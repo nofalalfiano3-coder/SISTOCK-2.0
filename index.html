@@ -44,399 +44,450 @@
         }
     </script>
 </head>
-<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen antialiased">
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen antialiased selection:bg-brand-500 selection:text-white">
 
-    <!-- Top Navigation Header -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-4 py-3 flex items-center justify-between shadow-sm">
-        <div class="flex items-center space-x-3">
-            <div class="bg-brand-500 text-white p-2 rounded-lg shadow-sm">
-                <i data-lucide="box" class="w-5 h-5"></i>
+    <!-- MODAL AUTENTIKASI LOGIN (SISTEM KEAMANAN) -->
+    <div id="modal-login" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl border border-slate-100">
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 bg-brand-500 text-white rounded-xl flex items-center justify-center mx-auto shadow-md">
+                    <i data-lucide="lock" class="w-6 h-6"></i>
+                </div>
+                <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">SISTOCK 2.0 PORTAL</h2>
+                <p class="text-xs text-slate-500">Manajemen Logistik SMKN 3 Bandung</p>
             </div>
-            <div>
-                <h1 class="font-extrabold text-sm sm:text-lg text-slate-900 tracking-tight flex items-center gap-2">
-                    SISTOCK 2.0
-                    <span class="bg-brand-100 text-brand-700 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase hidden sm:inline">SMKN 3 BANDUNG</span>
-                </h1>
-                <p class="text-[10px] sm:text-[11px] text-slate-500">Manajemen Logistik & Inventaris</p>
+
+            <form id="form-login" onsubmit="handleAuthLogin(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">Username / Name Account</label>
+                    <input type="text" id="login-username" required placeholder="Masukkan Username..." class="w-full bg-slate-50 border border-slate-200 p-3 rounded-lg font-medium text-slate-800 focus:outline-none focus:border-brand-500">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">Password</label>
+                    <input type="password" id="login-password" required placeholder="Masukkan Password..." class="w-full bg-slate-50 border border-slate-200 p-3 rounded-lg font-medium text-slate-800 focus:outline-none focus:border-brand-500">
+                </div>
+                <p id="login-error-msg" class="text-rose-500 font-semibold text-[11px] hidden text-center">⚠️ Username atau Password salah!</p>
+                <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-lg transition shadow-md flex items-center justify-center gap-2">
+                    <i data-lucide="log-in" class="w-4 h-4"></i> Masuk Sistem
+                </button>
+            </form>
+
+            <div class="border-t border-slate-100 pt-3 text-center">
+                <p class="text-[10px] text-slate-400 font-medium">Created By Naufal Alviano | Manajemen Logistik SMKN 3 Bandung 2026</p>
             </div>
         </div>
-
-        <div class="flex items-center space-x-1.5 sm:space-x-2">
-            <button onclick="syncToGoogleSheets()" title="Backup ke Google Sheets" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 border border-emerald-200 shadow-sm">
-                <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-600"></i>
-                <span class="hidden md:inline">Backup Portal</span>
-            </button>
-            <button onclick="openDeliveryModal()" title="Delivery Order" class="bg-brand-50 hover:bg-brand-100 text-brand-700 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 border border-brand-200">
-                <i data-lucide="file-text" class="w-4 h-4 text-brand-600"></i>
-                <span class="hidden md:inline">DO</span>
-            </button>
-            <button onclick="openScannerModal('search')" title="Scan Barcode" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 border border-slate-200">
-                <i data-lucide="scan" class="w-4 h-4 text-brand-500"></i>
-                <span class="hidden md:inline">Scan</span>
-            </button>
-            <button onclick="switchTab('products'); openProductModal();" class="bg-brand-500 hover:bg-brand-600 text-white px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 shadow-sm">
-                <i data-lucide="plus" class="w-4 h-4"></i>
-                <span class="hidden sm:inline">Barang Baru</span>
-            </button>
-        </div>
-    </header>
-
-    <div class="flex flex-1 overflow-hidden relative">
-        <!-- Desktop Sidebar -->
-        <aside class="w-64 bg-white border-r border-slate-200 hidden md:flex flex-col justify-between p-4 flex-shrink-0">
-            <div class="space-y-1">
-                <p class="text-[10px] font-bold text-slate-400 px-3 uppercase tracking-wider mb-2">Navigasi Utama</p>
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition text-brand-600 bg-brand-50">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
-                </button>
-                <button onclick="switchTab('products')" id="nav-products" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-slate-100">
-                    <i data-lucide="package" class="w-4 h-4"></i> Data Stok & ROP
-                </button>
-                <button onclick="switchTab('damaged')" id="nav-damaged" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-slate-100">
-                    <i data-lucide="alert-octagon" class="w-4 h-4 text-rose-500"></i> Barang Rusak & Expired
-                </button>
-                <button onclick="switchTab('operations')" id="nav-operations" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-slate-100">
-                    <i data-lucide="clipboard-check" class="w-4 h-4"></i> Stock Opname & Mutasi
-                </button>
-                <button onclick="switchTab('recap')" id="nav-recap" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-slate-100">
-                    <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Rekapitulasi Tren
-                </button>
-                <button onclick="switchTab('suppliers')" id="nav-suppliers" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-slate-100">
-                    <i data-lucide="truck" class="w-4 h-4"></i> Data Pemasok
-                </button>
-            </div>
-
-            <div class="border-t border-slate-100 pt-3">
-                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 flex items-center gap-2.5">
-                    <i data-lucide="cloud-lightning" class="w-4 h-4 text-brand-500"></i>
-                    <div>
-                        <p class="text-xs font-bold text-slate-800">Vercel & Firebase Pro</p>
-                        <p class="text-[10px] text-slate-500">SMKN 3 Bandung</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content Area -->
-        <main class="flex-1 overflow-y-auto p-4 md:p-6 mb-20 md:mb-0 custom-scrollbar space-y-6">
-            
-            <!-- SECTION: DASHBOARD -->
-            <section id="section-dashboard" class="space-y-5">
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <div class="flex items-center justify-between text-slate-500 mb-1">
-                            <span class="text-xs font-medium">Total Jenis Barang</span>
-                            <i data-lucide="boxes" class="w-4 h-4 text-brand-500"></i>
-                        </div>
-                        <h3 id="stat-total-products" class="text-2xl font-bold text-slate-900">0</h3>
-                        <p class="text-[10px] text-slate-400 mt-1">Item aktif terdaftar</p>
-                    </div>
-
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <div class="flex items-center justify-between text-slate-500 mb-1">
-                            <span class="text-xs font-medium">Nilai Total Aset</span>
-                            <i data-lucide="wallet" class="w-4 h-4 text-emerald-500"></i>
-                        </div>
-                        <h3 id="stat-total-value" class="text-lg sm:text-xl font-bold text-slate-900">Rp 0</h3>
-                        <p class="text-[10px] text-emerald-600 font-medium mt-1">Valuasi inventaris gudang</p>
-                    </div>
-
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <div class="flex items-center justify-between text-slate-500 mb-1">
-                            <span class="text-xs font-medium">Peringatan ROP / Habis</span>
-                            <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-500"></i>
-                        </div>
-                        <h3 id="stat-rop-alert" class="text-2xl font-bold text-rose-600">0</h3>
-                        <p class="text-[10px] text-rose-500 font-medium mt-1">Stok menipis atau kosong</p>
-                    </div>
-
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <div class="flex items-center justify-between text-slate-500 mb-1">
-                            <span class="text-xs font-medium">Barang Rusak / Expired</span>
-                            <i data-lucide="alert-octagon" class="w-4 h-4 text-amber-500"></i>
-                        </div>
-                        <h3 id="stat-damaged-count" class="text-2xl font-bold text-amber-600">0</h3>
-                        <p class="text-[10px] text-amber-500 font-medium mt-1">Perlu karantina/retur</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                    <div class="lg:col-span-2 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <div class="flex items-center justify-between mb-3">
-                            <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                                <i data-lucide="line-chart" class="w-4 h-4 text-brand-500"></i>
-                                Arus Mutasi Stok Gudang
-                            </h4>
-                            <span class="text-[10px] text-slate-400">Real-time Cloud Sync</span>
-                        </div>
-                        <div class="h-60 relative">
-                            <canvas id="stockMovementChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
-                        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2">
-                            <i data-lucide="award" class="w-4 h-4 text-amber-500"></i>
-                            Barang Aset Tertinggi
-                        </h4>
-                        <div id="top-products-list" class="space-y-2 flex-1 overflow-y-auto custom-scrollbar pr-1 text-slate-400 text-xs italic">Memuat data...</div>
-                    </div>
-                </div>
-
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2">
-                        <i data-lucide="history" class="w-4 h-4 text-slate-500"></i>
-                        Riwayat Transaksi & Audit
-                    </h4>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-200">
-                                <tr>
-                                    <th class="p-2.5">Waktu</th>
-                                    <th class="p-2.5">Nama Barang</th>
-                                    <th class="p-2.5">Aksi</th>
-                                    <th class="p-2.5">Jumlah</th>
-                                    <th class="p-2.5">Keterangan</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dashboard-logs-tbody" class="divide-y divide-slate-100">
-                                <tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Belum ada riwayat transaksi.</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION: PRODUCTS MANAGEMENT & ROP -->
-            <section id="section-products" class="space-y-4 hidden">
-                <div class="flex flex-col sm:flex-row justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                    <div class="relative flex-1">
-                        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
-                        <input type="text" id="search-product" onkeyup="renderProducts()" placeholder="Cari Kode SKU / Barcode Dus atau Nama Barang..." class="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-brand-500">
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="openScannerModal('search')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 border border-slate-200">
-                            <i data-lucide="scan" class="w-4 h-4 text-brand-500"></i> Scan
-                        </button>
-                        <button onclick="openProductModal()" class="bg-brand-500 hover:bg-brand-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition">
-                            <i data-lucide="plus" class="w-4 h-4"></i> Tambah Barang
-                        </button>
-                    </div>
-                </div>
-
-                <div class="flex flex-wrap gap-2 text-xs font-semibold items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                    <span class="text-slate-500 mr-2">Indikator Stok:</span>
-                    <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full border border-emerald-300">🟢 Aman (> ROP)</span>
-                    <span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full border border-amber-300">🟡 ROP Warning (≤ ROP)</span>
-                    <span class="px-2.5 py-1 bg-rose-100 text-rose-800 rounded-full border border-rose-300">🔴 Habis (0)</span>
-                </div>
-
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-200">
-                                <tr>
-                                    <th class="p-3">SKU / Barcode Dus</th>
-                                    <th class="p-3">Nama Barang</th>
-                                    <th class="p-3">Kategori</th>
-                                    <th class="p-3">Harga Satuan</th>
-                                    <th class="p-3 text-center">ROP (Min)</th>
-                                    <th class="p-3 text-center">Stok</th>
-                                    <th class="p-3 text-center">Status</th>
-                                    <th class="p-3 text-right">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="products-tbody" class="divide-y divide-slate-100">
-                                <tr><td colspan="8" class="p-6 text-center text-slate-400 italic">Memuat data...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION: DAMAGED & EXPIRED GOODS -->
-            <section id="section-damaged" class="space-y-4 hidden">
-                <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                    <div>
-                        <h3 class="font-bold text-xs text-slate-900 uppercase tracking-wider text-rose-600 flex items-center gap-1.5">
-                            <i data-lucide="alert-octagon" class="w-4 h-4"></i> Karantina Barang Rusak & Kadaluarsa
-                        </h3>
-                        <p class="text-[10px] text-slate-400">Pemisahan stok cacat, rusak fisik, atau melewati tanggal expired (FEFO)</p>
-                    </div>
-                    <button onclick="openDamagedModal()" class="bg-rose-500 hover:bg-rose-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition shadow-sm">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Catat Barang Rusak/Expired
-                    </button>
-                </div>
-
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-200">
-                                <tr>
-                                    <th class="p-3">Tanggal Catat</th>
-                                    <th class="p-3">Nama Barang (SKU)</th>
-                                    <th class="p-3">Jumlah Fisik</th>
-                                    <th class="p-3">Status Karantina</th>
-                                    <th class="p-3">Keterangan / Alasan</th>
-                                    <th class="p-3 text-right">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="damaged-tbody" class="divide-y divide-slate-100">
-                                <tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Belum ada barang rusak atau kadaluarsa.</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION: STOCK OPNAME & MUTASI -->
-            <section id="section-operations" class="space-y-5 hidden">
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm max-w-2xl mx-auto space-y-4">
-                    <div class="flex items-center gap-2 pb-2 border-b border-slate-100">
-                        <div class="p-2 bg-amber-50 text-amber-600 rounded-lg">
-                            <i data-lucide="clipboard-check" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-sm text-slate-900 uppercase tracking-wider">Formulir Stock Opname & Mutasi</h3>
-                            <p class="text-xs text-slate-400">Pencatatan barang masuk, keluar, atau karantina kerusakan</p>
-                        </div>
-                    </div>
-
-                    <form id="form-opname" onsubmit="handleDetailedOpname(event)" class="space-y-3 text-xs">
-                        <div>
-                            <label class="font-semibold text-slate-600 block mb-1">Pilih Barang / SKU</label>
-                            <select id="opname-product-id" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-500">
-                                <option value="">-- Pilih Barang Gudang --</option>
-                            </select>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="font-semibold text-slate-600 block mb-1">Tipe Transaksi</label>
-                                <select id="opname-type" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-500">
-                                    <option value="IN">Stok Masuk (Barang Datang)</option>
-                                    <option value="OUT">Stok Keluar (Terjual / Distribusi)</option>
-                                    <option value="DAMAGED">Pindah ke Rusak / Expired</option>
-                                    <option value="OPNAME">Koreksi Fisik Opname</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="font-semibold text-slate-600 block mb-1">Jumlah (Qty)</label>
-                                <input type="number" id="opname-qty" min="1" required placeholder="Jumlah..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-500">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="font-semibold text-slate-600 block mb-1">Keterangan / No. Surat Jalan</label>
-                            <input type="text" id="opname-notes" placeholder="Misal: Surat Jalan #012 / Alasan rusak" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-500">
-                        </div>
-                        <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-semibold py-2.5 rounded-lg transition shadow-sm">
-                            Proses & Update Sistem Cloud
-                        </button>
-                    </form>
-                </div>
-            </section>
-
-            <!-- SECTION: RECAPITULATION -->
-            <section id="section-recap" class="space-y-5 hidden">
-                <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <div>
-                        <h3 class="font-bold text-sm text-slate-900 uppercase tracking-wider">Rekapitulasi Tren Logistik</h3>
-                        <p class="text-xs text-slate-400">Analisis aktivitas keluar masuk barang secara menyeluruh</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <span class="text-xs text-slate-400 font-medium">Total Barang Masuk</span>
-                        <h3 id="recap-in-total" class="text-2xl font-bold text-emerald-600 mt-1">0 Unit</h3>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <span class="text-xs text-slate-400 font-medium">Total Barang Keluar</span>
-                        <h3 id="recap-out-total" class="text-2xl font-bold text-rose-600 mt-1">0 Unit</h3>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <span class="text-xs text-slate-400 font-medium">Total Rusak / Expired</span>
-                        <h3 id="recap-dmg-total" class="text-2xl font-bold text-amber-600 mt-1">0 Unit</h3>
-                    </div>
-                </div>
-
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Detail Log Rekapitulasi</h4>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-50 text-slate-500 uppercase font-bold border-b">
-                                <tr>
-                                    <th class="p-2.5">Waktu</th>
-                                    <th class="p-2.5">Barang</th>
-                                    <th class="p-2.5">Tipe</th>
-                                    <th class="p-2.5">Qty</th>
-                                    <th class="p-2.5">Keterangan</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recap-tbody" class="divide-y divide-slate-100">
-                                <tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Belum ada data rekapitulasi.</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION: SUPPLIERS MANAGEMENT -->
-            <section id="section-suppliers" class="space-y-4 hidden">
-                <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                    <div>
-                        <h3 class="font-bold text-xs text-slate-900 uppercase tracking-wider">Pemasok (Suppliers)</h3>
-                        <p class="text-[10px] text-slate-400">Kontak vendor distributor barang gudang</p>
-                    </div>
-                    <button onclick="openSupplierModal()" class="bg-brand-500 hover:bg-brand-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Tambah Supplier
-                    </button>
-                </div>
-
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-200">
-                                <tr>
-                                    <th class="p-3">Kode</th>
-                                    <th class="p-3">Nama Pemasok</th>
-                                    <th class="p-3">Kontak Person</th>
-                                    <th class="p-3">No. Telepon</th>
-                                </tr>
-                            </thead>
-                            <tbody id="suppliers-tbody" class="divide-y divide-slate-100">
-                                <tr><td colspan="4" class="p-6 text-center text-slate-400 italic">Belum ada data supplier.</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-        </main>
     </div>
 
-    <!-- Mobile Bottom Navigation Bar (Responsive HP) -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around py-2.5 z-30 shadow-lg">
-        <button onclick="switchTab('dashboard')" id="m-nav-dashboard" class="flex flex-col items-center text-brand-600">
-            <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-            <span class="text-[10px] font-semibold mt-0.5">Home</span>
-        </button>
-        <button onclick="switchTab('products')" id="m-nav-products" class="flex flex-col items-center text-slate-400">
-            <i data-lucide="package" class="w-5 h-5"></i>
-            <span class="text-[10px] font-semibold mt-0.5">Stok</span>
-        </button>
-        <button onclick="switchTab('damaged')" id="m-nav-damaged" class="flex flex-col items-center text-slate-400">
-            <i data-lucide="alert-octagon" class="w-5 h-5"></i>
-            <span class="text-[10px] font-semibold mt-0.5">Rusak</span>
-        </button>
-        <button onclick="switchTab('operations')" id="m-nav-operations" class="flex flex-col items-center text-slate-400">
-            <i data-lucide="clipboard-check" class="w-5 h-5"></i>
-            <span class="text-[10px] font-semibold mt-0.5">Opname</span>
-        </button>
-        <button onclick="switchTab('recap')" id="m-nav-recap" class="flex flex-col items-center text-slate-400">
-            <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
-            <span class="text-[10px] font-semibold mt-0.5">Tren</span>
-        </button>
-    </nav>
+    <!-- MAIN APP CONTENT (Protected Area) -->
+    <div id="main-app-container" class="flex flex-col min-h-screen hidden">
+        
+        <!-- Top Navigation Header -->
+        <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-4 py-3 flex items-center justify-between shadow-sm">
+            <div class="flex items-center space-x-3">
+                <div class="bg-brand-500 text-white p-2 rounded-lg shadow-sm">
+                    <i data-lucide="box" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-sm sm:text-lg text-slate-900 tracking-tight flex items-center gap-2">
+                        SISTOCK 2.0
+                        <span class="bg-brand-100 text-brand-700 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase hidden sm:inline">SMKN 3 BANDUNG</span>
+                    </h1>
+                    <p class="text-[10px] sm:text-[11px] text-slate-500">Manajemen Logistik & Inventaris</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-1.5 sm:space-x-2">
+                <button onclick="syncToGoogleSheets()" title="Backup ke Google Sheets" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 border border-emerald-200 shadow-sm">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-600"></i>
+                    <span class="hidden md:inline">Backup Portal</span>
+                </button>
+                <button onclick="openDeliveryModal()" title="Delivery Order" class="bg-brand-50 hover:bg-brand-100 text-brand-700 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 border border-brand-200">
+                    <i data-lucide="file-text" class="w-4 h-4 text-brand-600"></i>
+                    <span class="hidden md:inline">DO</span>
+                </button>
+                <button onclick="openScannerModal('search')" title="Scan Barcode" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 border border-slate-200">
+                    <i data-lucide="scan" class="w-4 h-4 text-brand-500"></i>
+                    <span class="hidden md:inline">Scan</span>
+                </button>
+                <button onclick="switchTab('products'); openProductModal();" class="bg-brand-500 hover:bg-brand-600 text-white px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 shadow-sm">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Barang Baru</span>
+                </button>
+                <button onclick="handleLogout()" title="Keluar" class="bg-rose-50 hover:bg-rose-100 text-rose-600 p-1.5 rounded-lg text-xs transition border border-rose-200 ml-1">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="flex flex-1 overflow-hidden relative">
+            <!-- Desktop Sidebar -->
+            <aside class="w-64 bg-white border-r border-slate-200 hidden md:flex flex-col justify-between p-4 flex-shrink-0">
+                <div class="space-y-1">
+                    <p class="text-[10px] font-bold text-slate-400 px-3 uppercase tracking-wider mb-2">Navigasi Utama</p>
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition text-brand-600 bg-brand-50">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+                    </button>
+                    <button onclick="switchTab('products')" id="nav-products" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-slate-100">
+                        <i data-lucide="package" class="w-4 h-4"></i> Data Stok & ROP
+                    </button>
+                    <button onclick="switchTab('damaged')" id="nav-damaged" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-slate-100">
+                        <i data-lucide="alert-octagon" class="w-4 h-4 text-rose-500"></i> Barang Rusak & Expired
+                    </button>
+                    <button onclick="switchTab('operations')" id="nav-operations" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-slate-100">
+                        <i data-lucide="clipboard-check" class="w-4 h-4"></i> Stock Opname & Mutasi
+                    </button>
+                    <button onclick="switchTab('recap')" id="nav-recap" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-slate-100">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Rekapitulasi Tren
+                    </button>
+                    <button onclick="switchTab('suppliers')" id="nav-suppliers" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-slate-100">
+                        <i data-lucide="truck" class="w-4 h-4"></i> Data Pemasok
+                    </button>
+                </div>
+
+                <div class="border-t border-slate-100 pt-3">
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 flex items-center gap-2.5">
+                        <i data-lucide="cloud-lightning" class="w-4 h-4 text-brand-500"></i>
+                        <div>
+                            <p class="text-xs font-bold text-slate-800">Vercel & Firebase Pro</p>
+                            <p class="text-[10px] text-slate-500">SMKN 3 Bandung</p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto p-4 md:p-6 mb-20 md:mb-0 custom-scrollbar space-y-6">
+                
+                <!-- SECTION: DASHBOARD -->
+                <section id="section-dashboard" class="space-y-5">
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                            <div class="flex items-center justify-between text-slate-500 mb-1">
+                                <span class="text-xs font-medium">Total Jenis Barang</span>
+                                <i data-lucide="boxes" class="w-4 h-4 text-brand-500"></i>
+                            </div>
+                            <h3 id="stat-total-products" class="text-2xl font-bold text-slate-900">0</h3>
+                            <p class="text-[10px] text-slate-400 mt-1">Item aktif terdaftar</p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                            <div class="flex items-center justify-between text-slate-500 mb-1">
+                                <span class="text-xs font-medium">Nilai Total Aset</span>
+                                <i data-lucide="wallet" class="w-4 h-4 text-emerald-500"></i>
+                            </div>
+                            <h3 id="stat-total-value" class="text-lg sm:text-xl font-bold text-slate-900">Rp 0</h3>
+                            <p class="text-[10px] text-emerald-600 font-medium mt-1">Valuasi inventaris gudang</p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                            <div class="flex items-center justify-between text-slate-500 mb-1">
+                                <span class="text-xs font-medium">Peringatan ROP / Habis</span>
+                                <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-500"></i>
+                            </div>
+                            <h3 id="stat-rop-alert" class="text-2xl font-bold text-rose-600">0</h3>
+                            <p class="text-[10px] text-rose-500 font-medium mt-1">Stok menipis atau kosong</p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                            <div class="flex items-center justify-between text-slate-500 mb-1">
+                                <span class="text-xs font-medium">Barang Rusak / Expired</span>
+                                <i data-lucide="alert-octagon" class="w-4 h-4 text-amber-500"></i>
+                            </div>
+                            <h3 id="stat-damaged-count" class="text-2xl font-bold text-amber-600">0</h3>
+                            <p class="text-[10px] text-amber-500 font-medium mt-1">Perlu karantina/retur</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                        <div class="lg:col-span-2 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                                    <i data-lucide="line-chart" class="w-4 h-4 text-brand-500"></i>
+                                    Arus Mutasi Stok Gudang
+                                </h4>
+                                <span class="text-[10px] text-slate-400">Real-time Cloud Sync</span>
+                            </div>
+                            <div class="h-60 relative">
+                                <canvas id="stockMovementChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+                            <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                <i data-lucide="award" class="w-4 h-4 text-amber-500"></i>
+                                Barang Aset Tertinggi
+                            </h4>
+                            <div id="top-products-list" class="space-y-2 flex-1 overflow-y-auto custom-scrollbar pr-1 text-slate-400 text-xs italic">Memuat data...</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <i data-lucide="history" class="w-4 h-4 text-slate-500"></i>
+                            Riwayat Transaksi & Audit
+                        </h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-2.5">Waktu</th>
+                                        <th class="p-2.5">Nama Barang</th>
+                                        <th class="p-2.5">Aksi</th>
+                                        <th class="p-2.5">Jumlah</th>
+                                        <th class="p-2.5">Keterangan</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboard-logs-tbody" class="divide-y divide-slate-100">
+                                    <tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Belum ada riwayat transaksi.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: PRODUCTS MANAGEMENT & ROP -->
+                <section id="section-products" class="space-y-4 hidden">
+                    <div class="flex flex-col sm:flex-row justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                        <div class="relative flex-1">
+                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
+                            <input type="text" id="search-product" onkeyup="renderProducts()" placeholder="Cari Kode SKU / Barcode Dus atau Nama Barang..." class="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-brand-500">
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="openScannerModal('search')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 border border-slate-200">
+                                <i data-lucide="scan" class="w-4 h-4 text-brand-500"></i> Scan
+                            </button>
+                            <button onclick="openProductModal()" class="bg-brand-500 hover:bg-brand-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Tambah Barang
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 text-xs font-semibold items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-slate-500 mr-2">Indikator Stok:</span>
+                        <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full border border-emerald-300">🟢 Aman (> ROP)</span>
+                        <span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full border border-amber-300">🟡 ROP Warning (≤ ROP)</span>
+                        <span class="px-2.5 py-1 bg-rose-100 text-rose-800 rounded-full border border-rose-300">🔴 Habis (0)</span>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-3">SKU / Barcode Dus</th>
+                                        <th class="p-3">Nama Barang</th>
+                                        <th class="p-3">Kategori</th>
+                                        <th class="p-3">Harga Satuan</th>
+                                        <th class="p-3 text-center">ROP (Min)</th>
+                                        <th class="p-3 text-center">Stok</th>
+                                        <th class="p-3 text-center">Status</th>
+                                        <th class="p-3 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="products-tbody" class="divide-y divide-slate-100">
+                                    <tr><td colspan="8" class="p-6 text-center text-slate-400 italic">Memuat data...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: DAMAGED & EXPIRED GOODS -->
+                <section id="section-damaged" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                        <div>
+                            <h3 class="font-bold text-xs text-slate-900 uppercase tracking-wider text-rose-600 flex items-center gap-1.5">
+                                <i data-lucide="alert-octagon" class="w-4 h-4"></i> Karantina Barang Rusak & Kadaluarsa
+                            </h3>
+                            <p class="text-[10px] text-slate-400">Pemisahan stok cacat, rusak fisik, atau melewati tanggal expired (FEFO)</p>
+                        </div>
+                        <button onclick="openDamagedModal()" class="bg-rose-500 hover:bg-rose-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition shadow-sm">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Catat Barang Rusak/Expired
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-3">Tanggal Catat</th>
+                                        <th class="p-3">Nama Barang (SKU)</th>
+                                        <th class="p-3">Jumlah Fisik</th>
+                                        <th class="p-3">Status Karantina</th>
+                                        <th class="p-3">Keterangan / Alasan</th>
+                                        <th class="p-3 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="damaged-tbody" class="divide-y divide-slate-100">
+                                    <tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Belum ada barang rusak atau kadaluarsa.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: STOCK OPNAME & MUTASI -->
+                <section id="section-operations" class="space-y-5 hidden">
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm max-w-2xl mx-auto space-y-4">
+                        <div class="flex items-center gap-2 pb-2 border-b border-slate-100">
+                            <div class="p-2 bg-amber-50 text-amber-600 rounded-lg">
+                                <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm text-slate-900 uppercase tracking-wider">Formulir Stock Opname & Mutasi</h3>
+                                <p class="text-xs text-slate-400">Pencatatan barang masuk, keluar, atau karantina kerusakan</p>
+                            </div>
+                        </div>
+
+                        <form id="form-opname" onsubmit="handleDetailedOpname(event)" class="space-y-3 text-xs">
+                            <div>
+                                <label class="font-semibold text-slate-600 block mb-1">Pilih Barang / SKU</label>
+                                <select id="opname-product-id" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-500">
+                                    <option value="">-- Pilih Barang Gudang --</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="font-semibold text-slate-600 block mb-1">Tipe Transaksi</label>
+                                    <select id="opname-type" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-500">
+                                        <option value="IN">Stok Masuk (Barang Datang)</option>
+                                        <option value="OUT">Stok Keluar (Terjual / Distribusi)</option>
+                                        <option value="DAMAGED">Pindah ke Rusak / Expired</option>
+                                        <option value="OPNAME">Koreksi Fisik Opname</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="font-semibold text-slate-600 block mb-1">Jumlah (Qty)</label>
+                                    <input type="number" id="opname-qty" min="1" required placeholder="Jumlah..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-500">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="font-semibold text-slate-600 block mb-1">Keterangan / No. Surat Jalan</label>
+                                <input type="text" id="opname-notes" placeholder="Misal: Surat Jalan #012 / Alasan rusak" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-500">
+                            </div>
+                            <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-semibold py-2.5 rounded-lg transition shadow-sm">
+                                Proses & Update Sistem Cloud
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- SECTION: RECAPITULATION -->
+                <section id="section-recap" class="space-y-5 hidden">
+                    <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <div>
+                            <h3 class="font-bold text-sm text-slate-900 uppercase tracking-wider">Rekapitulasi Tren Logistik</h3>
+                            <p class="text-xs text-slate-400">Analisis aktivitas keluar masuk barang secara menyeluruh</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                            <span class="text-xs text-slate-400 font-medium">Total Barang Masuk</span>
+                            <h3 id="recap-in-total" class="text-2xl font-bold text-emerald-600 mt-1">0 Unit</h3>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                            <span class="text-xs text-slate-400 font-medium">Total Barang Keluar</span>
+                            <h3 id="recap-out-total" class="text-2xl font-bold text-rose-600 mt-1">0 Unit</h3>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                            <span class="text-xs text-slate-400 font-medium">Total Rusak / Expired</span>
+                            <h3 id="recap-dmg-total" class="text-2xl font-bold text-amber-600 mt-1">0 Unit</h3>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Detail Log Rekapitulasi</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-500 uppercase font-bold border-b">
+                                    <tr>
+                                        <th class="p-2.5">Waktu</th>
+                                        <th class="p-2.5">Barang</th>
+                                        <th class="p-2.5">Tipe</th>
+                                        <th class="p-2.5">Qty</th>
+                                        <th class="p-2.5">Keterangan</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recap-tbody" class="divide-y divide-slate-100">
+                                    <tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Belum ada data rekapitulasi.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: SUPPLIERS MANAGEMENT -->
+                <section id="section-suppliers" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                        <div>
+                            <h3 class="font-bold text-xs text-slate-900 uppercase tracking-wider">Pemasok (Suppliers)</h3>
+                            <p class="text-[10px] text-slate-400">Kontak vendor distributor barang gudang</p>
+                        </div>
+                        <button onclick="openSupplierModal()" class="bg-brand-500 hover:bg-brand-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Tambah Supplier
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-3">Kode</th>
+                                        <th class="p-3">Nama Pemasok</th>
+                                        <th class="p-3">Kontak Person</th>
+                                        <th class="p-3">No. Telepon</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="suppliers-tbody" class="divide-y divide-slate-100">
+                                    <tr><td colspan="4" class="p-6 text-center text-slate-400 italic">Belum ada data supplier.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+
+        <!-- WATERMARK FOOTER (PROFESIONAL) -->
+        <footer class="bg-white border-t border-slate-200 py-3 px-4 text-center text-[11px] text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-1 z-20">
+            <div>
+                <span class="font-bold text-slate-600">SISTOCK 2.0</span> — System Inventaris & Logistik
+            </div>
+            <div class="flex items-center gap-2 font-medium">
+                <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-semibold">Created By Naufal Alviano</span>
+                <span>•</span>
+                <span>Manajemen Logistik SMKN 3 Bandung 2026</span>
+            </div>
+        </footer>
+
+        <!-- Mobile Bottom Navigation Bar -->
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around py-2.5 z-30 shadow-lg">
+            <button onclick="switchTab('dashboard')" id="m-nav-dashboard" class="flex flex-col items-center text-brand-600">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                <span class="text-[10px] font-semibold mt-0.5">Home</span>
+            </button>
+            <button onclick="switchTab('products')" id="m-nav-products" class="flex flex-col items-center text-slate-400">
+                <i data-lucide="package" class="w-5 h-5"></i>
+                <span class="text-[10px] font-semibold mt-0.5">Stok</span>
+            </button>
+            <button onclick="switchTab('damaged')" id="m-nav-damaged" class="flex flex-col items-center text-slate-400">
+                <i data-lucide="alert-octagon" class="w-5 h-5"></i>
+                <span class="text-[10px] font-semibold mt-0.5">Rusak</span>
+            </button>
+            <button onclick="switchTab('operations')" id="m-nav-operations" class="flex flex-col items-center text-slate-400">
+                <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+                <span class="text-[10px] font-semibold mt-0.5">Opname</span>
+            </button>
+            <button onclick="switchTab('recap')" id="m-nav-recap" class="flex flex-col items-center text-slate-400">
+                <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                <span class="text-[10px] font-semibold mt-0.5">Tren</span>
+            </button>
+        </nav>
+    </div>
 
     <!-- MODAL: PRODUCT -->
     <div id="modal-product" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -625,7 +676,7 @@
         </div>
     </div>
 
-    <!-- MODAL: BARCODE SCANNER (FIXED CAMERA CLOSE BUG) -->
+    <!-- MODAL: BARCODE SCANNER -->
     <div id="modal-scanner" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-xl max-w-md w-full p-5 space-y-4 shadow-xl">
             <div class="flex justify-between items-center border-b pb-2">
@@ -645,21 +696,19 @@
     </div>
 
     <script>
-        // KONFIGURASI FIREBASE CLOUD STORAGE
+        // KONFIGURASI FIREBASE DEFAULT REALTIME DATABASE TERBARU
         const firebaseConfig = {
-            apiKey: "AIzaSySistock20ProDatabaseKeyAuthAPI",
-            authDomain: "sistock2db.firebaseapp.com",
-            databaseURL: "https://sistock2db-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "sistock2db",
-            storageBucket: "sistock2db.firebasestorage.app",
-            messagingSenderId: "1050690696251",
-            appId: "1:1050690696251:web:sistock20proappidinventory"
+            databaseURL: "https://new-sistock-2026-default-rtdb.asia-southeast1.firebasedatabase.app/"
         };
 
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
+
+        // KREDENSIAL AUTENTIKASI AKSES
+        const AUTH_USER = "MLGSMKN3BDG";
+        const AUTH_PASS = "LOGISTIK2627";
 
         // Data awal terintegrasi Portal Inventaris
         const INITIAL_SPREADSHEET_DATA = {
@@ -681,8 +730,8 @@
             ],
             damagedGoods: [],
             logs: [
-                { timestamp: "2025-05-18 08:30:15", productName: "Logitech Wireless Mouse M185", type: "IN", qty: 42, notes: "Sinkronisasi awal Portal" },
-                { timestamp: "2025-05-18 08:31:02", productName: "Keyboard Mechanical RGB TKL", type: "IN", qty: 8, notes: "Sinkronisasi awal Portal" }
+                { timestamp: "2026-10-31 08:30:15", productName: "Logitech Wireless Mouse M185", type: "IN", qty: 42, notes: "Sinkronisasi awal Portal" },
+                { timestamp: "2026-10-31 08:31:02", productName: "Keyboard Mechanical RGB TKL", type: "IN", qty: 8, notes: "Sinkronisasi awal Portal" }
             ]
         };
 
@@ -690,6 +739,38 @@
         let chartInstance = null;
         let html5QrCode = null;
         let scannerMode = 'search'; 
+
+        // AUTENTIKASI SYSTEM
+        function checkSessionAuth() {
+            const isAuth = sessionStorage.getItem("sistock_auth");
+            if (isAuth === "true") {
+                document.getElementById('modal-login').classList.add('hidden');
+                document.getElementById('main-app-container').classList.remove('hidden');
+            } else {
+                document.getElementById('modal-login').classList.remove('hidden');
+                document.getElementById('main-app-container').classList.add('hidden');
+            }
+        }
+
+        function handleAuthLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('login-username').value;
+            const p = document.getElementById('login-password').value;
+            const errMsg = document.getElementById('login-error-msg');
+
+            if (u === AUTH_USER && p === AUTH_PASS) {
+                sessionStorage.setItem("sistock_auth", "true");
+                errMsg.classList.add('hidden');
+                checkSessionAuth();
+            } else {
+                errMsg.classList.remove('hidden');
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem("sistock_auth");
+            checkSessionAuth();
+        }
 
         function initFirebaseSync() {
             db.ref('sistock_v2_pro/state').on('value', (snapshot) => {
@@ -717,9 +798,9 @@
             });
         }
 
-        // FUNGSI SYNC KE GOOGLE SHEETS PORTAL (URL WEB APP TERBARU)
+        // FUNGSI SYNC KE GOOGLE SHEETS PORTAL TERBARU
         function syncToGoogleSheets() {
-            const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyee7mjpNUKZaSxhP6j18t8isztcLd4NNwcV3kDtuL5W5Z8VEpseWg1RJcO948YzI0/exec";
+            const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVyIpWceLZ9vkDxY9NPbFctcJtCjhqQcG9tfUAZnfqfH8BhoZ9CCA7CZsAwaqlqqt55w/exec";
 
             if (!confirm("Kirim full backup data terbaru ke Portal Google Sheets SMKN 3 BANDUNG?")) return;
 
@@ -748,6 +829,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
+            checkSessionAuth();
             initChart();
             initFirebaseSync();
         });
@@ -1256,7 +1338,7 @@
         const dateField = document.getElementById('doDate');
         if(dateField) dateField.addEventListener('change', updateDeliveryPreview);
 
-        // --- MANAJEMEN SCANNER KAMERA (DIAMANKAN & DI-FIX) ---
+        // --- MANAJEMEN SCANNER KAMERA ---
         function openScannerModal(mode = 'search') {
             scannerMode = mode;
             document.getElementById('modal-scanner').classList.remove('hidden');
