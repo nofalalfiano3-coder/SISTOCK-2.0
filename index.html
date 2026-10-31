@@ -63,12 +63,12 @@
     <!-- TOAST NOTIFICATION CONTAINER -->
     <div id="toast-container" class="fixed top-4 right-4 sm:top-5 sm:right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-[90vw]"></div>
 
-    <!-- MODAL AUTENTIKASI LOGIN (BERSIH TANPA KREDENSIAL) -->
+    <!-- MODAL AUTENTIKASI LOGIN (FIXED BUG) -->
     <div id="modal-login" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-slate-100 animate-tab-enter">
             <div class="text-center space-y-2">
                 <div class="w-14 h-14 bg-gradient-to-tr from-brand-600 to-brand-500 text-white rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-brand-500/30">
-                    <i data-lucide="package" class="w-7 h-7"></i>
+                    <i data-lucide="lock" class="w-7 h-7"></i>
                 </div>
                 <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">SISTOCK 2.0 PORTAL</h2>
                 <p class="text-xs text-slate-500 font-medium">Manajemen Logistik SMKN 3 Bandung</p>
@@ -1095,28 +1095,34 @@
 
         function checkSessionAuth() {
             const isAuth = sessionStorage.getItem("sistock_auth");
+            const loginModal = document.getElementById('modal-login');
+            const mainApp = document.getElementById('main-app-container');
             if (isAuth === "true") {
-                document.getElementById('modal-login').classList.add('hidden');
-                document.getElementById('main-app-container').classList.remove('hidden');
+                if(loginModal) loginModal.classList.add('hidden');
+                if(mainApp) mainApp.classList.remove('hidden');
             } else {
-                document.getElementById('modal-login').classList.remove('hidden');
-                document.getElementById('main-app-container').classList.add('hidden');
+                if(loginModal) loginModal.classList.remove('hidden');
+                if(mainApp) mainApp.classList.add('hidden');
             }
         }
 
         function handleAuthLogin(e) {
             e.preventDefault();
-            const u = document.getElementById('login-username').value.trim();
-            const p = document.getElementById('login-password').value.trim();
+            const uInput = document.getElementById('login-username');
+            const pInput = document.getElementById('login-password');
             const errMsg = document.getElementById('login-error-msg');
+            if(!uInput || !pInput) return;
+
+            const u = uInput.value.trim();
+            const p = pInput.value.trim();
 
             if (ACCOUNTS[u] && ACCOUNTS[u] === p) {
                 sessionStorage.setItem("sistock_auth", "true");
-                errMsg.classList.add('hidden');
+                if(errMsg) errMsg.classList.add('hidden');
                 checkSessionAuth();
                 showToast(`Login berhasil! Selamat datang di SISTOCK 2.0.`);
             } else {
-                errMsg.classList.remove('hidden');
+                if(errMsg) errMsg.classList.remove('hidden');
             }
         }
 
@@ -1220,11 +1226,11 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
             checkSessionAuth();
             initChart();
             initRealtimeClockAndReminders();
             initFirebaseSync();
+            lucide.createIcons();
         });
 
         function switchTab(tabName) {
@@ -2015,7 +2021,7 @@
             if(matched.length > 0) {
                 let resultHTML = "🔍 <strong>Hasil Penelusuran Database Inventaris:</strong><br>";
                 matched.slice(0, 3).forEach(p => {
-                    resultHTML .= `• <strong>${p.name}</strong><br>  SKU: ${p.sku} | Stok: ${p.stock} ${p.category || 'PCS'}<br>  Harga Satuan: Rp ${parseInt(p.price).toLocaleString('id-ID')} | Lokasi Rak: ${p.location || 'Gudang Utama'}<br>`;
+                    resultHTML += `• <strong>${p.name}</strong><br>  SKU: ${p.sku} | Stok: ${p.stock} ${p.category || 'PCS'}<br>  Harga Satuan: Rp ${parseInt(p.price).toLocaleString('id-ID')} | Lokasi Rak: ${p.location || 'Gudang Utama'}<br>`;
                 });
                 return resultHTML;
             }
