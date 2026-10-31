@@ -63,7 +63,7 @@
     <!-- TOAST NOTIFICATION CONTAINER -->
     <div id="toast-container" class="fixed top-4 right-4 sm:top-5 sm:right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-[90vw]"></div>
 
-    <!-- MODAL AUTENTIKASI LOGIN -->
+    <!-- MODAL AUTENTIKASI LOGIN (BERSIH TANPA KREDENSIAL) -->
     <div id="modal-login" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-slate-100 animate-tab-enter">
             <div class="text-center space-y-2">
@@ -88,12 +88,7 @@
                     <i data-lucide="log-in" class="w-4 h-4"></i> Masuk Sistem
                 </button>
             </form>
-            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/60 text-[11px] space-y-1">
-                <p class="font-bold text-slate-700">💡 Info Akun Akses:</p>
-                <p class="text-slate-500">• Admin Utama: <code class="text-brand-600 font-bold">MLGSMKN3BDG</code> / <code class="text-brand-600 font-bold">LOGISTIK2627</code></p>
-                <p class="text-slate-500">• Reviewer/Guru: <code class="text-brand-600 font-bold">BELAJAR</code> / <code class="text-brand-600 font-bold">123456</code></p>
-            </div>
-            <div class="border-t border-slate-100 pt-2 text-center">
+            <div class="border-t border-slate-100 pt-3 text-center">
                 <p class="text-[10px] text-slate-400 font-semibold">Created By Naufal Alviano | SMKN 3 Bandung 2026</p>
             </div>
         </div>
@@ -695,7 +690,7 @@
         </footer>
     </div>
 
-    <!-- FLOATING CHATBOT J.A.R.V.I.S GUIDEBOT ASSISTANT (NYUNDA) -->
+    <!-- FLOATING CHATBOT J.A.R.V.I.S GUIDEBOT ASSISTANT (PROFESSIONAL) -->
     <div class="fixed bottom-5 right-5 z-40">
         <button onclick="toggleJarvisChat()" class="bg-slate-900 hover:bg-brand-500 text-white p-3.5 sm:p-4 rounded-full shadow-2xl transition-all duration-300 flex items-center justify-center border-2 border-brand-500 group jarvis-glow btn-press" title="Tanya J.A.R.V.I.S GuideBot">
             <i data-lucide="bot" class="w-6 h-6 group-hover:rotate-12 transition"></i>
@@ -712,7 +707,7 @@
                 <div>
                     <h3 class="text-xs font-extrabold tracking-wider text-brand-50">J.A.R.V.I.S GUIDEBOT</h3>
                     <p class="text-[9px] text-emerald-400 font-bold flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Live Assistant (Nyunda)
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Professional Assistant
                     </p>
                 </div>
             </div>
@@ -724,7 +719,7 @@
         <div id="jarvis-messages" class="p-3.5 sm:p-4 flex-1 overflow-y-auto space-y-3 text-xs bg-slate-50/50 max-h-[260px] sm:max-h-[300px] custom-scrollbar">
             <div class="flex items-start gap-2">
                 <div class="bg-gradient-to-tr from-brand-500 to-brand-600 text-white p-3 rounded-2xl rounded-tl-none font-medium shadow-md max-w-[88%] leading-relaxed">
-                    Sampurasun Akang / Teteh! 👋 Saya <strong>J.A.R.V.I.S GuideBot Assistant</strong>. Silakan klik opsi bantuan cepat di bawah atau tanyakan apa saja tentang fitur gudang SISTOCK 2.0 ini!
+                    Halo! Saya <strong>J.A.R.V.I.S GuideBot Assistant</strong>. Silakan pilih tombol opsi cepat di bawah atau ajukan pertanyaan teknis mengenai pengelolaan gudang SISTOCK 2.0 ini.
                 </div>
             </div>
         </div>
@@ -741,7 +736,7 @@
         </div>
 
         <form id="jarvis-form" onsubmit="handleJarvisChat(event)" class="p-2.5 sm:p-3 bg-white border-t border-slate-100 flex gap-2">
-            <input type="text" id="jarvis-input" placeholder="Tanya Akang Jarvis..." class="flex-1 bg-slate-100 border border-slate-200 rounded-2xl px-3.5 py-2 text-xs focus:outline-none focus:border-brand-500 font-semibold text-slate-800">
+            <input type="text" id="jarvis-input" placeholder="Tanya J.A.R.V.I.S..." class="flex-1 bg-slate-100 border border-slate-200 rounded-2xl px-3.5 py-2 text-xs focus:outline-none focus:border-brand-500 font-semibold text-slate-800">
             <button type="submit" class="bg-brand-500 hover:bg-brand-600 text-white px-3.5 py-2 rounded-2xl text-xs font-bold transition shadow-md shadow-brand-500/20 flex items-center justify-center btn-press">
                 <i data-lucide="send" class="w-4 h-4"></i>
             </button>
@@ -1119,7 +1114,7 @@
                 sessionStorage.setItem("sistock_auth", "true");
                 errMsg.classList.add('hidden');
                 checkSessionAuth();
-                showToast(`Sampurasun! Wilujeng sumping, ${u === 'BELAJAR' ? 'Akun Reviewer (BELAJAR)' : 'Naufal'}!`);
+                showToast(`Login berhasil! Selamat datang di SISTOCK 2.0.`);
             } else {
                 errMsg.classList.remove('hidden');
             }
@@ -1910,7 +1905,7 @@
         function openSupplierModal() { document.getElementById('form-supplier').reset(); document.getElementById('modal-supplier').classList.remove('hidden'); }
         function closeSupplierModal() { document.getElementById('modal-supplier').classList.add('hidden'); }
 
-        // --- ENHANCED J.A.R.V.I.S GUIDEBOT ASSISTANT (NYUNDA) ---
+        // --- ENHANCED J.A.R.V.I.S GUIDEBOT ASSISTANT (PROFESSIONAL & DETAILED) ---
         function toggleJarvisChat() {
             const modal = document.getElementById('jarvis-chat-modal');
             if(modal) {
@@ -1951,7 +1946,7 @@
             msgContainer.scrollTop = msgContainer.scrollHeight;
 
             setTimeout(() => {
-                let reply = processAdvancedNyundaJarvis(query);
+                let reply = processAdvancedProfessionalJarvis(query);
                 msgContainer.innerHTML += `
                     <div class="flex items-start gap-2">
                         <div class="bg-gradient-to-tr from-brand-500 to-brand-600 text-white p-2.5 sm:p-3 rounded-2xl rounded-tl-none font-medium shadow-md max-w-[88%] space-y-1.5 leading-relaxed">
@@ -1964,60 +1959,68 @@
             }, 300);
         }
 
-        function processAdvancedNyundaJarvis(text) {
+        function processAdvancedProfessionalJarvis(text) {
             const q = text.toLowerCase();
 
-            if(q.includes('halo') || q.includes('hai') || q.includes('sampurasun') || q.includes('jarvis')) {
-                return `Sampurasun Akang / Teteh! 👋 Wilujeng sumping di SISTOCK 2.0. Ada yang bisa GuideBot bantu terkait inventaris logistik hari ini?`;
+            if(q.includes('halo') || q.includes('hai') || q.includes('jarvis')) {
+                return `Selamat datang! Saya J.A.R.V.I.S GuideBot Assistant. Sistem manajemen logistik ini dirancang komprehensif untuk mendukung operasional pergudangan SMKN 3 Bandung. Silakan pilih menu bantuan di bawah untuk penjelasan mendetail mengenai setiap modul.`;
             }
 
             if(q.includes('fefo') || q.includes('cek fefo') || q.includes('reminder')) {
-                return `☣️ <strong>REMINDER SISTEM FEFO & KADALUWARSA:</strong><br><br>
-                SISTOCK 2.0 memantau seluruh 23 batch kadaluwarsa secara real-time berdasarkan zona waktu Bandung (WIB). Jika ada batch yang melewati tanggal exp atau mendekati H-3, kotak peringatan khusus akan otomatis menyala di atas dashboard!<br>
-                • Contoh: <em>Indomie Soto (Exp: 02/10/2026)</em> tercatat kadaluwarsa dan diprioritaskan penanganannya.`;
+                return `☣️ <strong>ANALISIS & PROSEDUR OPERASIONAL FEFO (First Expired, First Out):</strong><br><br>
+                SISTOCK 2.0 menerapkan manajemen batch berbasis waktu real-time WIB secara otomatis:<br>
+                • <strong>Prinsip Kerja:</strong> Barang yang memiliki tanggal kedaluwarsa paling awal wajib didistribusikan atau dikeluarkan terlebih dahulu.<br>
+                • <strong>Sistem Peringatan Dini:</strong> Kotak notifikasi khusus pada dashboard akan memunculkan alarm visual jika terdapat batch yang telah melewati masa kedaluwarsa ataupun mendekati batas kritis (dalam rentang waktu H-3 hari).<br>
+                • <strong>Integrasi Database:</strong> Seluruh 23 batch dari spreadsheet portal terpetakan secara presisi per tanggal expired untuk memudahkan auditor dalam melakukan inspeksi berkala.`;
             }
 
             if(q.includes('rusak') || q.includes('barang rusak')) {
-                return `🛡️ <strong>MODUL PENCATATAN BARANG RUSAK FISIK:</strong><br><br>
-                Fitur ini dirancang khusus jika ada barang yang kemasannya sobek, pecah, atau rusak di gudang.<br>
-                • <strong>Cara Kerja:</strong> Masuk ke menu <em>Barang Rusak</em>, pilih produk dan jumlah kuantitas kerusakannya. Sistem akan **secara otomatis memotong stok gudang utama** dan mencatat laporan audit dengan aman.`;
+                return `🛡️ <strong>MODUL PENCATATAN KELAINAN FISIK & BARANG RUSAK (DAMAGED GOODS):</strong><br><br>
+                Modul ini menangani inventaris yang mengalami cacat kemasan, robek, pecah, atau kontaminasi fisik selama proses bongkar muat (*unloading*) maupun penyimpanan.<br>
+                • <strong>Mekanisme Otomatis:</strong> Ketika operator mencatat laporan pada menu <em>Barang Rusak</em>, sistem secara instan dan otomatis memotong kuantitas stok pada database produk utama.<br>
+                • <strong>Audit Log:</strong> Setiap transaksi penghapusan stok akibat kerusakan tercatat secara permanen di riwayat rekapitulasi guna menjaga akurasi laporan pertanggungjawaban kepada manajemen logistik.`;
             }
 
             if(q.includes('inbound') || q.includes('jelaskan inbound')) {
-                return `📥 <strong>DETAIL FITUR INBOUND (BARANG MASUK):</strong><br>
-                Digunakan saat kiriman barang dari supplier tiba di SMKN 3 Bandung. Bisa menggunakan scan kamera barcode agar SKU akurat dan stok otomatis bertambah secara live ke Firebase!`;
+                return `📥 <strong>PROSEDUR OPERASIONAL BAKU - BARANG MASUK (INBOUND):</strong><br><br>
+                Modul Inbound mencatat seluruh penerimaan barang dari vendor atau pemasok eksternal.<br>
+                • <strong>Langkah Kerja:</strong> Buka menu Barang Masuk, pilih item atau gunakan pemindai kamera (*scanner*) untuk membaca barcode SKU secara instan. Masukkan kuantitas kedatangan serta nomor surat jalan.<br>
+                • <strong>Dampak Sistem:</strong> Stok fisik di database pusat akan bertambah secara real-time dan terekam ke dalam file log riwayat mutasi gudang.`;
             }
 
             if(q.includes('outbound') || q.includes('jelaskan outbound')) {
-                return `📤 <strong>DETAIL FITUR OUTBOUND (BARANG KELUAR):</strong><br>
-                Digunakan untuk mendistribusikan barang keluar ke unit pemesan (ULP, lab, dll). Sistem memvalidasi agar tidak terjadi minus stok.`;
+                return `📤 <strong>PROSEDUR OPERASIONAL BAKU - BARANG KELUAR (OUTBOUND):</strong><br><br>
+                Modul Outbound mengelola proses pengeluaran stok untuk didistribusikan ke unit pemesan, ruang praktikum, atau kebutuhan instansi.<br>
+                • <strong>Validasi Keamanan:</strong> Sistem secara otomatis memeriksa ketersediaan stok; jika kuantitas permintaan melebihi stok yang ada di gudang, transaksi akan ditolak untuk mencegah terjadinya selisih minus.`;
             }
 
             if(q.includes('opname') || q.includes('jelaskan opname')) {
-                return `🔎 <strong>STOCK OPNAME & AUDIT FISIK:</strong><br>
-                Mencocokkan jumlah fisik barang di rak dengan database komputer secara berkala.`;
+                return `🔎 <strong>PROSEDUR STOCK OPNAME & AUDIT INVENTARIS:</strong><br><br>
+                Stock Opname adalah proses verifikasi berkala untuk mencocokkan catatan digital dalam sistem dengan kondisi fisik aktual di rak penyimpanan.<br>
+                • <strong>Fitur Unggulan:</strong> Memanfaatkan pemindai kamera barcode guna mempercepat proses audit. Sistem otomatis menghitung selisih (*variance*) surplus maupun susut demi akurasi pelaporan akhir.`;
             }
 
-            if(q.includes('surat jalan') || q.includes('jelaskan surat jalan')) {
-                return `📜 <strong>SURAT JALAN / DELIVERY ORDER (DO):</strong><br>
-                Klik tombol DO di header atas untuk memilih barang, mengisi tujuan, dan mencetak surat jalan resmi siap tanda tangan.`;
+            if(q.includes('surat jalan') || q.includes('jelaskan surat jalan') || q.includes('do')) {
+                return `📜 <strong>ADMINISTRASI SURAT JALAN / DELIVERY ORDER (DO):</strong><br><br>
+                Fitur administratif resmi untuk pengiriman barang.<br>
+                • <strong>Cara Penggunaan:</strong> Akses menu Surat Jalan DO di header atas, centang produk beserta kuantitas yang dilampirkan, tetapkan nama penerima dan tanggal pengiriman, lalu cetak dokumen dengan format formal lengkap beserta kolom tanda tangan resmi.`;
             }
 
             if(q.includes('aset') || q.includes('nilai') || q.includes('valuasi')) {
                 const totalVal = state.products.reduce((acc, item) => acc + ((parseInt(item.price) || 0) * (parseInt(item.stock) || 0)), 0);
-                return `💰 Total valuasi finansial seluruh aset inventaris gudang saat ini adalah: <strong>Rp ${totalVal.toLocaleString('id-ID')}</strong>.`;
+                return `💰 Berdasarkan kalkulasi real-time sistem, total valuasi finansial seluruh aset inventaris gudang saat ini adalah sebesar <strong>Rp ${totalVal.toLocaleString('id-ID')}</strong>.`;
             }
 
             const matched = state.products.filter(p => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q));
             if(matched.length > 0) {
-                let resultHTML = "🔍 <strong>Informasi Barang Ditemukan:</strong><br>";
+                let resultHTML = "🔍 <strong>Hasil Penelusuran Database Inventaris:</strong><br>";
                 matched.slice(0, 3).forEach(p => {
-                    resultHTML += `• <strong>${p.name}</strong><br>  SKU: ${p.sku} | Stok: ${p.stock} ${p.category || 'PCS'}<br>  Harga: Rp ${parseInt(p.price).toLocaleString('id-ID')} | Rak: ${p.location || 'Gudang Utama'}<br>`;
+                    resultHTML .= `• <strong>${p.name}</strong><br>  SKU: ${p.sku} | Stok: ${p.stock} ${p.category || 'PCS'}<br>  Harga Satuan: Rp ${parseInt(p.price).toLocaleString('id-ID')} | Lokasi Rak: ${p.location || 'Gudang Utama'}<br>`;
                 });
                 return resultHTML;
             }
 
-            return `Waduh Akang / Teteh, GuideBot belum paham perintah tersebut. 😅 Coba klik salah satu tombol opsi cepat di atas ya!`;
+            return `Mohon maaf, perintah tersebut belum dikenali oleh sistem J.A.R.V.I.S. Silakan gunakan tombol navigasi cepat di atas untuk mendapatkan panduan detail modul logistik.`;
         }
 
         function escapeHtml(str) {
