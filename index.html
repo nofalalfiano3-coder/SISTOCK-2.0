@@ -63,7 +63,7 @@
     <!-- TOAST NOTIFICATION CONTAINER -->
     <div id="toast-container" class="fixed top-4 right-4 sm:top-5 sm:right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-[90vw]"></div>
 
-    <!-- MODAL AUTENTIKASI LOGIN (FIXED BUG) -->
+    <!-- MODAL AUTENTIKASI LOGIN -->
     <div id="modal-login" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-slate-100 animate-tab-enter">
             <div class="text-center space-y-2">
@@ -109,7 +109,7 @@
                 <div>
                     <h1 class="font-extrabold text-sm sm:text-lg text-slate-900 tracking-tight flex items-center gap-2">
                         SISTOCK 2.0
-                        <span class="bg-brand-100 text-brand-700 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase hidden sm:inline border border-brand-200">SMKN 3 BANDUNG</span>
+                        <span id="account-mode-badge" class="bg-brand-100 text-brand-700 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase hidden sm:inline border border-brand-200">SMKN 3 BANDUNG</span>
                     </h1>
                     <p id="realtime-clock" class="text-[10px] sm:text-[11px] text-slate-500 font-semibold">Bandung (WIB): Memuat waktu...</p>
                 </div>
@@ -169,7 +169,7 @@
                         <div class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></div>
                         <div>
                             <p class="text-xs font-extrabold">Firebase Cloud Sync</p>
-                            <p class="text-[10px] text-slate-300">SMKN 3 Bandung</p>
+                            <p id="sidebar-db-node-label" class="text-[10px] text-slate-300">SMKN 3 Bandung</p>
                         </div>
                     </div>
                 </div>
@@ -230,6 +230,19 @@
             <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto p-3.5 sm:p-6 mb-6 custom-scrollbar space-y-5">
                 
+                <!-- BANNER NOTIFIKASI SANDBOX MODE (GURU / REVIEWER) -->
+                <div id="sandbox-alert-banner" class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white p-4 rounded-3xl shadow-lg border border-sky-400 hidden flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="flask-conical" class="w-5 h-5 text-sky-100"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xs font-extrabold uppercase tracking-wide">🧪 Sandbox Testing Mode Aktif (Akun BELAJAR)</h3>
+                            <p class="text-[11px] text-sky-100 font-medium">Semua data latihan/pengujian terpisah dari database gudang utama.</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- KOTAK REMINDER NOTIFIKASI FEFO (REAL-TIME WIB) -->
                 <div id="fefo-reminder-banner" class="bg-gradient-to-r from-amber-500 to-brand-600 text-white p-4 sm:p-5 rounded-3xl shadow-lg border border-amber-400 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div class="flex items-center gap-3">
@@ -690,7 +703,7 @@
         </footer>
     </div>
 
-    <!-- FLOATING CHATBOT J.A.R.V.I.S GUIDEBOT ASSISTANT (PROFESSIONAL) -->
+    <!-- FLOATING CHATBOT J.A.R.V.I.S GUIDEBOT ASSISTANT -->
     <div class="fixed bottom-5 right-5 z-40">
         <button onclick="toggleJarvisChat()" class="bg-slate-900 hover:bg-brand-500 text-white p-3.5 sm:p-4 rounded-full shadow-2xl transition-all duration-300 flex items-center justify-center border-2 border-brand-500 group jarvis-glow btn-press" title="Tanya J.A.R.V.I.S GuideBot">
             <i data-lucide="bot" class="w-6 h-6 group-hover:rotate-12 transition"></i>
@@ -967,7 +980,7 @@
         </div>
     </div>
 
-    <!-- MODAL: SCANNER MULTI-FUNGSI (OPTIMIZED MOBILE) -->
+    <!-- MODAL: SCANNER MULTI-FUNGSI -->
     <div id="modal-scanner" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
         <div class="bg-white rounded-3xl max-w-sm sm:max-w-md w-full p-4 sm:p-6 space-y-4 shadow-2xl animate-tab-enter flex flex-col items-center">
             <div class="flex justify-between items-center w-full border-b pb-2">
@@ -1001,7 +1014,7 @@
             "BELAJAR": "123456"
         };
 
-        // DATABASE INVENTARIS AWAL LENGKAP DENGAN 23 DATA FEFO SPREADSHEET & BARANG RUSAK
+        // DATABASE INVENTARIS AWAL
         const INITIAL_SPREADSHEET_DATA = {
             suppliers: [
                 { id: "sup-1", code: "CHECKER", name: "CHECKER GUDANG", contact: "Role: CHECKER", phone: "-" },
@@ -1031,7 +1044,6 @@
                 { id: "prod-33", sku: "18993379500235", name: "Sunco", category: "PCS", price: 17000, stock: 46, rop: 10, location: "C01.1" },
                 { id: "prod-34", sku: "8995180000000", name: "Gulaku", category: "PCS", price: 17500, stock: 20, rop: 10, location: "C01.3" }
             ],
-            // 23 DATA FEFO TERPISAH SESUAI SPREADSHEET PORTAL
             damagedGoods: [
                 { id: "fefo-1", timestamp: "26/11/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 46, status: "segera dikeluarkan", notes: "Kadaluarsa: 26/11/2026 | Tersedia" },
                 { id: "fefo-2", timestamp: "28/12/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 31, status: "segera dikeluarkan", notes: "Kadaluarsa: 28/12/2026" },
@@ -1057,7 +1069,6 @@
                 { id: "fefo-22", timestamp: "30/03/2028", productName: "Tropical", sku: "8992946535178", qty: 1, status: "masih aman", notes: "Kadaluwarsa: 30/03/2028 | Tersedia" },
                 { id: "fefo-23", timestamp: "10/07/2028", productName: "Gulaku", sku: "8995180000000", qty: 20, status: "masih aman", notes: "Kadaluwarsa: 10/07/2028 | Tersedia" }
             ],
-            // DATA BARANG RUSAK FISIK (DAMAGED GOODS)
             damagedPhysicalGoods: [
                 { id: "rusak-1", timestamp: "31/10/2026, 14.30", productName: "RON 88 500 ML", sku: "10341330462", qty: 2, pelapor: "Team Gudang", notes: "Botol penyok & bocor saat unboxing" }
             ],
@@ -1070,6 +1081,38 @@
         let chartInstance = null;
         let html5QrCode = null;
         let activeScanTarget = 'inbound';
+
+        // METODE FITUR SANDBOX DATABASE PARTITIONING (AKUN BELAJAR DAFTAR TERPISAH)
+        function getActiveFirebaseNode() {
+            const activeUser = sessionStorage.getItem("sistock_username");
+            if (activeUser === "BELAJAR") {
+                return 'sistock_v2_pro/sandbox_state'; // Database Latihan/Reviewer Terpisah
+            }
+            return 'sistock_v2_pro/state'; // Database Warehouse Utama
+        }
+
+        function updateUIBadgesForAccount() {
+            const activeUser = sessionStorage.getItem("sistock_username");
+            const badgeEl = document.getElementById('account-mode-badge');
+            const sandboxBanner = document.getElementById('sandbox-alert-banner');
+            const nodeLabel = document.getElementById('sidebar-db-node-label');
+
+            if (activeUser === "BELAJAR") {
+                if(badgeEl) {
+                    badgeEl.innerText = "TESTING SANDBOX MODE";
+                    badgeEl.className = "bg-sky-100 text-sky-800 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase hidden sm:inline border border-sky-300 animate-pulse";
+                }
+                if(sandboxBanner) sandboxBanner.classList.remove('hidden');
+                if(nodeLabel) nodeLabel.innerText = "Sandbox Node (Testing)";
+            } else {
+                if(badgeEl) {
+                    badgeEl.innerText = "SMKN 3 BANDUNG";
+                    badgeEl.className = "bg-brand-100 text-brand-700 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase hidden sm:inline border border-brand-200";
+                }
+                if(sandboxBanner) sandboxBanner.classList.add('hidden');
+                if(nodeLabel) nodeLabel.innerText = "Production Node (Live)";
+            }
+        }
 
         function showToast(msg, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -1100,6 +1143,8 @@
             if (isAuth === "true") {
                 if(loginModal) loginModal.classList.add('hidden');
                 if(mainApp) mainApp.classList.remove('hidden');
+                updateUIBadgesForAccount();
+                initFirebaseSync();
             } else {
                 if(loginModal) loginModal.classList.remove('hidden');
                 if(mainApp) mainApp.classList.add('hidden');
@@ -1118,9 +1163,10 @@
 
             if (ACCOUNTS[u] && ACCOUNTS[u] === p) {
                 sessionStorage.setItem("sistock_auth", "true");
+                sessionStorage.setItem("sistock_username", u); // SIMPAN STATUS AKUN ACTIF
                 if(errMsg) errMsg.classList.add('hidden');
                 checkSessionAuth();
-                showToast(`Login berhasil! Selamat datang di SISTOCK 2.0.`);
+                showToast(`Login berhasil! Masuk sebagai ${u}.`);
             } else {
                 if(errMsg) errMsg.classList.remove('hidden');
             }
@@ -1128,6 +1174,7 @@
 
         function handleLogout() {
             sessionStorage.removeItem("sistock_auth");
+            sessionStorage.removeItem("sistock_username");
             checkSessionAuth();
             showToast("Berhasil keluar dari portal.", "error");
         }
@@ -1178,7 +1225,8 @@
         }
 
         function initFirebaseSync() {
-            db.ref('sistock_v2_pro/state').on('value', (snapshot) => {
+            const dbNode = getActiveFirebaseNode();
+            db.ref(dbNode).on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data && data.products && data.products.length > 0) {
                     state = {
@@ -1197,7 +1245,8 @@
         }
 
         function saveStateToCloud() {
-            db.ref('sistock_v2_pro/state').set(state).then(() => {
+            const dbNode = getActiveFirebaseNode();
+            db.ref(dbNode).set(state).then(() => {
                 refreshUI();
             }).catch((error) => {
                 console.error("Gagal sync ke Firebase:", error);
@@ -1206,7 +1255,9 @@
 
         function syncToGoogleSheets() {
             const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVyIpWceLZ9vkDxY9NPbFctcJtCjhqQcG9tfUAZnfqfH8BhoZ9CCA7CZsAwaqlqqt55w/exec";
-            if (!confirm("Kirim full backup data terbaru ke Portal Google Sheets SMKN 3 BANDUNG?")) return;
+            const activeUser = sessionStorage.getItem("sistock_username");
+            
+            if (!confirm(`Kirim backup data dari ${activeUser === 'BELAJAR' ? 'SANDBOX MODE' : 'WAREHOUSE UTAMA'} ke Google Sheets SMKN 3 BANDUNG?`)) return;
 
             fetch(GOOGLE_APPS_SCRIPT_URL, {
                 method: "POST",
@@ -1214,6 +1265,7 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     action: "sync_stock",
+                    userMode: activeUser,
                     products: state.products,
                     damagedGoods: state.damagedGoods,
                     damagedPhysicalGoods: state.damagedPhysicalGoods,
@@ -1221,7 +1273,7 @@
                     timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
                 })
             })
-            .then(() => { showToast("✅ Full Backup berhasil dikirim ke Sheets!"); })
+            .then(() => { showToast("✅ Backup berhasil dikirim ke Sheets!"); })
             .catch(() => { showToast("❌ Gagal terhubung ke Sheets.", "error"); });
         }
 
@@ -1229,7 +1281,6 @@
             checkSessionAuth();
             initChart();
             initRealtimeClockAndReminders();
-            initFirebaseSync();
             lucide.createIcons();
         });
 
@@ -1657,7 +1708,6 @@
             }
         }
 
-        // FUNGSI SIMPAN BARANG RUSAK (OTOMATIS POTONG STOK UTAMA)
         function saveBarangRusak(e) {
             e.preventDefault();
             const prodId = document.getElementById('rusak-product-id').value;
@@ -1671,7 +1721,7 @@
                     showToast('Stok tidak mencukupi untuk dilaporkan rusak!', 'error');
                     return;
                 }
-                prod.stock -= qty; // AUTO POTONG STOK
+                prod.stock -= qty;
 
                 if(!state.damagedPhysicalGoods) state.damagedPhysicalGoods = [];
                 state.damagedPhysicalGoods.push({
@@ -1840,7 +1890,6 @@
             setTimeout(() => printWindow.print(), 300);
         }
 
-        // SCANNER KAMERA MOBILE OPTIMIZED
         function openDedicatedScanner(target) {
             activeScanTarget = target;
             document.getElementById('modal-scanner').classList.remove('hidden');
@@ -1911,7 +1960,7 @@
         function openSupplierModal() { document.getElementById('form-supplier').reset(); document.getElementById('modal-supplier').classList.remove('hidden'); }
         function closeSupplierModal() { document.getElementById('modal-supplier').classList.add('hidden'); }
 
-        // --- ENHANCED J.A.R.V.I.S GUIDEBOT ASSISTANT (PROFESSIONAL & DETAILED) ---
+        // --- ENHANCED J.A.R.V.I.S GUIDEBOT ASSISTANT ---
         function toggleJarvisChat() {
             const modal = document.getElementById('jarvis-chat-modal');
             if(modal) {
