@@ -46,7 +46,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen antialiased selection:bg-brand-500 selection:text-white">
 
-    <!-- MODAL AUTENTIKASI LOGIN (SISTEM KEAMANAN) -->
+    <!-- MODAL AUTENTIKASI LOGIN -->
     <div id="modal-login" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl border border-slate-100">
             <div class="text-center space-y-2">
@@ -59,7 +59,7 @@
 
             <form id="form-login" onsubmit="handleAuthLogin(event)" class="space-y-4 text-xs">
                 <div>
-                    <label class="font-bold text-slate-700 block mb-1">Username / Name Account</label>
+                    <label class="font-bold text-slate-700 block mb-1">Username</label>
                     <input type="text" id="login-username" required placeholder="Masukkan Username..." class="w-full bg-slate-50 border border-slate-200 p-3 rounded-lg font-medium text-slate-800 focus:outline-none focus:border-brand-500">
                 </div>
                 <div>
@@ -71,17 +71,16 @@
                     <i data-lucide="log-in" class="w-4 h-4"></i> Masuk Sistem
                 </button>
             </form>
-
             <div class="border-t border-slate-100 pt-3 text-center">
                 <p class="text-[10px] text-slate-400 font-medium">Created By Naufal Alviano | Manajemen Logistik SMKN 3 Bandung 2026</p>
             </div>
         </div>
     </div>
 
-    <!-- MAIN APP CONTENT (Protected Area) -->
+    <!-- MAIN APP CONTAINER -->
     <div id="main-app-container" class="flex flex-col min-h-screen hidden">
         
-        <!-- Top Navigation Header -->
+        <!-- Header -->
         <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-4 py-3 flex items-center justify-between shadow-sm">
             <div class="flex items-center space-x-3">
                 <div class="bg-brand-500 text-white p-2 rounded-lg shadow-sm">
@@ -120,7 +119,7 @@
         </header>
 
         <div class="flex flex-1 overflow-hidden relative">
-            <!-- Desktop Sidebar -->
+            <!-- Sidebar -->
             <aside class="w-64 bg-white border-r border-slate-200 hidden md:flex flex-col justify-between p-4 flex-shrink-0">
                 <div class="space-y-1">
                     <p class="text-[10px] font-bold text-slate-400 px-3 uppercase tracking-wider mb-2">Navigasi Utama</p>
@@ -300,7 +299,7 @@
                             <h3 class="font-bold text-xs text-slate-900 uppercase tracking-wider text-rose-600 flex items-center gap-1.5">
                                 <i data-lucide="alert-octagon" class="w-4 h-4"></i> Karantina Barang Rusak & Kadaluarsa
                             </h3>
-                            <p class="text-[10px] text-slate-400">Pemisahan stok cacat, rusak fisik, atau melewati tanggal expired (FEFO)</p>
+                            <p class="text-[10px] text-slate-400">Pemisahan stok cacat, rusak fisik, atau mendekati/lewat tanggal expired (FEFO)</p>
                         </div>
                         <button onclick="openDamagedModal()" class="bg-rose-500 hover:bg-rose-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition shadow-sm">
                             <i data-lucide="plus" class="w-4 h-4"></i> Catat Barang Rusak/Expired
@@ -453,7 +452,7 @@
             </main>
         </div>
 
-        <!-- WATERMARK FOOTER (PROFESIONAL) -->
+        <!-- Footer -->
         <footer class="bg-white border-t border-slate-200 py-3 px-4 text-center text-[11px] text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-1 z-20">
             <div>
                 <span class="font-bold text-slate-600">SISTOCK 2.0</span> — System Inventaris & Logistik
@@ -465,7 +464,7 @@
             </div>
         </footer>
 
-        <!-- Mobile Bottom Navigation Bar -->
+        <!-- Mobile Bottom Nav -->
         <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around py-2.5 z-30 shadow-lg">
             <button onclick="switchTab('dashboard')" id="m-nav-dashboard" class="flex flex-col items-center text-brand-600">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
@@ -540,7 +539,7 @@
         </div>
     </div>
 
-    <!-- MODAL: DELIVERY ORDER & FORMAT CETAK SURAT JALAN -->
+    <!-- MODAL: DELIVERY ORDER -->
     <div id="deliveryModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -566,7 +565,6 @@
                 <div id="doItemSelector" class="space-y-2 max-h-40 overflow-y-auto border p-2 rounded-lg text-xs bg-slate-50"></div>
             </div>
 
-            <!-- AREA PRATINJAU CETAK -->
             <div id="printArea" class="border p-6 rounded-lg bg-white space-y-4 text-slate-900">
                 <div class="flex justify-between items-start border-b-2 border-slate-800 pb-3">
                     <div>
@@ -615,7 +613,7 @@
     <div id="modal-damaged" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-xl max-w-sm w-full p-5 space-y-4 shadow-xl">
             <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-bold text-xs uppercase tracking-wider text-rose-600">Catat Barang Rusak / Expired</h3>
+                <h3 class="font-bold text-xs uppercase tracking-wider text-rose-600">Catat Karantina Barang</h3>
                 <button onclick="closeDamagedModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-4 h-4"></i></button>
             </div>
             <form id="form-damaged" onsubmit="saveDamagedGood(event)" class="space-y-3 text-xs">
@@ -625,25 +623,25 @@
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="font-semibold text-slate-600 block mb-1">Jumlah Rusak/Exp</label>
+                        <label class="font-semibold text-slate-600 block mb-1">Jumlah Fisik</label>
                         <input type="number" id="dmg-qty" min="1" required placeholder="Qty" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none">
                     </div>
                     <div>
                         <label class="font-semibold text-slate-600 block mb-1">Status Karantina</label>
                         <select id="dmg-status" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none">
-                            <option value="segera dikeluarkan">Segera Dikeluarkan</option>
-                            <option value="kadaluwarsa">Kadaluwarsa</option>
-                            <option value="masih aman">Masih Aman</option>
+                            <option value="kadaluwarsa">🔴 Kadaluwarsa</option>
+                            <option value="segera dikeluarkan">🟡 Segera Dikeluarkan</option>
+                            <option value="masih aman">🟢 Masih Aman</option>
                         </select>
                     </div>
                 </div>
                 <div>
                     <label class="font-semibold text-slate-600 block mb-1">Tgl Expired / Catatan</label>
-                    <input type="text" id="dmg-notes" placeholder="Misal: 28/12/2026 / Segera dikeluarkan" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none">
+                    <input type="text" id="dmg-notes" placeholder="Misal: 28/12/2026 / Catatan khusus" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none">
                 </div>
                 <div class="pt-2 flex justify-end gap-2">
                     <button type="button" onclick="closeDamagedModal()" class="px-3 py-1.5 border rounded-lg font-semibold text-slate-600">Batal</button>
-                    <button type="submit" class="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg font-semibold">Simpan Karantina</button>
+                    <button type="submit" class="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg font-semibold">Simpan</button>
                 </div>
             </form>
         </div>
@@ -677,7 +675,7 @@
         </div>
     </div>
 
-    <!-- MODAL: BARCODE SCANNER -->
+    <!-- MODAL: SCANNER -->
     <div id="modal-scanner" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-xl max-w-md w-full p-5 space-y-4 shadow-xl">
             <div class="flex justify-between items-center border-b pb-2">
@@ -697,7 +695,6 @@
     </div>
 
     <script>
-        // KONFIGURASI FIREBASE DEFAULT REALTIME DATABASE TERBARU
         const firebaseConfig = {
             databaseURL: "https://new-sistock-2026-default-rtdb.asia-southeast1.firebasedatabase.app/"
         };
@@ -707,11 +704,9 @@
         }
         const db = firebase.database();
 
-        // KREDENSIAL AUTENTIKASI AKSES
         const AUTH_USER = "MLGSMKN3BDG";
         const AUTH_PASS = "LOGISTIK2627";
 
-        // DATA BARANG MURNI DARI SPREADSHEET PORTAL INVENTARIS SISTOCK 2.0 (LENGKAP DENGAN PRICE HPP)
         const INITIAL_SPREADSHEET_DATA = {
             suppliers: [
                 { id: "sup-1", code: "CHECKER", name: "CHECKER GUDANG", contact: "Role: CHECKER", phone: "-" },
@@ -775,34 +770,12 @@
                 { id: "prod-54", sku: "8993093665497", name: "Gula rose brand", category: "Pcs", price: 17000, stock: 0, rop: 10, location: "A01.1" }
             ],
             damagedGoods: [
-                { id: "dmg-1", timestamp: "26/11/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 46, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan | Ket: TERSEDIA" },
-                { id: "dmg-2", timestamp: "28/12/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 31, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan" },
-                { id: "dmg-3", timestamp: "02/10/2026", productName: "Indomie Soto", sku: "10089686010340", qty: 5, status: "kadaluwarsa", notes: "Catatan: kadaluwarsa" },
-                { id: "dmg-4", timestamp: "05/01/2027", productName: "Indomie Soto", sku: "10089686010340", qty: 40, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan" },
-                { id: "dmg-5", timestamp: "28/12/2026", productName: "Indomie Goreng Original", sku: "10089686010944", qty: 29, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan" },
-                { id: "dmg-6", timestamp: "05/01/2027", productName: "Indomie Soto Mie", sku: "10089686010340", qty: 10, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan | Ket: TERSEDIA" },
-                { id: "dmg-7", timestamp: "19/05/2027", productName: "Indomie Rendang", sku: "10089686011187", qty: 40, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
-                { id: "dmg-8", timestamp: "15/05/2027", productName: "Indomie Goreng Original", sku: "10089686010944", qty: 40, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
-                { id: "dmg-9", timestamp: "15/01/2027", productName: "Indomie Rica-Rica", sku: "10089686043270", qty: 40, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan" },
-                { id: "dmg-10", timestamp: "07/01/2027", productName: "Indomie cabe ijo", sku: "10089686010715", qty: 40, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan" },
-                { id: "dmg-11", timestamp: "22/01/2027", productName: "Indomie cabe ijo", sku: "10089686010715", qty: 40, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan" },
-                { id: "dmg-12", timestamp: "21/01/2027", productName: "Indomie cabe ijo", sku: "10089686010715", qty: 40, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan" },
-                { id: "dmg-13", timestamp: "10/04/2028", productName: "Indomie cabe ijo", sku: "10089686010715", qty: 5, status: "masih aman", notes: "Catatan: masih aman" },
-                { id: "dmg-14", timestamp: "19/11/2027", productName: "Tarik Malaka", sku: "8994171102361", qty: 12, status: "masih aman", notes: "Catatan: masih aman" },
-                { id: "dmg-15", timestamp: "26/04/2027", productName: "Indomie Cabe Ijo", sku: "10089686010715", qty: 45, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
-                { id: "dmg-16", timestamp: "28/04/2027", productName: "Indomie Ayam Geprek", sku: "10089686043430", qty: 65, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
-                { id: "dmg-17", timestamp: "14/01/2027", productName: "Indomie Gentong", sku: "10089686910305", qty: 40, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan | Ket: TERSEDIA" },
-                { id: "dmg-18", timestamp: "17/05/2027", productName: "Indomie Goreng Aceh", sku: "10089686043201", qty: 65, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
-                { id: "dmg-19", timestamp: "27/04/2027", productName: "Indomie Rica Rica", sku: "10089686043270", qty: 30, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
-                { id: "dmg-20", timestamp: "06/03/2027", productName: "Indomie Iga Penyet", sku: "10089686043683", qty: 95, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
-                { id: "dmg-21", timestamp: "17/05/2028", productName: "Sunco", sku: "18993379500235", qty: 46, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
-                { id: "dmg-22", timestamp: "30/03/2028", productName: "Tropical", sku: "8992946122002", qty: 1, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
-                { id: "dmg-23", timestamp: "10/07/2028", productName: "Gulaku", sku: "8995180000000", qty: 20, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" }
+                { id: "dmg-1", timestamp: "26/11/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 46, status: "segera dikeluarkan", notes: "Segera dikeluarkan" },
+                { id: "dmg-2", timestamp: "02/10/2026", productName: "Indomie Soto", sku: "10089686010340", qty: 5, status: "kadaluwarsa", notes: "Sudah lewat masa simpan" },
+                { id: "dmg-3", timestamp: "19/05/2027", productName: "Indomie Rendang", sku: "10089686011187", qty: 40, status: "masih aman", notes: "Pemeriksaan rutin aman" }
             ],
             logs: [
-                { timestamp: "10/28/26 6:42", productName: "RON 88 500 ML", type: "IN", qty: 50, notes: "BARANG MASUK - Lokasi: A01.3, A01.2 | Ket: BUSINESS CENTER" },
-                { timestamp: "10/28/26 6:43", productName: "RON 88 500 ML", type: "OUT", qty: 5, notes: "BARANG KELUAR - Ket: ULP" },
-                { timestamp: "10/29/26 7:47", productName: "AIR RON 88 CUP 200ml", type: "OUT", qty: 1, notes: "BARANG KELUAR - Ket: KURIKULUM" }
+                { timestamp: "10/28/26 6:42", productName: "RON 88 500 ML", type: "IN", qty: 50, notes: "BARANG MASUK - Lokasi: A01.3" }
             ]
         };
 
@@ -811,7 +784,6 @@
         let html5QrCode = null;
         let scannerMode = 'search'; 
 
-        // AUTENTIKASI SYSTEM
         function checkSessionAuth() {
             const isAuth = sessionStorage.getItem("sistock_auth");
             if (isAuth === "true") {
@@ -848,7 +820,7 @@
                 const data = snapshot.val();
                 if (data && data.products && data.products.length > 0) {
                     state = {
-                        suppliers: data.suppliers || [],
+                        suppliers: data.suppliers || INITIAL_SPREADSHEET_DATA.suppliers,
                         products: data.products || [],
                         damagedGoods: data.damagedGoods || [],
                         logs: data.logs || []
@@ -869,7 +841,6 @@
             });
         }
 
-        // FUNGSI SYNC KE GOOGLE SHEETS PORTAL TERBARU
         function syncToGoogleSheets() {
             const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVyIpWceLZ9vkDxY9NPbFctcJtCjhqQcG9tfUAZnfqfH8BhoZ9CCA7CZsAwaqlqqt55w/exec";
 
@@ -878,9 +849,7 @@
             fetch(GOOGLE_APPS_SCRIPT_URL, {
                 method: "POST",
                 mode: "no-cors",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     action: "sync_stock",
                     products: state.products,
@@ -889,9 +858,7 @@
                     timestamp: new Date().toLocaleString('id-ID')
                 })
             })
-            .then(() => {
-                alert("✅ Full Backup Data Berhasil Dikirim ke Portal Sheets!");
-            })
+            .then(() => { alert("✅ Full Backup Data Berhasil Dikirim ke Portal Sheets!"); })
             .catch(err => {
                 console.error("Gagal sync:", err);
                 alert("❌ Terjadi kesalahan jaringan saat mengirim data.");
@@ -956,15 +923,18 @@
         function renderDashboardStats() {
             document.getElementById('stat-total-products').innerText = state.products.length;
             
-            // Perhitungan Nilai Total Aset (Stok * Harga Satuan)
             const totalVal = state.products.reduce((acc, item) => acc + ((parseInt(item.price) || 0) * (parseInt(item.stock) || 0)), 0);
             document.getElementById('stat-total-value').innerText = `Rp ${totalVal.toLocaleString('id-ID')}`;
 
             const ropAlertCount = state.products.filter(p => parseInt(p.stock) <= parseInt(p.rop)).length;
             document.getElementById('stat-rop-alert').innerText = ropAlertCount;
 
-            const totalDamaged = state.damagedGoods.reduce((acc, item) => acc + item.qty, 0);
-            document.getElementById('stat-damaged-count').innerText = totalDamaged;
+            // Hitung hanya barang karantina yang butuh tindakan (Kadaluwarsa & Segera Dikeluarkan)
+            const activeDamagedCount = state.damagedGoods.filter(d => {
+                const s = (d.status || '').toLowerCase();
+                return s.includes('kadaluwarsa') || s.includes('segera');
+            }).reduce((acc, item) => acc + item.qty, 0);
+            document.getElementById('stat-damaged-count').innerText = activeDamagedCount;
 
             const topProductsContainer = document.getElementById('top-products-list');
             if(state.products.length === 0) {
@@ -1062,24 +1032,39 @@
             lucide.createIcons();
         }
 
+        // --- BUG FIXED: RENDER DAMAGED GOODS DENGAN 3 KATEGORI WARNA ---
         function renderDamagedGoods() {
             const tbody = document.getElementById('damaged-tbody');
             if(!tbody) return;
-            if(state.damagedGoods.length === 0) {
+
+            if(!state.damagedGoods || state.damagedGoods.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Belum ada barang rusak atau kadaluarsa.</td></tr>`;
                 return;
             }
+
             tbody.innerHTML = '';
             state.damagedGoods.forEach(d => {
+                const statusLower = (d.status || '').toLowerCase();
+                let badgeStyle = 'bg-emerald-100 text-emerald-800 font-bold';
+                let badgeText = '🟢 Masih Aman';
+
+                if (statusLower.includes('kadaluwarsa') || statusLower.includes('expired')) {
+                    badgeStyle = 'bg-rose-100 text-rose-800 font-bold';
+                    badgeText = '🔴 Kadaluwarsa';
+                } else if (statusLower.includes('segera') || statusLower.includes('karantina') || statusLower.includes('rusak')) {
+                    badgeStyle = 'bg-amber-100 text-amber-800 font-bold';
+                    badgeText = '🟡 Segera Dikeluarkan';
+                }
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
                         <td class="p-3 text-slate-400">${d.timestamp}</td>
                         <td class="p-3 font-bold text-slate-800">${d.productName} <span class="font-mono text-xs text-brand-600">(${d.sku})</span></td>
-                        <td class="p-3 font-extrabold text-rose-600">${d.qty}</td>
+                        <td class="p-3 font-extrabold text-slate-700">${d.qty}</td>
                         <td class="p-3 text-slate-500">PCS</td>
-                        <td class="p-3"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded text-[10px] font-bold">${d.status}</span> <span class="text-slate-500 ml-1">(${d.notes})</span></td>
+                        <td class="p-3"><span class="${badgeStyle} px-2.5 py-1 rounded-full text-[10px]">${badgeText}</span> <span class="text-slate-500 ml-1 text-xs">(${d.notes || '-'})</span></td>
                         <td class="p-3 text-right">
-                            <button onclick="deleteDamaged('${d.id}')" class="p-1 text-slate-400 hover:text-rose-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            <button onclick="deleteDamaged('${d.id}')" class="p-1 text-slate-400 hover:text-rose-500" title="Hapus"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </td>
                     </tr>
                 `;
@@ -1201,7 +1186,7 @@
                         productName: prod.name,
                         sku: prod.sku,
                         qty: qty,
-                        status: 'Karantina',
+                        status: 'segera dikeluarkan',
                         notes: notes
                     });
                 } else if(type === 'OPNAME') {
@@ -1228,15 +1213,18 @@
             const prodId = document.getElementById('dmg-product-id').value;
             const qty = parseInt(document.getElementById('dmg-qty').value);
             const status = document.getElementById('dmg-status').value;
-            const notes = document.getElementById('dmg-notes').value || 'Pemisahan Karantina';
+            const notes = document.getElementById('dmg-notes').value || 'Karantina';
 
             const prod = state.products.find(p => p.id === prodId);
             if(prod) {
-                if(prod.stock < qty) {
-                    alert('Stok siap jual tidak mencukupi!');
+                if(status !== 'masih aman' && prod.stock < qty) {
+                    alert('Stok siap jual tidak mencukupi untuk dikarantina!');
                     return;
                 }
-                prod.stock -= qty;
+                if(status !== 'masih aman') {
+                    prod.stock -= qty;
+                }
+
                 state.damagedGoods.push({
                     id: 'dmg-' + Date.now(),
                     timestamp: new Date().toLocaleDateString('id-ID'),
@@ -1246,6 +1234,7 @@
                     status: status,
                     notes: notes
                 });
+
                 state.logs.push({
                     timestamp: new Date().toLocaleString('id-ID'),
                     productName: prod.name,
@@ -1253,15 +1242,16 @@
                     qty: qty,
                     notes: `Karantina: ${status} - ${notes}`
                 });
+
                 saveStateToCloud();
-                alert('Data barang rusak/expired berhasil dicatat!');
+                alert('Data karantina berhasil dicatat!');
                 closeDamagedModal();
                 switchTab('damaged');
             }
         }
 
         function deleteDamaged(id) {
-            if(confirm('Hapus catatan barang rusak ini?')) {
+            if(confirm('Hapus catatan karantina ini?')) {
                 state.damagedGoods = state.damagedGoods.filter(d => d.id !== id);
                 saveStateToCloud();
             }
@@ -1316,7 +1306,6 @@
             document.getElementById('recap-dmg-total').innerText = `${dmgTotal} Unit`;
         }
 
-        // --- DELIVERY ORDER (SURAT JALAN) FUNCTIONS ---
         function openDeliveryModal() {
             const dateInput = document.getElementById('doDate');
             if(dateInput && !dateInput.value) {
@@ -1411,10 +1400,7 @@
                     <script src="https://cdn.tailwindcss.com"><\/script>
                     <style>
                         body { font-family: 'Inter', sans-serif; padding: 24px; background: #ffffff; color: #0f172a; }
-                        @media print { 
-                            body { padding: 0; } 
-                            .no-print { display: none; }
-                        }
+                        @media print { body { padding: 0; } .no-print { display: none; } }
                     </style>
                 </head>
                 <body>
@@ -1435,7 +1421,6 @@
             printWindow.document.close();
         }
 
-        // --- MANAJEMEN SCANNER KAMERA ---
         function openScannerModal(mode = 'search') {
             scannerMode = mode;
             document.getElementById('modal-scanner').classList.remove('hidden');
@@ -1497,16 +1482,14 @@
                 type: 'line',
                 data: {
                     labels: ['Masuk', 'Keluar', 'Rusak/Exp', 'Opname'],
-                    datasets: [
-                        {
-                            label: 'Jumlah Mutasi Unit',
-                            data: [0, 0, 0, 0],
-                            borderColor: '#f97316',
-                            backgroundColor: 'rgba(249, 115, 22, 0.08)',
-                            fill: true,
-                            tension: 0.3
-                        }
-                    ]
+                    datasets: [{
+                        label: 'Jumlah Mutasi Unit',
+                        data: [0, 0, 0, 0],
+                        borderColor: '#f97316',
+                        backgroundColor: 'rgba(249, 115, 22, 0.08)',
+                        fill: true,
+                        tension: 0.3
+                    }]
                 },
                 options: {
                     responsive: true,
