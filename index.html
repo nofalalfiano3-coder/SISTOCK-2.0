@@ -172,11 +172,11 @@
 
                         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                             <div class="flex items-center justify-between text-slate-500 mb-1">
-                                <span class="text-xs font-medium">Total Stok Unit</span>
+                                <span class="text-xs font-medium">Nilai Total Aset</span>
                                 <i data-lucide="wallet" class="w-4 h-4 text-emerald-500"></i>
                             </div>
-                            <h3 id="stat-total-value" class="text-lg sm:text-xl font-bold text-slate-900">0 Unit</h3>
-                            <p class="text-[10px] text-emerald-600 font-medium mt-1">Akumulasi fisik gudang</p>
+                            <h3 id="stat-total-value" class="text-lg sm:text-xl font-bold text-slate-900">Rp 0</h3>
+                            <p class="text-[10px] text-emerald-600 font-medium mt-1">Valuasi inventaris gudang</p>
                         </div>
 
                         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
@@ -215,7 +215,7 @@
                         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
                             <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2">
                                 <i data-lucide="award" class="w-4 h-4 text-amber-500"></i>
-                                Stok Terbanyak
+                                Barang Aset Tertinggi
                             </h4>
                             <div id="top-products-list" class="space-y-2 flex-1 overflow-y-auto custom-scrollbar pr-1 text-slate-400 text-xs italic">Memuat data...</div>
                         </div>
@@ -277,7 +277,8 @@
                                         <th class="p-3">Barcode</th>
                                         <th class="p-3">Nama Barang</th>
                                         <th class="p-3">Satuan</th>
-                                        <th class="p-3">Lokasi</th>
+                                        <th class="p-3">Harga Satuan</th>
+                                        <th class="p-3 font-semibold text-slate-700">Total Nilai</th>
                                         <th class="p-3 text-center">ROP (Min)</th>
                                         <th class="p-3 text-center">Stok Akhir</th>
                                         <th class="p-3 text-center">Status</th>
@@ -285,7 +286,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="products-tbody" class="divide-y divide-slate-100">
-                                    <tr><td colspan="8" class="p-6 text-center text-slate-400 italic">Memuat data...</td></tr>
+                                    <tr><td colspan="9" class="p-6 text-center text-slate-400 italic">Memuat data...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -517,8 +518,8 @@
                         <input type="text" id="prod-category" placeholder="PCS / DUS / RENCENG" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none focus:border-brand-500">
                     </div>
                     <div>
-                        <label class="font-semibold text-slate-600 block mb-1">Lokasi Rak/Gudang</label>
-                        <input type="text" id="prod-price" placeholder="Misal: B01.2 / Gudang" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none focus:border-brand-500">
+                        <label class="font-semibold text-slate-600 block mb-1">Harga Satuan (Rp)</label>
+                        <input type="number" id="prod-price" min="0" required placeholder="0" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none focus:border-brand-500">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
@@ -539,7 +540,7 @@
         </div>
     </div>
 
-    <!-- MODAL: DELIVERY ORDER & FORMAT CETAK SURAT JALAN (FIXED) -->
+    <!-- MODAL: DELIVERY ORDER & FORMAT CETAK SURAT JALAN -->
     <div id="deliveryModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -710,7 +711,7 @@
         const AUTH_USER = "MLGSMKN3BDG";
         const AUTH_PASS = "LOGISTIK2627";
 
-        // DATA MURNI 100% DARIPADA SPREADSHEET GUDANG SEKOLAH (DATA BASE APLIKASI GUDANG-1.xlsx)
+        // DATA BARANG MURNI DARI SPREADSHEET PORTAL INVENTARIS SISTOCK 2.0 (LENGKAP DENGAN PRICE HPP)
         const INITIAL_SPREADSHEET_DATA = {
             suppliers: [
                 { id: "sup-1", code: "CHECKER", name: "CHECKER GUDANG", contact: "Role: CHECKER", phone: "-" },
@@ -718,60 +719,60 @@
                 { id: "sup-3", code: "ADMIN", name: "ADMIN GUDANG", contact: "Role: ADMIN GUDANG", phone: "-" }
             ],
             products: [
-                { id: "prod-1", sku: "18993496110072", name: "TEPUNG TULIP", category: "PCS", price: 0, stock: 0, rop: 10, location: "Staging area" },
-                { id: "prod-2", sku: "18998866201343", name: "SEDAP WHITE CURRY", category: "PCS", price: 0, stock: 0, rop: 10, location: "B01.2" },
-                { id: "prod-3", sku: "8993539106003", name: "RON 88 600 ML", category: "DUS", price: 0, stock: 0, rop: 10, location: "D2" },
-                { id: "prod-4", sku: "10341330462", name: "RON 88 500 ML", category: "DUS", price: 0, stock: 85, rop: 15, location: "A01.3, A01.2, A01.1, B01.1, C01.2" },
-                { id: "prod-5", sku: "8993539105006", name: "RON 88 380ML", category: "PCS", price: 0, stock: 0, rop: 10, location: "C01.3" },
-                { id: "prod-6", sku: "8993539121501", name: "RON 88 1,5 L", category: "DUS", price: 0, stock: 13, rop: 10, location: "D2" },
-                { id: "prod-7", sku: "18993496111017", name: "MINYAKITA 1 Liter", category: "PCS", price: 0, stock: 0, rop: 10, location: "C01.1" },
-                { id: "prod-8", sku: "8992946535178", name: "MINYAK TROPICAL 1,5L", category: "BOTOL", price: 0, stock: 0, rop: 10, location: "C01.2" },
-                { id: "prod-9", sku: "18993496000151", name: "Minyak Sania", category: "PCS", price: 0, stock: 0, rop: 10, location: "BC" },
-                { id: "prod-10", sku: "18993379500235", name: "Minyak Sunco", category: "Pcs", price: 0, stock: 14, rop: 10, location: "Gudang" },
-                { id: "prod-11", sku: "8992946532795", name: "Minyak Rizki", category: "Pcs", price: 0, stock: 0, rop: 10, location: "C01.2" },
-                { id: "prod-12", sku: "8992826111089", name: "MINYAK GORENG FILMA", category: "PCS", price: 0, stock: 0, rop: 10, location: "D3" },
-                { id: "prod-13", sku: "8992826111188", name: "MINYAK FILMA 2 Liter", category: "PCS", price: 0, stock: 0, rop: 10, location: "Gudang" },
-                { id: "prod-14", sku: "38992628020153", name: "Minyak Bimoli", category: "PCS", price: 0, stock: 0, rop: 10, location: "Gudang" },
-                { id: "prod-15", sku: "18996001523237", name: "MIE GELAS SOTO AYAM", category: "RENCENG", price: 0, stock: 0, rop: 10, location: "C01.4" },
-                { id: "prod-16", sku: "18996001520427", name: "MIE GELAS SOSIS BBQ", category: "PCS", price: 0, stock: 0, rop: 10, location: "C01.4" },
-                { id: "prod-17", sku: "18996001523381", name: "MIE GELAS SOP BUNTUT", category: "PCS", price: 0, stock: 0, rop: 10, location: "Staging area" },
-                { id: "prod-18", sku: "18996001523220", name: "MIE GELAS KARI AYAM", category: "PCS", price: 0, stock: 0, rop: 10, location: "C01.4" },
-                { id: "prod-19", sku: "18996001523244", name: "MIE GELAS BASO SAPI", category: "PCS", price: 0, stock: 0, rop: 10, location: "C01.4" },
-                { id: "prod-20", sku: "18996001523213", name: "MIE GELAS AYAM BAWANG", category: "RENCENG", price: 0, stock: 0, rop: 10, location: "C01.4" },
-                { id: "prod-21", sku: "18888166603612", name: "Konguan Mini", category: "Dus", price: 0, stock: 0, rop: 10, location: "D01.3" },
-                { id: "prod-22", sku: "10089686010340", name: "INDOMIE SOTO", category: "PCS", price: 0, stock: 0, rop: 10, location: "B01.3" },
-                { id: "prod-23", sku: "10089686011279", name: "INDOMIE KOCOK BANDUNG", category: "PCS", price: 0, stock: 0, rop: 10, location: "B01.3" },
-                { id: "prod-24", sku: "10089686010524", name: "INDOMIE KARI", category: "PCS", price: 0, stock: 0, rop: 10, location: "B01.2" },
-                { id: "prod-25", sku: "10089686043683", name: "INDOMIE IGA PENYET", category: "PCS", price: 0, stock: 80, rop: 20, location: "B01.3" },
-                { id: "prod-26", sku: "10089686043270", name: "INDOMIE GORENG RICA RICA", category: "PCS", price: 0, stock: 85, rop: 20, location: "B01.2" },
-                { id: "prod-27", sku: "10089686011187", name: "INDOMIE GORENG RENDANG", category: "PCS", price: 0, stock: 5, rop: 10, location: "B01.3" },
-                { id: "prod-28", sku: "10089686010944", name: "INDOMIE GORENG ORIGINAL", category: "PCS", price: 0, stock: 99, rop: 20, location: "B01.2" },
-                { id: "prod-29", sku: "10089686010715", name: "INDOMIE GORENG CABE IJO", category: "PCS", price: 0, stock: 81, rop: 20, location: "B01.3" },
-                { id: "prod-30", sku: "10089686043430", name: "INDOMIE GORENG AYAM GEPREK", category: "PCS", price: 0, stock: 20, rop: 10, location: "B01.3" },
-                { id: "prod-31", sku: "10089686043201", name: "INDOMIE GORENG ACEH", category: "PCS", price: 0, stock: 80, rop: 20, location: "B01.2" },
-                { id: "prod-32", sku: "10089686910305", name: "INDOMIE EMPAL GENTONG", category: "PCS", price: 0, stock: 40, rop: 10, location: "Gudang" },
-                { id: "prod-33", sku: "10089686010012", name: "INDOMIE AYAM BAWANG", category: "PCS", price: 0, stock: 96, rop: 20, location: "B01.2" },
-                { id: "prod-34", sku: "8995180000000", name: "Gulaku Murni 1Kg", category: "Pcs", price: 0, stock: 0, rop: 10, location: "D01.3" },
-                { id: "prod-35", sku: "8993093665480", name: "GULA ROSE BRAND", category: "PCS", price: 0, stock: 0, rop: 10, location: "C01.1" },
-                { id: "prod-36", sku: "02881539", name: "Gula pasir lokal", category: "PCS", price: 0, stock: 0, rop: 10, location: "D01.1" },
-                { id: "prod-37", sku: "8993226568473", name: "GARAM DAPUR", category: "PCS", price: 0, stock: 0, rop: 10, location: "Staging area" },
-                { id: "prod-38", sku: "18993118731104", name: "BIHUNKU SOTO", category: "PCS", price: 0, stock: 0, rop: 10, location: "B01.3" },
-                { id: "prod-39", sku: "18993118938497", name: "BIHUNKU seduh soto ayam", category: "RENCENG", price: 0, stock: 0, rop: 10, location: "B01.2" },
-                { id: "prod-40", sku: "18993118938503", name: "BIHUNKU seduh Kaldu Ayam", category: "RENCENG", price: 0, stock: 0, rop: 10, location: "Gudang" },
-                { id: "prod-41", sku: "18993118938510", name: "BIHUNKU seduh bakso", category: "RENCENG", price: 0, stock: 0, rop: 10, location: "D01.1" },
-                { id: "prod-42", sku: "18993118000019", name: "BIHUNKU Bakso sapi", category: "PCS", price: 0, stock: 0, rop: 10, location: "B01.3" },
-                { id: "prod-43", sku: "18993118731043", name: "BIHUNKU AYAM BAWANG", category: "PCS", price: 0, stock: 0, rop: 10, location: "B01.3" },
-                { id: "prod-44", sku: "18993118938053", name: "BIHUNKU ASAM PEDAS", category: "PCS", price: 0, stock: 0, rop: 10, location: "B01.1" },
-                { id: "prod-45", sku: "8994096225817", name: "beras slyp super", category: "PCS", price: 0, stock: 0, rop: 10, location: "-" },
-                { id: "prod-46", sku: "8997204210019", name: "BERAS PULEN 5KG", category: "PCS", price: 0, stock: 0, rop: 10, location: "Staging area" },
-                { id: "prod-47", sku: "8993539102401", name: "AIR RON 88 CUP 200ml", category: "DUS", price: 0, stock: 8, rop: 5, location: "C01.2" },
-                { id: "prod-48", sku: "8993539322922", name: "AIR MINERAL PERFECT 500 ML", category: "DUS", price: 0, stock: 9, rop: 5, location: "Gudang" },
-                { id: "prod-49", sku: "8993539322939", name: "AIR MINERAL PERFECT 2L", category: "DUS", price: 0, stock: 0, rop: 5, location: "D01.3" },
-                { id: "prod-50", sku: "8993539322977", name: "AIR MINERAL PERFECT 1L", category: "PCS", price: 0, stock: 14, rop: 5, location: "C01.3" },
-                { id: "prod-51", sku: "112233445577", name: "Aci", category: "PCS", price: 0, stock: 0, rop: 10, location: "Staging area" },
-                { id: "prod-52", sku: "8994171102361", name: "TARIK MALAKA", category: "RENCENG", price: 0, stock: 54, rop: 10, location: "GUDANG" },
-                { id: "prod-53", sku: "8992946122002", name: "Minyak Tropical", category: "Satuan", price: 0, stock: 10, rop: 5, location: "Gudang" },
-                { id: "prod-54", sku: "8993093665497", name: "Gula rose brand", category: "Pcs", price: 0, stock: 0, rop: 10, location: "A01.1" }
+                { id: "prod-1", sku: "18993496110072", name: "TEPUNG TULIP", category: "PCS", price: 12500, stock: 0, rop: 10, location: "Staging area" },
+                { id: "prod-2", sku: "18998866201343", name: "SEDAP WHITE CURRY", category: "PCS", price: 3500, stock: 0, rop: 10, location: "B01.2" },
+                { id: "prod-3", sku: "8993539106003", name: "RON 88 600 ML", category: "DUS", price: 48000, stock: 0, rop: 10, location: "D2" },
+                { id: "prod-4", sku: "10341330462", name: "RON 88 500 ML", category: "DUS", price: 45000, stock: 85, rop: 15, location: "A01.3, A01.2" },
+                { id: "prod-5", sku: "8993539105006", name: "RON 88 380ML", category: "PCS", price: 2500, stock: 0, rop: 10, location: "C01.3" },
+                { id: "prod-6", sku: "8993539121501", name: "RON 88 1,5 L", category: "DUS", price: 52000, stock: 13, rop: 10, location: "D2" },
+                { id: "prod-7", sku: "18993496111017", name: "MINYAKITA 1 Liter", category: "PCS", price: 14000, stock: 0, rop: 10, location: "C01.1" },
+                { id: "prod-8", sku: "8992946535178", name: "MINYAK TROPICAL 1,5L", category: "BOTOL", price: 24500, stock: 0, rop: 10, location: "C01.2" },
+                { id: "prod-9", sku: "18993496000151", name: "Minyak Sania", category: "PCS", price: 16500, stock: 0, rop: 10, location: "BC" },
+                { id: "prod-10", sku: "18993379500235", name: "Minyak Sunco", category: "Pcs", price: 17000, stock: 14, rop: 10, location: "Gudang" },
+                { id: "prod-11", sku: "8992946532795", name: "Minyak Rizki", category: "Pcs", price: 14500, stock: 0, rop: 10, location: "C01.2" },
+                { id: "prod-12", sku: "8992826111089", name: "MINYAK GORENG FILMA", category: "PCS", price: 17500, stock: 0, rop: 10, location: "D3" },
+                { id: "prod-13", sku: "8992826111188", name: "MINYAK FILMA 2 Liter", category: "PCS", price: 34000, stock: 0, rop: 10, location: "Gudang" },
+                { id: "prod-14", sku: "38992628020153", name: "Minyak Bimoli", category: "PCS", price: 18000, stock: 0, rop: 10, location: "Gudang" },
+                { id: "prod-15", sku: "18996001523237", name: "MIE GELAS SOTO AYAM", category: "RENCENG", price: 14000, stock: 0, rop: 10, location: "C01.4" },
+                { id: "prod-16", sku: "18996001520427", name: "MIE GELAS SOSIS BBQ", category: "PCS", price: 1500, stock: 0, rop: 10, location: "C01.4" },
+                { id: "prod-17", sku: "18996001523381", name: "MIE GELAS SOP BUNTUT", category: "PCS", price: 1500, stock: 0, rop: 10, location: "Staging area" },
+                { id: "prod-18", sku: "18996001523220", name: "MIE GELAS KARI AYAM", category: "PCS", price: 1500, stock: 0, rop: 10, location: "C01.4" },
+                { id: "prod-19", sku: "18996001523244", name: "MIE GELAS BASO SAPI", category: "PCS", price: 1500, stock: 0, rop: 10, location: "C01.4" },
+                { id: "prod-20", sku: "18996001523213", name: "MIE GELAS AYAM BAWANG", category: "RENCENG", price: 14000, stock: 0, rop: 10, location: "C01.4" },
+                { id: "prod-21", sku: "18888166603612", name: "Konguan Mini", category: "Dus", price: 95000, stock: 0, rop: 10, location: "D01.3" },
+                { id: "prod-22", sku: "10089686010340", name: "INDOMIE SOTO", category: "PCS", price: 3100, stock: 0, rop: 10, location: "B01.3" },
+                { id: "prod-23", sku: "10089686011279", name: "INDOMIE KOCOK BANDUNG", category: "PCS", price: 3300, stock: 0, rop: 10, location: "B01.3" },
+                { id: "prod-24", sku: "10089686010524", name: "INDOMIE KARI", category: "PCS", price: 3300, stock: 0, rop: 10, location: "B01.2" },
+                { id: "prod-25", sku: "10089686043683", name: "INDOMIE IGA PENYET", category: "PCS", price: 3300, stock: 80, rop: 20, location: "B01.3" },
+                { id: "prod-26", sku: "10089686043270", name: "INDOMIE GORENG RICA RICA", category: "PCS", price: 3300, stock: 85, rop: 20, location: "B01.2" },
+                { id: "prod-27", sku: "10089686011187", name: "INDOMIE GORENG RENDANG", category: "PCS", price: 3300, stock: 5, rop: 10, location: "B01.3" },
+                { id: "prod-28", sku: "10089686010944", name: "INDOMIE GORENG ORIGINAL", category: "PCS", price: 3200, stock: 99, rop: 20, location: "B01.2" },
+                { id: "prod-29", sku: "10089686010715", name: "INDOMIE GORENG CABE IJO", category: "PCS", price: 3300, stock: 81, rop: 20, location: "B01.3" },
+                { id: "prod-30", sku: "10089686043430", name: "INDOMIE GORENG AYAM GEPREK", category: "PCS", price: 3300, stock: 20, rop: 10, location: "B01.3" },
+                { id: "prod-31", sku: "10089686043201", name: "INDOMIE GORENG ACEH", category: "PCS", price: 3300, stock: 80, rop: 20, location: "B01.2" },
+                { id: "prod-32", sku: "10089686910305", name: "INDOMIE EMPAL GENTONG", category: "PCS", price: 3300, stock: 40, rop: 10, location: "Gudang" },
+                { id: "prod-33", sku: "10089686010012", name: "INDOMIE AYAM BAWANG", category: "PCS", price: 3100, stock: 96, rop: 20, location: "B01.2" },
+                { id: "prod-34", sku: "8995180000000", name: "Gulaku Murni 1Kg", category: "Pcs", price: 17500, stock: 0, rop: 10, location: "D01.3" },
+                { id: "prod-35", sku: "8993093665480", name: "GULA ROSE BRAND", category: "PCS", price: 17000, stock: 0, rop: 10, location: "C01.1" },
+                { id: "prod-36", sku: "02881539", name: "Gula pasir lokal", category: "PCS", price: 16000, stock: 0, rop: 10, location: "D01.1" },
+                { id: "prod-37", sku: "8993226568473", name: "GARAM DAPUR", category: "PCS", price: 2500, stock: 0, rop: 10, location: "Staging area" },
+                { id: "prod-38", sku: "18993118731104", name: "BIHUNKU SOTO", category: "PCS", price: 4000, stock: 0, rop: 10, location: "B01.3" },
+                { id: "prod-39", sku: "18993118938497", name: "BIHUNKU seduh soto ayam", category: "RENCENG", price: 18000, stock: 0, rop: 10, location: "B01.2" },
+                { id: "prod-40", sku: "18993118938503", name: "BIHUNKU seduh Kaldu Ayam", category: "RENCENG", price: 18000, stock: 0, rop: 10, location: "Gudang" },
+                { id: "prod-41", sku: "18993118938510", name: "BIHUNKU seduh bakso", category: "RENCENG", price: 18000, stock: 0, rop: 10, location: "D01.1" },
+                { id: "prod-42", sku: "18993118000019", name: "BIHUNKU Bakso sapi", category: "PCS", price: 4000, stock: 0, rop: 10, location: "B01.3" },
+                { id: "prod-43", sku: "18993118731043", name: "BIHUNKU AYAM BAWANG", category: "PCS", price: 4000, stock: 0, rop: 10, location: "B01.3" },
+                { id: "prod-44", sku: "18993118938053", name: "BIHUNKU ASAM PEDAS", category: "PCS", price: 4000, stock: 0, rop: 10, location: "B01.1" },
+                { id: "prod-45", sku: "8994096225817", name: "beras slyp super", category: "PCS", price: 65000, stock: 0, rop: 10, location: "-" },
+                { id: "prod-46", sku: "8997204210019", name: "BERAS PULEN 5KG", category: "PCS", price: 72000, stock: 0, rop: 10, location: "Staging area" },
+                { id: "prod-47", sku: "8993539102401", name: "AIR RON 88 CUP 200ml", category: "DUS", price: 28000, stock: 8, rop: 5, location: "C01.2" },
+                { id: "prod-48", sku: "8993539322922", name: "AIR MINERAL PERFECT 500 ML", category: "DUS", price: 42000, stock: 9, rop: 5, location: "Gudang" },
+                { id: "prod-49", sku: "8993539322939", name: "AIR MINERAL PERFECT 2L", category: "DUS", price: 46000, stock: 0, rop: 5, location: "D01.3" },
+                { id: "prod-50", sku: "8993539322977", name: "AIR MINERAL PERFECT 1L", category: "PCS", price: 4500, stock: 14, rop: 5, location: "C01.3" },
+                { id: "prod-51", sku: "112233445577", name: "Aci", category: "PCS", price: 8000, stock: 0, rop: 10, location: "Staging area" },
+                { id: "prod-52", sku: "8994171102361", name: "TARIK MALAKA", category: "RENCENG", price: 15000, stock: 54, rop: 10, location: "GUDANG" },
+                { id: "prod-53", sku: "8992946122002", name: "Minyak Tropical", category: "Satuan", price: 16000, stock: 10, rop: 5, location: "Gudang" },
+                { id: "prod-54", sku: "8993093665497", name: "Gula rose brand", category: "Pcs", price: 17000, stock: 0, rop: 10, location: "A01.1" }
             ],
             damagedGoods: [
                 { id: "dmg-1", timestamp: "26/11/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 46, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan | Ket: TERSEDIA" },
@@ -799,7 +800,7 @@
                 { id: "dmg-23", timestamp: "10/07/2028", productName: "Gulaku", sku: "8995180000000", qty: 20, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" }
             ],
             logs: [
-                { timestamp: "10/28/26 6:42", productName: "RON 88 500 ML", type: "IN", qty: 50, notes: "BARANG MASUK - Lokasi: A01.3, A01.2, A01.1 | Ket: BUSINESS CENTER" },
+                { timestamp: "10/28/26 6:42", productName: "RON 88 500 ML", type: "IN", qty: 50, notes: "BARANG MASUK - Lokasi: A01.3, A01.2 | Ket: BUSINESS CENTER" },
                 { timestamp: "10/28/26 6:43", productName: "RON 88 500 ML", type: "OUT", qty: 5, notes: "BARANG KELUAR - Ket: ULP" },
                 { timestamp: "10/29/26 7:47", productName: "AIR RON 88 CUP 200ml", type: "OUT", qty: 1, notes: "BARANG KELUAR - Ket: KURIKULUM" }
             ]
@@ -955,8 +956,9 @@
         function renderDashboardStats() {
             document.getElementById('stat-total-products').innerText = state.products.length;
             
-            const totalStock = state.products.reduce((acc, item) => acc + (parseInt(item.stock) || 0), 0);
-            document.getElementById('stat-total-value').innerText = `${totalStock} Unit`;
+            // Perhitungan Nilai Total Aset (Stok * Harga Satuan)
+            const totalVal = state.products.reduce((acc, item) => acc + ((parseInt(item.price) || 0) * (parseInt(item.stock) || 0)), 0);
+            document.getElementById('stat-total-value').innerText = `Rp ${totalVal.toLocaleString('id-ID')}`;
 
             const ropAlertCount = state.products.filter(p => parseInt(p.stock) <= parseInt(p.rop)).length;
             document.getElementById('stat-rop-alert').innerText = ropAlertCount;
@@ -969,15 +971,16 @@
                 topProductsContainer.innerHTML = `<p class="text-slate-400 text-xs italic">Belum ada data barang...</p>`;
             } else {
                 topProductsContainer.innerHTML = '';
-                const sortedProducts = [...state.products].sort((a,b) => parseInt(b.stock) - parseInt(a.stock)).slice(0, 4);
+                const sortedProducts = [...state.products].sort((a,b) => ((parseInt(b.price)||0) * (parseInt(b.stock)||0)) - ((parseInt(a.price)||0) * (parseInt(a.stock)||0))).slice(0, 4);
                 sortedProducts.forEach((p) => {
+                    const itemVal = (parseInt(p.price) || 0) * (parseInt(p.stock) || 0);
                     topProductsContainer.innerHTML += `
                         <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
                             <div class="truncate">
                                 <p class="text-xs font-bold text-slate-800 truncate">${p.name}</p>
-                                <p class="text-[10px] text-slate-400">Lokasi: ${p.location || '-'}</p>
+                                <p class="text-[10px] text-slate-400">Stok: ${p.stock} ${p.category || 'PCS'}</p>
                             </div>
-                            <span class="text-xs font-bold text-brand-600">${p.stock} ${p.category}</span>
+                            <span class="text-xs font-bold text-brand-600">Rp ${itemVal.toLocaleString('id-ID')}</span>
                         </div>
                     `;
                 });
@@ -1015,25 +1018,28 @@
             );
 
             if(filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400 italic">Tidak ada data barang ditemukan.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400 italic">Tidak ada data barang ditemukan.</td></tr>`;
                 return;
             }
 
             filtered.forEach(p => {
-                const stock = parseInt(p.stock);
-                const rop = parseInt(p.rop);
+                const stock = parseInt(p.stock) || 0;
+                const rop = parseInt(p.rop) || 0;
+                const price = parseInt(p.price) || 0;
+                const totalAssetVal = stock * price;
 
                 let statusBadge = '';
                 let rowBg = '';
 
                 if (stock <= 0) {
                     statusBadge = `<span class="px-2.5 py-1 bg-rose-100 text-rose-800 font-bold rounded-full text-[10px]">🔴 Habis</span>`;
-                    rowBg = 'bg-rose-50/30';
+                    rowBg = 'bg-rose-50/50';
                 } else if (stock <= rop) {
                     statusBadge = `<span class="px-2.5 py-1 bg-amber-100 text-amber-800 font-bold rounded-full text-[10px]">🟡 ROP Warning</span>`;
-                    rowBg = 'bg-amber-50/30';
+                    rowBg = 'bg-amber-50/50';
                 } else {
                     statusBadge = `<span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 font-bold rounded-full text-[10px]">🟢 Aman</span>`;
+                    rowBg = '';
                 }
 
                 tbody.innerHTML += `
@@ -1041,7 +1047,8 @@
                         <td class="p-3 font-mono font-bold text-brand-600">${p.sku}</td>
                         <td class="p-3 font-semibold text-slate-800">${p.name}</td>
                         <td class="p-3 text-slate-500">${p.category || '-'}</td>
-                        <td class="p-3 font-medium text-slate-600">${p.location || '-'}</td>
+                        <td class="p-3 font-medium text-slate-600">Rp ${price.toLocaleString('id-ID')}</td>
+                        <td class="p-3 font-bold text-emerald-700">Rp ${totalAssetVal.toLocaleString('id-ID')}</td>
                         <td class="p-3 text-center text-slate-600 font-medium">${rop}</td>
                         <td class="p-3 text-center font-extrabold">${stock}</td>
                         <td class="p-3 text-center">${statusBadge}</td>
@@ -1121,8 +1128,7 @@
                 sku: sku,
                 name: document.getElementById('prod-name').value,
                 category: document.getElementById('prod-category').value,
-                location: document.getElementById('prod-price').value || 'Gudang',
-                price: 0,
+                price: parseFloat(document.getElementById('prod-price').value) || 0,
                 stock: parseInt(document.getElementById('prod-stock').value) || 0,
                 rop: parseInt(document.getElementById('prod-rop').value) || 10
             };
@@ -1159,7 +1165,7 @@
             document.getElementById('prod-sku').value = p.sku;
             document.getElementById('prod-name').value = p.name;
             document.getElementById('prod-category').value = p.category;
-            document.getElementById('prod-price').value = p.location;
+            document.getElementById('prod-price').value = p.price;
             document.getElementById('prod-stock').value = p.stock;
             document.getElementById('prod-rop').value = p.rop;
             document.getElementById('modal-product-title').innerText = 'Edit Data Barang Gudang';
@@ -1310,7 +1316,7 @@
             document.getElementById('recap-dmg-total').innerText = `${dmgTotal} Unit`;
         }
 
-        // --- FIXED DELIVERY ORDER (SURAT JALAN) FUNCTIONS ---
+        // --- DELIVERY ORDER (SURAT JALAN) FUNCTIONS ---
         function openDeliveryModal() {
             const dateInput = document.getElementById('doDate');
             if(dateInput && !dateInput.value) {
