@@ -299,7 +299,7 @@
                             <h3 class="font-bold text-xs text-slate-900 uppercase tracking-wider text-rose-600 flex items-center gap-1.5">
                                 <i data-lucide="alert-octagon" class="w-4 h-4"></i> Karantina Barang Rusak & Kadaluarsa
                             </h3>
-                            <p class="text-[10px] text-slate-400">Pemisahan stok cacat, rusak fisik, atau mendekati/lewat tanggal expired (FEFO)</p>
+                            <p class="text-[10px] text-slate-400">Pemisahan stok cacat, rusak fisik, atau tanggal expired (FEFO)</p>
                         </div>
                         <button onclick="openDamagedModal()" class="bg-rose-500 hover:bg-rose-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition shadow-sm">
                             <i data-lucide="plus" class="w-4 h-4"></i> Catat Barang Rusak/Expired
@@ -439,10 +439,11 @@
                                         <th class="p-3">Nama User / Supplier</th>
                                         <th class="p-3">Kontak Person</th>
                                         <th class="p-3">No. Telepon</th>
+                                        <th class="p-3 text-right">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="suppliers-tbody" class="divide-y divide-slate-100">
-                                    <tr><td colspan="4" class="p-6 text-center text-slate-400 italic">Belum ada data supplier.</td></tr>
+                                    <tr><td colspan="5" class="p-6 text-center text-slate-400 italic">Belum ada data supplier.</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -908,6 +909,7 @@
 
             if(tabName === 'recap') renderRecapData();
             if(tabName === 'damaged') renderDamagedGoods();
+            if(tabName === 'suppliers') renderSuppliers();
         }
 
         function refreshUI() {
@@ -929,7 +931,6 @@
             const ropAlertCount = state.products.filter(p => parseInt(p.stock) <= parseInt(p.rop)).length;
             document.getElementById('stat-rop-alert').innerText = ropAlertCount;
 
-            // Hitung hanya barang karantina yang butuh tindakan (Kadaluwarsa & Segera Dikeluarkan)
             const activeDamagedCount = state.damagedGoods.filter(d => {
                 const s = (d.status || '').toLowerCase();
                 return s.includes('kadaluwarsa') || s.includes('segera');
@@ -1032,7 +1033,6 @@
             lucide.createIcons();
         }
 
-        // --- BUG FIXED: RENDER DAMAGED GOODS DENGAN 3 KATEGORI WARNA ---
         function renderDamagedGoods() {
             const tbody = document.getElementById('damaged-tbody');
             if(!tbody) return;
@@ -1072,24 +1072,31 @@
             lucide.createIcons();
         }
 
+        // --- FIXED: RENDER SUPPLIERS WITH DELETE BUTTON ---
         function renderSuppliers() {
             const tbody = document.getElementById('suppliers-tbody');
             if(!tbody) return;
-            if(state.suppliers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400 italic">Belum ada data supplier/user.</td></tr>`;
+
+            if(!state.suppliers || state.suppliers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400 italic">Belum ada data supplier/user.</td></tr>`;
                 return;
             }
+
             tbody.innerHTML = '';
             state.suppliers.forEach(s => {
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
-                        <td class="p-3 font-mono font-bold text-slate-400">${s.code}</td>
-                        <td class="p-3 font-bold text-slate-800">${s.name}</td>
-                        <td class="p-3 text-slate-600">${s.contact}</td>
-                        <td class="p-3 text-brand-600 font-semibold">${s.phone}</td>
+                        <td class="p-3 font-mono font-bold text-slate-400">${s.code || '-'}</td>
+                        <td class="p-3 font-bold text-slate-800">${s.name || '-'}</td>
+                        <td class="p-3 text-slate-600">${s.contact || '-'}</td>
+                        <td class="p-3 text-brand-600 font-semibold">${s.phone || '-'}</td>
+                        <td class="p-3 text-right">
+                            <button onclick="deleteSupplier('${s.id}')" class="p-1 text-slate-400 hover:text-rose-500" title="Hapus User"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </td>
                     </tr>
                 `;
             });
+            lucide.createIcons();
         }
 
         function populateDropdowns() {
@@ -1257,18 +1264,42 @@
             }
         }
 
+        // --- FIXED: SAVE SUPPLIER FUNCTION ---
         function saveSupplier(e) {
             e.preventDefault();
-            state.suppliers.push({
+            
+            const nameEl = document.getElementById('sup-name');
+            const contactEl = document.getElementById('sup-contact');
+            const phoneEl = document.getElementById('sup-phone');
+
+            if(!nameEl) return;
+
+            if(!state.suppliers) {
+                state.suppliers = [];
+            }
+
+            const newSupplier = {
                 id: 'sup-' + Date.now(),
                 code: 'USER-' + (state.suppliers.length + 1).toString().padStart(2, '0'),
-                name: document.getElementById('sup-name').value,
-                contact: document.getElementById('sup-contact').value,
-                phone: document.getElementById('sup-phone').value
-            });
+                name: nameEl.value,
+                contact: contactEl ? contactEl.value || '-' : '-',
+                phone: phoneEl ? phoneEl.value || '-' : '-'
+            };
 
+            state.suppliers.push(newSupplier);
             saveStateToCloud();
             closeSupplierModal();
+            alert('✅ Pemasok / User baru berhasil ditambahkan!');
+        }
+
+        // --- FIXED: DELETE SUPPLIER FUNCTION ---
+        function deleteSupplier(id) {
+            if(confirm('Apakah kamu yakin ingin menghapus data pemasok/user ini?')) {
+                if(state.suppliers) {
+                    state.suppliers = state.suppliers.filter(s => s.id !== id);
+                    saveStateToCloud();
+                }
+            }
         }
 
         function renderRecapData() {
@@ -1473,7 +1504,7 @@
         function closeProductModal() { document.getElementById('modal-product').classList.add('hidden'); }
         function openDamagedModal() { document.getElementById('form-damaged').reset(); document.getElementById('modal-damaged').classList.remove('hidden'); }
         function closeDamagedModal() { document.getElementById('modal-damaged').classList.add('hidden'); }
-        function openSupplierModal() { document.getElementById('form-supplier').reset(); document.getElementById('modal-supplier').classList.add('hidden'); }
+        function openSupplierModal() { document.getElementById('form-supplier').reset(); document.getElementById('modal-supplier').classList.remove('hidden'); }
         function closeSupplierModal() { document.getElementById('modal-supplier').classList.add('hidden'); }
 
         function initChart() {
@@ -1514,4 +1545,5 @@
         }
     </script>
 </body>
+</html>
 </html>
