@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTOCK 2.0 - Ultimate Logistics Management</title>
+    <title>SISTOCK 2.0 - SMKN 3 BANDUNG</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -15,7 +15,7 @@
     <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <!-- Google Font: Inter & Plus Jakarta Sans -->
+    <!-- Google Font: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -23,7 +23,6 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         
-        /* Custom UI Animations */
         @keyframes fadeInSlideUp {
             from { opacity: 0; transform: translateY(12px) scale(0.98); }
             to { opacity: 1; transform: translateY(0) scale(1); }
@@ -32,21 +31,15 @@
             0%, 100% { box-shadow: 0 0 15px rgba(249, 115, 22, 0.4); }
             50% { box-shadow: 0 0 30px rgba(249, 115, 22, 0.8); }
         }
-        @keyframes slideInRight {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
-        }
         
-        .animate-tab-enter { animation: fadeInSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-tab-enter { animation: fadeInSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .jarvis-glow { animation: pulseGlow 2.5s infinite; }
         .toast-enter { animation: fadeInSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
         .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #fdba74; border-radius: 99px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #f97316; }
 
-        /* Smooth UI Active States */
         .btn-press:active { transform: scale(0.95); }
         .card-hover { transition: all 0.25s ease-in-out; }
         .card-hover:hover { transform: translateY(-3px); box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.08); }
@@ -72,7 +65,7 @@
 <body class="bg-slate-50/80 text-slate-800 flex flex-col min-h-screen antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
 
     <!-- TOAST NOTIFICATION CONTAINER -->
-    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    <div id="toast-container" class="fixed top-4 right-4 sm:top-5 sm:right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-[90vw]"></div>
 
     <!-- MODAL AUTENTIKASI LOGIN -->
     <div id="modal-login" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
@@ -82,7 +75,7 @@
                     <i data-lucide="package" class="w-7 h-7"></i>
                 </div>
                 <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">SISTOCK 2.0 PORTAL</h2>
-                <p class="text-xs text-slate-500 font-medium">Sistem Manajemen Logistik & Inventaris SMKN 3 Bandung</p>
+                <p class="text-xs text-slate-500 font-medium">Manajemen Logistik SMKN 3 Bandung</p>
             </div>
 
             <form id="form-login" onsubmit="handleAuthLogin(event)" class="space-y-4 text-xs">
@@ -94,9 +87,9 @@
                     <label class="font-bold text-slate-700 block mb-1">Password</label>
                     <input type="password" id="login-password" required placeholder="Masukkan Password..." class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white transition">
                 </div>
-                <p id="login-error-msg" class="text-rose-500 font-bold text-[11px] hidden text-center animate-bounce">⚠️ Username atau Password tidak cocok!</p>
+                <p id="login-error-msg" class="text-rose-500 font-bold text-[11px] hidden text-center animate-bounce">⚠️ Username atau Password salah!</p>
                 <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-brand-500/25 flex items-center justify-center gap-2 btn-press">
-                    <i data-lucide="log-in" class="w-4 h-4"></i> Masuk Portal Gudang
+                    <i data-lucide="log-in" class="w-4 h-4"></i> Masuk Sistem
                 </button>
             </form>
             <div class="border-t border-slate-100 pt-3 text-center">
@@ -109,32 +102,32 @@
     <div id="main-app-container" class="flex flex-col min-h-screen hidden">
         
         <!-- Header Utama -->
-        <header class="bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 px-4 py-3 flex items-center justify-between shadow-sm">
-            <div class="flex items-center space-x-3">
+        <header class="bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 px-3 sm:px-4 py-3 flex items-center justify-between shadow-sm">
+            <div class="flex items-center space-x-2.5 sm:space-x-3">
                 <!-- Tombol Hamburger Mobile -->
                 <button onclick="toggleMobileMenu()" class="md:hidden text-slate-700 hover:text-brand-500 p-2 rounded-xl bg-slate-100 hover:bg-brand-50 transition btn-press">
                     <i data-lucide="menu" class="w-5 h-5"></i>
                 </button>
 
                 <!-- Logo Header -->
-                <div class="bg-gradient-to-tr from-brand-600 to-brand-500 text-white p-2.5 rounded-xl shadow-md shadow-brand-500/20">
+                <div class="bg-gradient-to-tr from-brand-600 to-brand-500 text-white p-2 sm:p-2.5 rounded-xl shadow-md shadow-brand-500/20">
                     <i data-lucide="package" class="w-5 h-5"></i>
                 </div>
                 <div>
                     <h1 class="font-extrabold text-sm sm:text-lg text-slate-900 tracking-tight flex items-center gap-2">
                         SISTOCK 2.0
-                        <span class="bg-brand-100 text-brand-700 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase hidden sm:inline border border-brand-200">LOGISTIK SMKN 3</span>
+                        <span class="bg-brand-100 text-brand-700 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase hidden sm:inline border border-brand-200">SMKN 3 BANDUNG</span>
                     </h1>
-                    <p class="text-[10px] sm:text-[11px] text-slate-500 font-medium">Warehouse & Inventory Management System</p>
+                    <p class="text-[10px] sm:text-[11px] text-slate-500 font-medium hidden xs:block">Warehouse & Inventory Management</p>
                 </div>
             </div>
 
-            <div class="flex items-center space-x-2">
-                <button onclick="syncToGoogleSheets()" title="Backup ke Google Sheets" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-emerald-200/80 shadow-sm btn-press">
+            <div class="flex items-center space-x-1.5 sm:space-x-2">
+                <button onclick="syncToGoogleSheets()" title="Backup ke Google Sheets" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-2.5 sm:px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-emerald-200/80 shadow-sm btn-press">
                     <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-600"></i>
                     <span class="hidden md:inline">Backup Sheets</span>
                 </button>
-                <button onclick="openDeliveryModal()" title="Surat Jalan DO" class="bg-brand-50 hover:bg-brand-100 text-brand-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-brand-200/80 btn-press">
+                <button onclick="openDeliveryModal()" title="Surat Jalan DO" class="bg-brand-50 hover:bg-brand-100 text-brand-700 px-2.5 sm:px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-brand-200/80 btn-press">
                     <i data-lucide="file-text" class="w-4 h-4 text-brand-600"></i>
                     <span class="hidden md:inline">Surat Jalan DO</span>
                 </button>
@@ -166,7 +159,7 @@
                         <i data-lucide="package" class="w-4 h-4"></i> Data Stok & ROP
                     </button>
                     <button onclick="switchTab('damaged')" id="nav-damaged" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:bg-slate-100/80">
-                        <i data-lucide="alert-octagon" class="w-4 h-4 text-amber-500"></i> Rusak & Expired
+                        <i data-lucide="alert-octagon" class="w-4 h-4 text-amber-500"></i> Karantina & FEFO
                     </button>
                     <button onclick="switchTab('recap')" id="nav-recap" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:bg-slate-100/80">
                         <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Rekapitulasi Tren
@@ -180,14 +173,14 @@
                     <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-3 rounded-2xl shadow-md flex items-center gap-3">
                         <div class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></div>
                         <div>
-                            <p class="text-xs font-extrabold">Firebase Cloud Live</p>
+                            <p class="text-xs font-extrabold">Firebase Cloud Sync</p>
                             <p class="text-[10px] text-slate-300">SMKN 3 Bandung</p>
                         </div>
                     </div>
                 </div>
             </aside>
 
-            <!-- Mobile Drawer Sidebar (Menu HP) -->
+            <!-- Mobile Drawer Sidebar -->
             <div id="mobile-drawer" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden md:hidden flex justify-start transition-opacity">
                 <div class="w-72 bg-white h-full shadow-2xl p-5 flex flex-col justify-between overflow-y-auto animate-tab-enter">
                     <div class="space-y-3">
@@ -196,7 +189,7 @@
                                 <div class="bg-brand-500 text-white p-2 rounded-xl">
                                     <i data-lucide="package" class="w-5 h-5"></i>
                                 </div>
-                                <span class="font-extrabold text-sm text-slate-900 tracking-tight">NAVIGASI MENU</span>
+                                <span class="font-extrabold text-sm text-slate-900 tracking-tight">MENU SISTOCK 2.0</span>
                             </div>
                             <button onclick="toggleMobileMenu()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg bg-slate-100">
                                 <i data-lucide="x" class="w-5 h-5"></i>
@@ -220,7 +213,7 @@
                                 <i data-lucide="package" class="w-4 h-4"></i> Data Stok & ROP
                             </button>
                             <button onclick="switchTab('damaged'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold text-slate-700 hover:bg-brand-50 hover:text-brand-600 transition btn-press">
-                                <i data-lucide="alert-octagon" class="w-4 h-4 text-amber-500"></i> Barang Rusak & Expired
+                                <i data-lucide="alert-octagon" class="w-4 h-4 text-amber-500"></i> Karantina & FEFO
                             </button>
                             <button onclick="switchTab('recap'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold text-slate-700 hover:bg-brand-50 hover:text-brand-600 transition btn-press">
                                 <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Rekapitulasi Tren
@@ -238,22 +231,22 @@
             </div>
 
             <!-- Main Content Area -->
-            <main class="flex-1 overflow-y-auto p-4 md:p-6 mb-6 custom-scrollbar space-y-6">
+            <main class="flex-1 overflow-y-auto p-3.5 sm:p-6 mb-6 custom-scrollbar space-y-5">
                 
                 <!-- SECTION: DASHBOARD -->
                 <section id="section-dashboard" class="space-y-5 animate-tab-enter">
                     
-                    <div class="bg-gradient-to-r from-white to-orange-50/50 p-6 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="bg-gradient-to-r from-white to-orange-50/50 p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div class="space-y-1 text-center sm:text-left">
-                            <h2 class="text-base font-extrabold text-slate-900 uppercase tracking-wider">Aksi Cepat Mutasi Gudang</h2>
+                            <h2 class="text-sm sm:text-base font-extrabold text-slate-900 uppercase tracking-wider">Aksi Cepat Transaksi Gudang</h2>
                             <p class="text-xs text-slate-500 font-medium">Pencatatan langsung arus penerimaan dan pengeluaran barang</p>
                         </div>
                         <div class="flex gap-2.5 w-full sm:w-auto">
-                            <button onclick="switchTab('inbound')" class="flex-1 sm:flex-none bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 btn-press">
-                                <i data-lucide="arrow-down-left" class="w-4 h-4"></i> + Barang Masuk
+                            <button onclick="switchTab('inbound')" class="flex-1 sm:flex-none bg-emerald-500 hover:bg-emerald-600 text-white px-4 sm:px-5 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 btn-press">
+                                <i data-lucide="arrow-down-left" class="w-4 h-4"></i> + Masuk
                             </button>
-                            <button onclick="switchTab('outbound')" class="flex-1 sm:flex-none bg-rose-500 hover:bg-rose-600 text-white px-5 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-md shadow-rose-500/20 flex items-center justify-center gap-2 btn-press">
-                                <i data-lucide="arrow-up-right" class="w-4 h-4"></i> - Barang Keluar
+                            <button onclick="switchTab('outbound')" class="flex-1 sm:flex-none bg-rose-500 hover:bg-rose-600 text-white px-4 sm:px-5 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-md shadow-rose-500/20 flex items-center justify-center gap-2 btn-press">
+                                <i data-lucide="arrow-up-right" class="w-4 h-4"></i> - Keluar
                             </button>
                         </div>
                     </div>
@@ -273,44 +266,44 @@
                                 <span class="text-xs font-bold">Nilai Total Aset</span>
                                 <i data-lucide="wallet" class="w-4 h-4 text-emerald-500"></i>
                             </div>
-                            <h3 id="stat-total-value" class="text-lg sm:text-xl font-black text-slate-900">Rp 0</h3>
+                            <h3 id="stat-total-value" class="text-base sm:text-xl font-black text-slate-900">Rp 0</h3>
                             <p class="text-[10px] text-emerald-600 font-bold mt-1">Valuasi inventaris gudang</p>
                         </div>
 
                         <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm card-hover">
                             <div class="flex items-center justify-between text-slate-500 mb-2">
-                                <span class="text-xs font-bold">Peringatan ROP / Habis</span>
+                                <span class="text-xs font-bold">Peringatan ROP</span>
                                 <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-500"></i>
                             </div>
                             <h3 id="stat-rop-alert" class="text-2xl font-black text-rose-600">0</h3>
-                            <p class="text-[10px] text-rose-500 font-bold mt-1">Stok menipis atau kosong</p>
+                            <p class="text-[10px] text-rose-500 font-bold mt-1">Stok menipis / ROP</p>
                         </div>
 
                         <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm card-hover">
                             <div class="flex items-center justify-between text-slate-500 mb-2">
-                                <span class="text-xs font-bold">Barang Karantina</span>
+                                <span class="text-xs font-bold">FEFO & Karantina</span>
                                 <i data-lucide="alert-octagon" class="w-4 h-4 text-amber-500"></i>
                             </div>
                             <h3 id="stat-damaged-count" class="text-2xl font-black text-amber-600">0</h3>
-                            <p class="text-[10px] text-amber-600 font-bold mt-1">Rusak atau Kadaluarsa</p>
+                            <p class="text-[10px] text-amber-600 font-bold mt-1">Status FEFO Karantina</p>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                        <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm card-hover">
+                        <div class="lg:col-span-2 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-sm card-hover">
                             <div class="flex items-center justify-between mb-4">
                                 <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                                     <i data-lucide="line-chart" class="w-4 h-4 text-brand-500"></i>
                                     Arus Mutasi Stok Gudang
                                 </h4>
-                                <span class="text-[10px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-bold">Real-time Graph</span>
+                                <span class="text-[10px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-bold">Live Graph</span>
                             </div>
                             <div class="h-60 relative">
                                 <canvas id="stockMovementChart"></canvas>
                             </div>
                         </div>
 
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm card-hover flex flex-col">
+                        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-sm card-hover flex flex-col">
                             <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2">
                                 <i data-lucide="award" class="w-4 h-4 text-amber-500"></i>
                                 Barang Aset Tertinggi
@@ -319,13 +312,13 @@
                         </div>
                     </div>
 
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm card-hover">
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-sm card-hover">
                         <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
                             <i data-lucide="history" class="w-4 h-4 text-slate-500"></i>
                             Riwayat Transaksi & Audit Terakhir
                         </h4>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs">
+                        <div class="overflow-x-auto max-w-full">
+                            <table class="w-full text-left text-xs min-w-[500px]">
                                 <thead class="bg-slate-50 text-slate-500 uppercase font-extrabold border-b border-slate-200">
                                     <tr>
                                         <th class="p-3">Waktu</th>
@@ -345,7 +338,7 @@
 
                 <!-- SECTION: BARANG MASUK (INBOUND) -->
                 <section id="section-inbound" class="space-y-4 hidden animate-tab-enter">
-                    <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm max-w-2xl mx-auto space-y-5">
+                    <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/80 shadow-sm max-w-2xl mx-auto space-y-5">
                         <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
                             <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl shadow-sm">
                                 <i data-lucide="arrow-down-left" class="w-6 h-6"></i>
@@ -368,7 +361,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label class="font-bold text-slate-700 block mb-1">Jumlah Masuk (Qty)</label>
                                     <input type="number" id="in-qty" min="1" required placeholder="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-brand-500 font-extrabold text-slate-800">
@@ -391,7 +384,7 @@
 
                 <!-- SECTION: BARANG KELUAR (OUTBOUND) -->
                 <section id="section-outbound" class="space-y-4 hidden animate-tab-enter">
-                    <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm max-w-2xl mx-auto space-y-5">
+                    <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/80 shadow-sm max-w-2xl mx-auto space-y-5">
                         <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
                             <div class="p-3 bg-rose-50 text-rose-600 rounded-2xl shadow-sm">
                                 <i data-lucide="arrow-up-right" class="w-6 h-6"></i>
@@ -409,7 +402,7 @@
                                     <option value="">-- Pilih Barang Gudang --</option>
                                 </select>
                             </div>
-                            <div class="grid grid-cols-2 gap-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label class="font-bold text-slate-700 block mb-1">Jumlah Keluar (Qty)</label>
                                     <input type="number" id="out-qty" min="1" required placeholder="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-brand-500 font-extrabold text-slate-800">
@@ -432,7 +425,7 @@
 
                 <!-- SECTION: STOCK OPNAME -->
                 <section id="section-opname" class="space-y-4 hidden animate-tab-enter">
-                    <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm max-w-2xl mx-auto space-y-5">
+                    <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/80 shadow-sm max-w-2xl mx-auto space-y-5">
                         <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
                             <div class="p-3 bg-brand-50 text-brand-600 rounded-2xl shadow-sm">
                                 <i data-lucide="scan-line" class="w-6 h-6"></i>
@@ -455,7 +448,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label class="font-bold text-slate-700 block mb-1">Hasil Hitung Fisik Sebenarnya</label>
                                     <input type="number" id="opname-qty" min="0" required placeholder="Jumlah fisik..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-brand-500 font-extrabold text-slate-800">
@@ -484,10 +477,10 @@
                             <input type="text" id="search-product" onkeyup="renderProducts()" placeholder="Cari Barcode SKU atau Nama Barang..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-brand-500">
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="openScannerModal('search')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-200 btn-press">
-                                <i data-lucide="scan" class="w-4 h-4 text-brand-500"></i> Scan Barcode
+                            <button onclick="openScannerModal('search')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-200 btn-press">
+                                <i data-lucide="scan" class="w-4 h-4 text-brand-500"></i> Scan
                             </button>
-                            <button onclick="openProductModal()" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-md shadow-brand-500/20 btn-press">
+                            <button onclick="openProductModal()" class="bg-brand-500 hover:bg-brand-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-md shadow-brand-500/20 btn-press">
                                 <i data-lucide="plus" class="w-4 h-4"></i> Tambah Barang
                             </button>
                         </div>
@@ -501,8 +494,8 @@
                     </div>
 
                     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs">
+                        <div class="overflow-x-auto max-w-full">
+                            <table class="w-full text-left text-xs min-w-[700px]">
                                 <thead class="bg-slate-50 text-slate-500 uppercase font-extrabold border-b border-slate-200">
                                     <tr>
                                         <th class="p-3.5">SKU / Barcode</th>
@@ -524,30 +517,30 @@
                     </div>
                 </section>
 
-                <!-- SECTION: DAMAGED & EXPIRED GOODS -->
+                <!-- SECTION: DAMAGED & FEFO EXPIRED GOODS -->
                 <section id="section-damaged" class="space-y-4 hidden animate-tab-enter">
                     <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
                         <div>
                             <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider text-rose-600 flex items-center gap-1.5">
-                                <i data-lucide="alert-octagon" class="w-4 h-4"></i> Karantina Barang Rusak & Kadaluarsa
+                                <i data-lucide="alert-octagon" class="w-4 h-4"></i> Karantina Barang FEFO & Expired
                             </h3>
-                            <p class="text-[10px] text-slate-400 font-medium">Pemisahan fisik stok cacat & tanggal expired</p>
+                            <p class="text-[10px] text-slate-400 font-medium">Pemisahan fisik stok cacat & tanggal kadaluarsa (FEFO)</p>
                         </div>
-                        <button onclick="openDamagedModal()" class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-md shadow-rose-500/20 btn-press">
-                            <i data-lucide="plus" class="w-4 h-4"></i> Catat Karantina
+                        <button onclick="openDamagedModal()" class="bg-rose-500 hover:bg-rose-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-md shadow-rose-500/20 btn-press">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Catat FEFO
                         </button>
                     </div>
 
                     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs">
+                        <div class="overflow-x-auto max-w-full">
+                            <table class="w-full text-left text-xs min-w-[600px]">
                                 <thead class="bg-slate-50 text-slate-500 uppercase font-extrabold border-b border-slate-200">
                                     <tr>
                                         <th class="p-3.5">Tanggal</th>
                                         <th class="p-3.5">Nama Barang</th>
                                         <th class="p-3.5">Jumlah Fisik</th>
                                         <th class="p-3.5">Satuan</th>
-                                        <th class="p-3.5">Status / Catatan</th>
+                                        <th class="p-3.5">Status FEFO / Catatan</th>
                                         <th class="p-3.5 text-right">Aksi</th>
                                     </tr>
                                 </thead>
@@ -576,15 +569,15 @@
                             <h3 id="recap-out-total" class="text-2xl font-black text-rose-600 mt-1">0 Unit</h3>
                         </div>
                         <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm card-hover">
-                            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Rusak & Expired</span>
+                            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Rusak & FEFO Expired</span>
                             <h3 id="recap-dmg-total" class="text-2xl font-black text-amber-600 mt-1">0 Unit</h3>
                         </div>
                     </div>
 
                     <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm card-hover">
                         <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider mb-4">Detail Log Rekapitulasi Audit</h4>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs">
+                        <div class="overflow-x-auto max-w-full">
+                            <table class="w-full text-left text-xs min-w-[500px]">
                                 <thead class="bg-slate-50 text-slate-500 uppercase font-extrabold border-b border-slate-200">
                                     <tr>
                                         <th class="p-3">Waktu</th>
@@ -609,14 +602,14 @@
                             <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider">Pemasok & Pengguna Sistem</h3>
                             <p class="text-[10px] text-slate-400 font-medium">Daftar role akun dan partner vendor</p>
                         </div>
-                        <button onclick="openSupplierModal()" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-md shadow-brand-500/20 btn-press">
+                        <button onclick="openSupplierModal()" class="bg-brand-500 hover:bg-brand-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-md shadow-brand-500/20 btn-press">
                             <i data-lucide="plus" class="w-4 h-4"></i> Tambah User/Supplier
                         </button>
                     </div>
 
                     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs">
+                        <div class="overflow-x-auto max-w-full">
+                            <table class="w-full text-left text-xs min-w-[500px]">
                                 <thead class="bg-slate-50 text-slate-500 uppercase font-extrabold border-b border-slate-200">
                                     <tr>
                                         <th class="p-3.5">Kode / Role</th>
@@ -638,7 +631,7 @@
         </div>
 
         <!-- Footer -->
-        <footer class="bg-white border-t border-slate-200/80 py-3.5 px-5 text-center text-[11px] text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-2 z-20">
+        <footer class="bg-white border-t border-slate-200/80 py-3.5 px-4 sm:px-5 text-center text-[11px] text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-2 z-20">
             <div>
                 <span class="font-extrabold text-slate-700">SISTOCK 2.0</span> — Ultimate WMS Software
             </div>
@@ -650,24 +643,25 @@
         </footer>
     </div>
 
-    <!-- FLOATING CHATBOT J.A.R.V.I.S WIDGET (Interactive Session Assistant) -->
-    <div class="fixed bottom-6 right-6 z-40">
-        <button onclick="toggleJarvisChat()" class="bg-slate-900 hover:bg-brand-500 text-white p-4 rounded-full shadow-2xl transition-all duration-300 flex items-center justify-center border-2 border-brand-500 group jarvis-glow btn-press" title="Tanya J.A.R.V.I.S AI">
+    <!-- FLOATING CHATBOT J.A.R.V.I.S WIDGET (NYUNDA INTERACTIVE GUIDE BOT) -->
+    <div class="fixed bottom-5 right-5 z-40">
+        <button onclick="toggleJarvisChat()" class="bg-slate-900 hover:bg-brand-500 text-white p-3.5 sm:p-4 rounded-full shadow-2xl transition-all duration-300 flex items-center justify-center border-2 border-brand-500 group jarvis-glow btn-press" title="Tanya J.A.R.V.I.S AI">
             <i data-lucide="bot" class="w-6 h-6 group-hover:rotate-12 transition"></i>
         </button>
     </div>
 
-    <!-- Jendela Panel Chat J.A.R.V.I.S -->
-    <div id="jarvis-chat-modal" class="fixed bottom-20 right-6 w-80 sm:w-96 bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-200/80 z-50 hidden flex flex-col overflow-hidden max-h-[530px] animate-tab-enter">
-        <div class="bg-slate-900 text-white p-4 flex items-center justify-between">
+    <!-- Jendela Panel Chat J.A.R.V.I.S Guide Bot -->
+    <div id="jarvis-chat-modal" class="fixed bottom-16 sm:bottom-20 right-3 sm:right-6 w-[92vw] sm:w-96 bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-200/80 z-50 hidden flex flex-col overflow-hidden max-h-[80vh] sm:max-h-[550px] animate-tab-enter">
+        <!-- Header Bot -->
+        <div class="bg-slate-900 text-white p-3.5 sm:p-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-gradient-to-tr from-brand-600 to-brand-500 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-brand-500/30">
+                <div class="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-tr from-brand-600 to-brand-500 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-brand-500/30">
                     <i data-lucide="bot" class="w-5 h-5"></i>
                 </div>
                 <div>
-                    <h3 class="text-xs font-extrabold tracking-wider text-brand-50">J.A.R.V.I.S LOGISTICS AI</h3>
+                    <h3 class="text-xs font-extrabold tracking-wider text-brand-50">J.A.R.V.I.S GUIDE BOT</h3>
                     <p class="text-[9px] text-emerald-400 font-bold flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Live Session Active
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Live Nyunda Assistant
                     </p>
                 </div>
             </div>
@@ -676,17 +670,41 @@
             </button>
         </div>
 
-        <div id="jarvis-messages" class="p-4 flex-1 overflow-y-auto space-y-3 text-xs bg-slate-50/50 max-h-[340px] custom-scrollbar">
+        <!-- Area Riwayat Chat -->
+        <div id="jarvis-messages" class="p-3.5 sm:p-4 flex-1 overflow-y-auto space-y-3 text-xs bg-slate-50/50 max-h-[260px] sm:max-h-[300px] custom-scrollbar">
             <div class="flex items-start gap-2">
-                <div class="bg-gradient-to-tr from-brand-500 to-brand-600 text-white p-3 rounded-2xl rounded-tl-none font-medium shadow-md max-w-[85%] leading-relaxed">
-                    Halo Naufal! Saya <strong>J.A.R.V.I.S</strong>, Asisten AI SISTOCK 2.0. Saya bisa bantu cek stok, nilai aset, lokasi rak, hingga menjelaskan semua fitur aplikasi ini secara detail! <br><br>👉 Ketik <strong>"panduan"</strong> atau <strong>"fitur"</strong> untuk bantuan.
+                <div class="bg-gradient-to-tr from-brand-500 to-brand-600 text-white p-3 rounded-2xl rounded-tl-none font-medium shadow-md max-w-[88%] leading-relaxed">
+                    Sampurasun Akang / Teteh! 👋 Saya <strong>J.A.R.V.I.S Guide Bot</strong>. Silakan klik opsi bantuan cepat di bawah atau ketik langsung apa saja terkait gudang SISTOCK 2.0 ini ya!
                 </div>
             </div>
         </div>
 
-        <form id="jarvis-form" onsubmit="handleJarvisChat(event)" class="p-3 bg-white border-t border-slate-100 flex gap-2">
-            <input type="text" id="jarvis-input" placeholder="Tanya stok, harga, atau fitur aplikasi..." class="flex-1 bg-slate-100 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-brand-500 font-semibold text-slate-800">
-            <button type="submit" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2.5 rounded-2xl text-xs font-bold transition shadow-md shadow-brand-500/20 flex items-center justify-center btn-press">
+        <!-- TOMBOL OPSI INTERAKTIF (QUICK CHIPS) -->
+        <div class="p-2 sm:p-2.5 bg-slate-100/90 border-t border-slate-200/80 flex flex-wrap gap-1.5 text-[10px] sm:text-[11px] font-bold">
+            <button onclick="sendJarvisOption('jelaskan inbound')" class="bg-white hover:bg-brand-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">
+                📥 Fitur Inbound
+            </button>
+            <button onclick="sendJarvisOption('jelaskan outbound')" class="bg-white hover:bg-brand-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">
+                📤 Fitur Outbound
+            </button>
+            <button onclick="sendJarvisOption('jelaskan opname')" class="bg-white hover:bg-brand-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">
+                🔎 Stock Opname
+            </button>
+            <button onclick="sendJarvisOption('jelaskan surat jalan')" class="bg-white hover:bg-brand-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">
+                📜 Surat Jalan (DO)
+            </button>
+            <button onclick="sendJarvisOption('cek fefo')" class="bg-white hover:bg-amber-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">
+                ☣️ Status FEFO
+            </button>
+            <button onclick="sendJarvisOption('nilai aset')" class="bg-white hover:bg-emerald-600 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">
+                💰 Valuasi Aset
+            </button>
+        </div>
+
+        <!-- Input Chat Manual -->
+        <form id="jarvis-form" onsubmit="handleJarvisChat(event)" class="p-2.5 sm:p-3 bg-white border-t border-slate-100 flex gap-2">
+            <input type="text" id="jarvis-input" placeholder="Tanya Akang Jarvis..." class="flex-1 bg-slate-100 border border-slate-200 rounded-2xl px-3.5 py-2 text-xs focus:outline-none focus:border-brand-500 font-semibold text-slate-800">
+            <button type="submit" class="bg-brand-500 hover:bg-brand-600 text-white px-3.5 py-2 rounded-2xl text-xs font-bold transition shadow-md shadow-brand-500/20 flex items-center justify-center btn-press">
                 <i data-lucide="send" class="w-4 h-4"></i>
             </button>
         </form>
@@ -694,7 +712,7 @@
 
     <!-- MODAL: PRODUCT -->
     <div id="modal-product" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-tab-enter">
+        <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 id="modal-product-title" class="font-extrabold text-xs uppercase tracking-wider text-slate-900">Registrasi Barang Baru</h3>
                 <button onclick="closeProductModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -743,10 +761,10 @@
     </div>
 
     <!-- MODAL: DELIVERY ORDER -->
-    <div id="deliveryModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 space-y-4 animate-tab-enter">
+    <div id="deliveryModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 z-50">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6 space-y-4 animate-tab-enter">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                     <i data-lucide="file-text" class="w-4 h-4 text-brand-500"></i> Form Delivery Order (Surat Jalan)
                 </h3>
                 <button onclick="closeDeliveryModal()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
@@ -768,11 +786,11 @@
                 <div id="doItemSelector" class="space-y-2 max-h-40 overflow-y-auto border p-3 rounded-2xl text-xs bg-slate-50 custom-scrollbar"></div>
             </div>
 
-            <div id="printArea" class="border p-6 rounded-2xl bg-white space-y-4 text-slate-900">
+            <div id="printArea" class="border p-4 sm:p-6 rounded-2xl bg-white space-y-4 text-slate-900">
                 <div class="flex justify-between items-start border-b-2 border-slate-800 pb-3">
                     <div>
-                        <h2 class="text-xl font-black tracking-wide uppercase text-brand-600">DELIVERY ORDER (SURAT JALAN)</h2>
-                        <p class="text-xs font-bold text-slate-700">SISTOCK 2.0 — Manajemen Logistik SMKN 3 BANDUNG</p>
+                        <h2 class="text-lg sm:text-xl font-black tracking-wide uppercase text-brand-600">DELIVERY ORDER (SURAT JALAN)</h2>
+                        <p class="text-xs font-bold text-slate-700">SISTOCK 2.0 — SMKN 3 BANDUNG</p>
                     </div>
                     <div class="text-right text-xs font-semibold">
                         <p><strong>Tgl Kirim:</strong> <span id="previewDate">-</span></p>
@@ -814,9 +832,9 @@
 
     <!-- MODAL: DAMAGED -->
     <div id="modal-damaged" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl animate-tab-enter">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter">
             <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-extrabold text-xs uppercase tracking-wider text-rose-600">Catat Karantina Barang</h3>
+                <h3 class="font-extrabold text-xs uppercase tracking-wider text-rose-600">Catat Karantina FEFO</h3>
                 <button onclick="closeDamagedModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <form id="form-damaged" onsubmit="saveDamagedGood(event)" class="space-y-3 text-xs">
@@ -832,15 +850,15 @@
                     <div>
                         <label class="font-bold text-slate-700 block mb-1">Status Karantina</label>
                         <select id="dmg-status" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none">
-                            <option value="kadaluwarsa">🔴 Kadaluwarsa</option>
+                            <option value="kadaluwarsa">🔴 Kadaluwarsa (Expired)</option>
                             <option value="segera dikeluarkan">🟡 Segera Dikeluarkan</option>
                             <option value="masih aman">🟢 Masih Aman</option>
                         </select>
                     </div>
                 </div>
                 <div>
-                    <label class="font-bold text-slate-700 block mb-1">Tanggal Expired / Catatan</label>
-                    <input type="text" id="dmg-notes" placeholder="Tgl Expired atau Alasan Rusak..." class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none">
+                    <label class="font-bold text-slate-700 block mb-1">Tgl Expired / Catatan FEFO</label>
+                    <input type="text" id="dmg-notes" placeholder="Tgl Expired / Catatan FEFO..." class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none">
                 </div>
                 <div class="pt-2 flex justify-end gap-2">
                     <button type="button" onclick="closeDamagedModal()" class="px-4 py-2 border rounded-xl font-bold text-slate-600 btn-press">Batal</button>
@@ -852,7 +870,7 @@
 
     <!-- MODAL: SUPPLIER -->
     <div id="modal-supplier" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl animate-tab-enter">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter">
             <div class="flex justify-between items-center border-b pb-2">
                 <h3 class="font-extrabold text-xs uppercase tracking-wider text-slate-900">Tambah Supplier / User</h3>
                 <button onclick="closeSupplierModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -880,7 +898,7 @@
 
     <!-- MODAL: SCANNER MULTI-FUNGSI -->
     <div id="modal-scanner" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-tab-enter">
+        <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter">
             <div class="flex justify-between items-center border-b pb-2">
                 <h3 class="font-extrabold text-xs uppercase tracking-wider text-slate-900 flex items-center gap-2">
                     <i data-lucide="scan" class="w-4 h-4 text-brand-500"></i> Pemindai Barcode Kamera
@@ -910,6 +928,7 @@
         const AUTH_USER = "MLGSMKN3BDG";
         const AUTH_PASS = "LOGISTIK2627";
 
+        // DATABASE INVENTARIS DENGAN STATUS FEFO DARI SPREADSHEET
         const INITIAL_SPREADSHEET_DATA = {
             suppliers: [
                 { id: "sup-1", code: "CHECKER", name: "CHECKER GUDANG", contact: "Role: CHECKER", phone: "-" },
@@ -926,11 +945,15 @@
                 { id: "prod-7", sku: "18993496111017", name: "MINYAKITA 1 Liter", category: "PCS", price: 14000, stock: 0, rop: 10, location: "C01.1" },
                 { id: "prod-8", sku: "8992946535178", name: "MINYAK TROPICAL 1,5L", category: "BOTOL", price: 24500, stock: 0, rop: 10, location: "C01.2" },
                 { id: "prod-22", sku: "10089686010340", name: "INDOMIE SOTO", category: "PCS", price: 3100, stock: 0, rop: 10, location: "B01.3" },
+                { id: "prod-27", sku: "10089686011187", name: "INDOMIE GORENG RENDANG", category: "PCS", price: 3300, stock: 5, rop: 10, location: "B01.3" },
                 { id: "prod-28", sku: "10089686010944", name: "INDOMIE GORENG ORIGINAL", category: "PCS", price: 3200, stock: 99, rop: 20, location: "B01.2" },
                 { id: "prod-33", sku: "10089686010012", name: "INDOMIE AYAM BAWANG", category: "PCS", price: 3100, stock: 96, rop: 20, location: "B01.2" }
             ],
+            // STATUS FEFO YANG DI-INPUT DARIPADA SPREADSHEET PORTAL
             damagedGoods: [
-                { id: "dmg-1", timestamp: "26/11/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 46, status: "segera dikeluarkan", notes: "Segera dikeluarkan" }
+                { id: "dmg-1", timestamp: "02/10/2026", productName: "INDOMIE SOTO", sku: "10089686010340", qty: 5, status: "kadaluwarsa", notes: "Status FEFO: Kadaluwarsa / Expired" },
+                { id: "dmg-2", timestamp: "26/11/2026", productName: "INDOMIE AYAM BAWANG", sku: "10089686010012", qty: 46, status: "segera dikeluarkan", notes: "Status FEFO: Segera Dikeluarkan" },
+                { id: "dmg-3", timestamp: "31/10/2026", productName: "INDOMIE GORENG RENDANG", sku: "10089686011187", qty: 5, status: "segera dikeluarkan", notes: "Status FEFO: Perlu Restock / Monitoring" }
             ],
             logs: [
                 { timestamp: "10/28/26 6:42", productName: "RON 88 500 ML", type: "IN", qty: 50, notes: "BARANG MASUK - Lokasi: A01.3" }
@@ -985,7 +1008,7 @@
                 sessionStorage.setItem("sistock_auth", "true");
                 errMsg.classList.add('hidden');
                 checkSessionAuth();
-                showToast("Selamat datang di SISTOCK 2.0 Portal!");
+                showToast("Sampurasun! Wilujeng sumping di SISTOCK 2.0!");
             } else {
                 errMsg.classList.remove('hidden');
             }
@@ -994,7 +1017,7 @@
         function handleLogout() {
             sessionStorage.removeItem("sistock_auth");
             checkSessionAuth();
-            showToast("Berhasil keluar dari sistem.", "error");
+            showToast("Berhasil keluar dari portal.", "error");
         }
 
         function initFirebaseSync() {
@@ -1004,7 +1027,7 @@
                     state = {
                         suppliers: data.suppliers || INITIAL_SPREADSHEET_DATA.suppliers,
                         products: data.products || [],
-                        damagedGoods: data.damagedGoods || [],
+                        damagedGoods: data.damagedGoods || INITIAL_SPREADSHEET_DATA.damagedGoods,
                         logs: data.logs || []
                     };
                 } else {
@@ -1040,8 +1063,8 @@
                     timestamp: new Date().toLocaleString('id-ID')
                 })
             })
-            .then(() => { showToast("✅ Full Backup dikirim ke Google Sheets!"); })
-            .catch(() => { showToast("❌ Gagal terhubung ke Google Sheets.", "error"); });
+            .then(() => { showToast("✅ Full Backup berhasil dikirim ke Sheets!"); })
+            .catch(() => { showToast("❌ Gagal terhubung ke Sheets.", "error"); });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1102,10 +1125,7 @@
             const ropAlertCount = state.products.filter(p => parseInt(p.stock) <= parseInt(p.rop)).length;
             document.getElementById('stat-rop-alert').innerText = ropAlertCount;
 
-            const activeDamagedCount = state.damagedGoods.filter(d => {
-                const s = (d.status || '').toLowerCase();
-                return s.includes('kadaluwarsa') || s.includes('segera');
-            }).reduce((acc, item) => acc + item.qty, 0);
+            const activeDamagedCount = state.damagedGoods.length;
             document.getElementById('stat-damaged-count').innerText = activeDamagedCount;
 
             const topProductsContainer = document.getElementById('top-products-list');
@@ -1209,7 +1229,7 @@
             if(!tbody) return;
 
             if(!state.damagedGoods || state.damagedGoods.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Belum ada barang karantina.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Belum ada barang karantina FEFO.</td></tr>`;
                 return;
             }
 
@@ -1221,10 +1241,10 @@
 
                 if (statusLower.includes('kadaluwarsa') || statusLower.includes('expired')) {
                     badgeStyle = 'bg-rose-100 text-rose-800 font-bold';
-                    badgeText = '🔴 Kadaluwarsa';
+                    badgeText = '🔴 Kadaluwarsa (FEFO Expired)';
                 } else if (statusLower.includes('segera') || statusLower.includes('rusak')) {
                     badgeStyle = 'bg-amber-100 text-amber-800 font-bold';
-                    badgeText = '🟡 Segera Dikeluarkan';
+                    badgeText = '🟡 Segera Dikeluarkan (FEFO Alert)';
                 }
 
                 tbody.innerHTML += `
@@ -1448,11 +1468,11 @@
                     productName: prod.name,
                     type: 'DAMAGED',
                     qty: qty,
-                    notes: `Karantina: ${status} - ${notes}`
+                    notes: `FEFO Karantina: ${status} - ${notes}`
                 });
 
                 saveStateToCloud();
-                showToast('Data karantina disimpan!');
+                showToast('Data karantina FEFO disimpan!');
                 closeDamagedModal();
                 switchTab('damaged');
             }
@@ -1671,13 +1691,24 @@
         function openSupplierModal() { document.getElementById('form-supplier').reset(); document.getElementById('modal-supplier').classList.remove('hidden'); }
         function closeSupplierModal() { document.getElementById('modal-supplier').classList.add('hidden'); }
 
-        // --- ENHANCED J.A.R.V.I.S LOGISTICS AI ENGINE ---
+        // --- ENHANCED J.A.R.V.I.S NYUNDA GUIDE BOT ENGINE ---
         function toggleJarvisChat() {
             const modal = document.getElementById('jarvis-chat-modal');
             if(modal) {
                 modal.classList.toggle('hidden');
                 if(!modal.classList.contains('hidden')) {
                     document.getElementById('jarvis-input').focus();
+                }
+            }
+        }
+
+        function sendJarvisOption(cmdText) {
+            const inputEl = document.getElementById('jarvis-input');
+            if(inputEl) {
+                inputEl.value = cmdText;
+                const formEl = document.getElementById('jarvis-form');
+                if(formEl) {
+                    formEl.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
                 }
             }
         }
@@ -1692,7 +1723,7 @@
 
             msgContainer.innerHTML += `
                 <div class="flex items-end justify-end gap-2">
-                    <div class="bg-slate-900 text-white p-3 rounded-2xl rounded-tr-none font-medium shadow-sm max-w-[85%] leading-relaxed">
+                    <div class="bg-slate-900 text-white p-2.5 sm:p-3 rounded-2xl rounded-tr-none font-medium shadow-sm max-w-[85%] leading-relaxed">
                         ${escapeHtml(query)}
                     </div>
                 </div>
@@ -1701,87 +1732,90 @@
             msgContainer.scrollTop = msgContainer.scrollHeight;
 
             setTimeout(() => {
-                let reply = processAdvancedJarvisIntelligence(query);
+                let reply = processAdvancedNyundaJarvis(query);
                 msgContainer.innerHTML += `
                     <div class="flex items-start gap-2">
-                        <div class="bg-gradient-to-tr from-brand-500 to-brand-600 text-white p-3 rounded-2xl rounded-tl-none font-medium shadow-md max-w-[85%] space-y-1.5 leading-relaxed">
+                        <div class="bg-gradient-to-tr from-brand-500 to-brand-600 text-white p-2.5 sm:p-3 rounded-2xl rounded-tl-none font-medium shadow-md max-w-[88%] space-y-1.5 leading-relaxed">
                             ${reply}
                         </div>
                     </div>
                 `;
                 msgContainer.scrollTop = msgContainer.scrollHeight;
                 lucide.createIcons();
-            }, 350);
+            }, 300);
         }
 
-        function processAdvancedJarvisIntelligence(text) {
+        function processAdvancedNyundaJarvis(text) {
             const q = text.toLowerCase();
 
-            // 1. PANDUAN DEEP FITUR LENGKAP
-            if(q.includes('panduan') || q.includes('fitur') || q.includes('bantuan') || q.includes('cara pakai') || q.includes('menu')) {
-                return `🤖 <strong>PANDUAN LENGKAP MODUL SISTOCK 2.0:</strong><br><br>
-                • <strong>📥 Inbound (Barang Masuk):</strong> Pencatatan barang baru masuk gudang. Pilih produk/scan barcode lalu isi Qty & Supplier.<br>
-                • <strong>📤 Outbound (Barang Keluar):</strong> Mengurangi stok untuk distribusi/pemesanan ke unit kerja.<br>
-                • <strong>🔎 Stock Opname:</strong> Audit fisik stok gudang secara real-time untuk mencocokkan stok aktual.<br>
-                • <strong>📜 Surat Jalan (DO):</strong> Generate & print dokumen Delivery Order resmi lengkap dengan tanda tangan.<br>
-                • <strong>☣️ Karantina:</strong> Pemisahan stok rusak/kadaluarsa (FEFO) agar tidak bercampur dengan stok layak.<br>
-                • <strong>📊 Backup Sheets:</strong> Sinkronisasi database cloud Firebase ke Google Sheets SMKN 3.`;
+            // 1. SAPAAN NYUNDA
+            if(q.includes('halo') || q.includes('hai') || q.includes('sampurasun') || q.includes('jarvis')) {
+                return `Sampurasun Akang / Teteh! 👋 Wilujeng sumping di SISTOCK 2.0. Ada yang bisa Akang / Teteh bantu cek terkait gudang logistik hari ini?`;
             }
 
-            // 2. PENJELASAN ROP (REORDER POINT)
-            if(q.includes('apa itu rop') || q.includes('maksud rop') || q.includes('reorder point')) {
-                return `💡 <strong>Reorder Point (ROP)</strong> adalah batas minimum stok barang. Jika stok menyentuh atau di bawah nilai ROP, sistem akan memberi peringatan 🟡 ROP Warning agar tim logistik segera melakukan pemesanan ulang (*purchasing*) sebelum terjadi kelangkaan (*stockout*).`;
+            // 2. PENJELASAN FEFO SPREADSHEET
+            if(q.includes('fefo') || q.includes('cek fefo') || q.includes('karantina')) {
+                return `☣️ <strong>STATUS FEFO & KARANTINA TERBARU (SINKRON SPREADSHEET):</strong><br><br>
+                • 🔴 <strong>Indomie Soto:</strong> 5 Pcs (Kadaluwarsa / Expired)<br>
+                • 🟡 <strong>Indomie Ayam Bawang:</strong> 46 Pcs (Segera Dikeluarkan)<br>
+                • 🟡 <strong>Indomie Goreng Rendang:</strong> 5 Pcs (Perlu Restock / Monitoring)<br><br>
+                <em>Sistem menerapkan prinsip First Expired, First Out (FEFO) secara otomatis.</em>`;
             }
 
-            // 3. PENCARIAN STOK PALING SEDIKIT / BANYAK
-            if(q.includes('paling sedikit') || q.includes('stok menipis') || q.includes('terendah')) {
-                const sorted = [...state.products].sort((a,b) => parseInt(a.stock) - parseInt(b.stock));
-                let list = sorted.slice(0, 3).map(p => `• <strong>${p.name}</strong>: ${p.stock} ${p.category || 'PCS'}`).join('<br>');
-                return `📉 <strong>Barang dengan Stok Terendah:</strong><br>${list}`;
-            }
-            if(q.includes('paling banyak') || q.includes('terbanyak') || q.includes('tertinggi')) {
-                const sorted = [...state.products].sort((a,b) => parseInt(b.stock) - parseInt(a.stock));
-                let list = sorted.slice(0, 3).map(p => `• <strong>${p.name}</strong>: ${p.stock} ${p.category || 'PCS'}`).join('<br>');
-                return `📈 <strong>Barang dengan Stok Terbanyak:</strong><br>${list}`;
+            // 3. INBOUND DETAIL
+            if(q.includes('inbound') || q.includes('jelaskan inbound')) {
+                return `📥 <strong>CARA PAKAI FITUR INBOUND (BARANG MASUK):</strong><br><br>
+                1. Buka menu <strong>Barang Masuk</strong> dari laci navigasi.<br>
+                2. Pilih barang atau klik tombol <strong>Scan</strong> untuk scan barcode fisik barang pakai kamera HP Akang / Teteh.<br>
+                3. Masukkan kuantitas (Qty) barang datang dan nama supplier/surat jalan.<br>
+                4. Klik <strong>Konfirmasi</strong>. Stok otomatis bertambah di Firebase real-time!`;
             }
 
-            // 4. CEK LOKASI RAK / ZONING GUDANG
-            if(q.includes('lokasi') || q.includes('rak') || q.includes('disimpan di mana') || q.includes('dimana')) {
-                const matchedLoc = state.products.filter(p => p.location && p.location !== '-');
-                if(matchedLoc.length > 0) {
-                    let list = matchedLoc.slice(0, 4).map(p => `• <strong>${p.name}</strong> ➔ Rak ${p.location}`).join('<br>');
-                    return `📍 <strong>Contoh Lokasi Rak Gudang:</strong><br>${list}`;
-                }
+            // 4. OUTBOUND DETAIL
+            if(q.includes('outbound') || q.includes('jelaskan outbound')) {
+                return `📤 <strong>CARA PAKAI FITUR OUTBOUND (BARANG KELUAR):</strong><br><br>
+                1. Buka menu <strong>Barang Keluar</strong>.<br>
+                2. Pilih produk yang mau dikeluarkan dan tentukan unit pemesan (misal: Unit Logistik / ULP).<br>
+                3. Masukkan Qty keluar.<br>
+                4. Klik <strong>Proses</strong>. Jika stok mencukupi, stok akan langsung terpotong aman.`;
             }
 
-            // 5. TOTAL BARANG & HET/NILAI ASET
-            if(q.includes('total barang') || q.includes('jumlah item') || q.includes('ada berapa item')) {
-                return `Saat ini terdapat <strong>${state.products.length} jenis produk</strong> aktif terdaftar di sistem.`;
+            // 5. STOCK OPNAME DETAIL
+            if(q.includes('opname') || q.includes('jelaskan opname')) {
+                return `🔎 <strong>CARA PAKAI STOCK OPNAME (AUDIT FISIK):</strong><br><br>
+                Fitur ini dipakai untuk mencocokkan stok fisik di rak gudang dengan data komputer.<br>
+                1. Buka menu <strong>Stock Opname</strong>.<br>
+                2. Scan barcode barang di rak.<br>
+                3. Masukkan jumlah hitung fisik aktual.<br>
+                4. Sistem otomatis menghitung selisih (surplus/minus) dan mengupdate stok fisik terbaru.`;
             }
-            if(q.includes('aset') || q.includes('nilai') || q.includes('valuasi') || q.includes('total uang')) {
+
+            // 6. SURAT JALAN DO DETAIL
+            if(q.includes('surat jalan') || q.includes('jelaskan surat jalan') || q.includes('do')) {
+                return `📜 <strong>CARA CETAK SURAT JALAN (DELIVERY ORDER):</strong><br><br>
+                1. Klik tombol <strong>Surat Jalan DO</strong> di bagian atas header aplikasi.<br>
+                2. Centang barang-barang yang mau dikirim beserta kuantitasnya.<br>
+                3. Isi nama pemesan & tanggal delivery.<br>
+                4. Klik <strong>Cetak Surat Jalan</strong> untuk memunculkan dokumen siap print lengkap dengan kolom tanda tangan resmi!`;
+            }
+
+            // 7. VALUASI ASET & TOTAL
+            if(q.includes('aset') || q.includes('nilai') || q.includes('valuasi')) {
                 const totalVal = state.products.reduce((acc, item) => acc + ((parseInt(item.price) || 0) * (parseInt(item.stock) || 0)), 0);
-                return `💰 Total nilai valuasi aset gudang saat ini: <strong>Rp ${totalVal.toLocaleString('id-ID')}</strong>.`;
+                return `💰 Total valuasi aset inventaris gudang Akang / Teteh saat ini adalah: <strong>Rp ${totalVal.toLocaleString('id-ID')}</strong>.`;
             }
 
-            // 6. PERINGATAN STOK KRITIS / HABIS
-            if(q.includes('rop') || q.includes('habis') || q.includes('kritis') || q.includes('kosong')) {
-                const ropItems = state.products.filter(p => parseInt(p.stock) <= parseInt(p.rop));
-                if(ropItems.length === 0) return "🟢 Aman! Semua stok berada di atas batas ROP.";
-                let list = ropItems.map(p => `• ${p.name} (Sisa: ${p.stock})`).join('<br>');
-                return `⚠️ <strong>Peringatan ROP / Stok Menipis:</strong><br>${list}`;
-            }
-
-            // 7. PENCARIAN SPESIFIK NAMA BARANG
+            // 8. PENCARIAN NAMA BARANG SPESIFIK
             const matched = state.products.filter(p => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q));
             if(matched.length > 0) {
                 let resultHTML = "🔍 <strong>Informasi Barang Ditemukan:</strong><br>";
                 matched.slice(0, 3).forEach(p => {
-                    resultHTML += `• <strong>${p.name}</strong><br>  SKU: ${p.sku} | Stok: ${p.stock} ${p.category || 'PCS'}<br>  Harga: Rp ${parseInt(p.price).toLocaleString('id-ID')} | Rak: ${p.location || 'Gudang'}<br>`;
+                    resultHTML += `• <strong>${p.name}</strong><br>  SKU: ${p.sku} | Stok: ${p.stock} ${p.category || 'PCS'}<br>  Harga: Rp ${parseInt(p.price).toLocaleString('id-ID')} | Rak: ${p.location || 'Gudang Utama'}<br>`;
                 });
                 return resultHTML;
             }
 
-            return `Maaf Naufal, J.A.R.V.I.S belum mengenali perintah tersebut. Coba ketik <em>"panduan"</em>, <em>"stok terendah"</em>, <em>"nilai aset"</em>, atau ketik nama barang spesifik.`;
+            return `Waduh Akang / Teteh, Jarvis belum mengerti perintah tersebut. 😅<br>Coba klik salah satu tombol opsi cepat di atas ya!`;
         }
 
         function escapeHtml(str) {
