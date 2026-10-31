@@ -159,6 +159,23 @@
                 
                 <!-- SECTION: DASHBOARD -->
                 <section id="section-dashboard" class="space-y-5">
+                    
+                    <!-- Quick Action Tombol Barang Masuk & Keluar (Sesuai Catatan Pak Yunan) -->
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <div>
+                            <h3 class="font-bold text-xs uppercase tracking-wider text-slate-800">Aksi Cepat Transaksi Gudang</h3>
+                            <p class="text-[10px] text-slate-500">Pencatatan langsung arus barang masuk dan keluar harian</p>
+                        </div>
+                        <div class="flex items-center gap-2 w-full sm:w-auto">
+                            <button onclick="openQuickTransactionModal('IN')" class="flex-1 sm:flex-none bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow-sm">
+                                <i data-lucide="arrow-down-left" class="w-4 h-4"></i> + Barang Masuk
+                            </button>
+                            <button onclick="openQuickTransactionModal('OUT')" class="flex-1 sm:flex-none bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow-sm">
+                                <i data-lucide="arrow-up-right" class="w-4 h-4"></i> - Barang Keluar
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                             <div class="flex items-center justify-between text-slate-500 mb-1">
@@ -1072,7 +1089,6 @@
             lucide.createIcons();
         }
 
-        // --- FIXED: RENDER SUPPLIERS WITH DELETE BUTTON ---
         function renderSuppliers() {
             const tbody = document.getElementById('suppliers-tbody');
             if(!tbody) return;
@@ -1264,7 +1280,6 @@
             }
         }
 
-        // --- FIXED: SAVE SUPPLIER FUNCTION ---
         function saveSupplier(e) {
             e.preventDefault();
             
@@ -1292,7 +1307,6 @@
             alert('✅ Pemasok / User baru berhasil ditambahkan!');
         }
 
-        // --- FIXED: DELETE SUPPLIER FUNCTION ---
         function deleteSupplier(id) {
             if(confirm('Apakah kamu yakin ingin menghapus data pemasok/user ini?')) {
                 if(state.suppliers) {
@@ -1300,6 +1314,17 @@
                     saveStateToCloud();
                 }
             }
+        }
+
+        // Fungsi Quick Action Tombol Barang Masuk & Keluar di Dashboard
+        function openQuickTransactionModal(type) {
+            switchTab('operations');
+            const typeSelect = document.getElementById('opname-type');
+            if(typeSelect) {
+                typeSelect.value = type;
+            }
+            const qtyInput = document.getElementById('opname-qty');
+            if(qtyInput) qtyInput.focus();
         }
 
         function renderRecapData() {
