@@ -140,7 +140,7 @@
                         <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Rekapitulasi Tren
                     </button>
                     <button onclick="switchTab('suppliers')" id="nav-suppliers" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition text-slate-600 hover:bg-slate-100">
-                        <i data-lucide="truck" class="w-4 h-4"></i> Data Pemasok
+                        <i data-lucide="truck" class="w-4 h-4"></i> Data Pemasok & User
                     </button>
                 </div>
 
@@ -172,11 +172,11 @@
 
                         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                             <div class="flex items-center justify-between text-slate-500 mb-1">
-                                <span class="text-xs font-medium">Nilai Total Aset</span>
+                                <span class="text-xs font-medium">Total Stok Unit</span>
                                 <i data-lucide="wallet" class="w-4 h-4 text-emerald-500"></i>
                             </div>
-                            <h3 id="stat-total-value" class="text-lg sm:text-xl font-bold text-slate-900">Rp 0</h3>
-                            <p class="text-[10px] text-emerald-600 font-medium mt-1">Valuasi inventaris gudang</p>
+                            <h3 id="stat-total-value" class="text-lg sm:text-xl font-bold text-slate-900">0 Unit</h3>
+                            <p class="text-[10px] text-emerald-600 font-medium mt-1">Akumulasi fisik gudang</p>
                         </div>
 
                         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
@@ -190,11 +190,11 @@
 
                         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                             <div class="flex items-center justify-between text-slate-500 mb-1">
-                                <span class="text-xs font-medium">Barang Rusak / Expired</span>
+                                <span class="text-xs font-medium">Barang Karantina / Exp</span>
                                 <i data-lucide="alert-octagon" class="w-4 h-4 text-amber-500"></i>
                             </div>
                             <h3 id="stat-damaged-count" class="text-2xl font-bold text-amber-600">0</h3>
-                            <p class="text-[10px] text-amber-500 font-medium mt-1">Perlu karantina/retur</p>
+                            <p class="text-[10px] text-amber-500 font-medium mt-1">Perlu tindakan</p>
                         </div>
                     </div>
 
@@ -215,7 +215,7 @@
                         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col">
                             <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2">
                                 <i data-lucide="award" class="w-4 h-4 text-amber-500"></i>
-                                Barang Aset Tertinggi
+                                Stok Terbanyak
                             </h4>
                             <div id="top-products-list" class="space-y-2 flex-1 overflow-y-auto custom-scrollbar pr-1 text-slate-400 text-xs italic">Memuat data...</div>
                         </div>
@@ -250,7 +250,7 @@
                     <div class="flex flex-col sm:flex-row justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
                         <div class="relative flex-1">
                             <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
-                            <input type="text" id="search-product" onkeyup="renderProducts()" placeholder="Cari Kode SKU / Barcode Dus atau Nama Barang..." class="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-brand-500">
+                            <input type="text" id="search-product" onkeyup="renderProducts()" placeholder="Cari Kode Barcode atau Nama Barang..." class="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-brand-500">
                         </div>
                         <div class="flex gap-2">
                             <button onclick="openScannerModal('search')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 border border-slate-200">
@@ -274,12 +274,12 @@
                             <table class="w-full text-left text-xs">
                                 <thead class="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-200">
                                     <tr>
-                                        <th class="p-3">SKU / Barcode Dus</th>
+                                        <th class="p-3">Barcode</th>
                                         <th class="p-3">Nama Barang</th>
-                                        <th class="p-3">Kategori</th>
-                                        <th class="p-3">Harga Satuan</th>
+                                        <th class="p-3">Satuan</th>
+                                        <th class="p-3">Lokasi</th>
                                         <th class="p-3 text-center">ROP (Min)</th>
-                                        <th class="p-3 text-center">Stok</th>
+                                        <th class="p-3 text-center">Stok Akhir</th>
                                         <th class="p-3 text-center">Status</th>
                                         <th class="p-3 text-right">Aksi</th>
                                     </tr>
@@ -311,11 +311,11 @@
                             <table class="w-full text-left text-xs">
                                 <thead class="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-200">
                                     <tr>
-                                        <th class="p-3">Tanggal Catat</th>
-                                        <th class="p-3">Nama Barang (SKU)</th>
+                                        <th class="p-3">Tanggal Expired</th>
+                                        <th class="p-3">Nama Barang</th>
                                         <th class="p-3">Jumlah Fisik</th>
-                                        <th class="p-3">Status Karantina</th>
-                                        <th class="p-3">Keterangan / Alasan</th>
+                                        <th class="p-3">Satuan</th>
+                                        <th class="p-3">Status Karantina / Catatan</th>
                                         <th class="p-3 text-right">Aksi</th>
                                     </tr>
                                 </thead>
@@ -342,7 +342,7 @@
 
                         <form id="form-opname" onsubmit="handleDetailedOpname(event)" class="space-y-3 text-xs">
                             <div>
-                                <label class="font-semibold text-slate-600 block mb-1">Pilih Barang / SKU</label>
+                                <label class="font-semibold text-slate-600 block mb-1">Pilih Barang Gudang</label>
                                 <select id="opname-product-id" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-500">
                                     <option value="">-- Pilih Barang Gudang --</option>
                                 </select>
@@ -363,8 +363,8 @@
                                 </div>
                             </div>
                             <div>
-                                <label class="font-semibold text-slate-600 block mb-1">Keterangan / No. Surat Jalan</label>
-                                <input type="text" id="opname-notes" placeholder="Misal: Surat Jalan #012 / Alasan rusak" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-500">
+                                <label class="font-semibold text-slate-600 block mb-1">Keterangan / No. Surat Jalan / Tujuan</label>
+                                <input type="text" id="opname-notes" placeholder="Misal: Kurikulum / ULP / Alasan" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:border-brand-500">
                             </div>
                             <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-semibold py-2.5 rounded-lg transition shadow-sm">
                                 Proses & Update Sistem Cloud
@@ -422,11 +422,11 @@
                 <section id="section-suppliers" class="space-y-4 hidden">
                     <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
                         <div>
-                            <h3 class="font-bold text-xs text-slate-900 uppercase tracking-wider">Pemasok (Suppliers)</h3>
-                            <p class="text-[10px] text-slate-400">Kontak vendor distributor barang gudang</p>
+                            <h3 class="font-bold text-xs text-slate-900 uppercase tracking-wider">Pemasok & Pengguna Sistem</h3>
+                            <p class="text-[10px] text-slate-400">Daftar role akun dan vendor gudang</p>
                         </div>
                         <button onclick="openSupplierModal()" class="bg-brand-500 hover:bg-brand-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition">
-                            <i data-lucide="plus" class="w-4 h-4"></i> Tambah Supplier
+                            <i data-lucide="plus" class="w-4 h-4"></i> Tambah User/Supplier
                         </button>
                     </div>
 
@@ -435,8 +435,8 @@
                             <table class="w-full text-left text-xs">
                                 <thead class="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-200">
                                     <tr>
-                                        <th class="p-3">Kode</th>
-                                        <th class="p-3">Nama Pemasok</th>
+                                        <th class="p-3">Role / Kode</th>
+                                        <th class="p-3">Nama User / Supplier</th>
                                         <th class="p-3">Kontak Person</th>
                                         <th class="p-3">No. Telepon</th>
                                     </tr>
@@ -499,11 +499,11 @@
             <form id="form-product" onsubmit="saveProduct(event)" class="space-y-3 text-xs">
                 <input type="hidden" id="prod-id">
                 <div>
-                    <label class="font-semibold text-slate-600 block mb-1">Kode SKU / Barcode (Scan dari Dus atau Pabrik)</label>
+                    <label class="font-semibold text-slate-600 block mb-1">Kode Barcode / SKU</label>
                     <div class="flex gap-2 items-center">
-                        <input type="text" id="prod-sku" required placeholder="Scan barcode dus..." class="w-full bg-slate-50 border border-slate-200 p-2 rounded-lg font-mono font-bold text-brand-600 focus:outline-none focus:border-brand-500">
+                        <input type="text" id="prod-sku" required placeholder="Scan barcode..." class="w-full bg-slate-50 border border-slate-200 p-2 rounded-lg font-mono font-bold text-brand-600 focus:outline-none focus:border-brand-500">
                         <button type="button" onclick="openScannerModal('input')" class="bg-brand-500 hover:bg-brand-600 text-white px-3 py-2 rounded-lg font-semibold flex items-center gap-1 shadow-sm flex-shrink-0">
-                            <i data-lucide="scan" class="w-4 h-4"></i> Scan Dus
+                            <i data-lucide="scan" class="w-4 h-4"></i> Scan
                         </button>
                     </div>
                 </div>
@@ -513,17 +513,17 @@
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="font-semibold text-slate-600 block mb-1">Kategori</label>
-                        <input type="text" id="prod-category" placeholder="Elektronik / Bahan" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none focus:border-brand-500">
+                        <label class="font-semibold text-slate-600 block mb-1">Satuan</label>
+                        <input type="text" id="prod-category" placeholder="PCS / DUS / RENCENG" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none focus:border-brand-500">
                     </div>
                     <div>
-                        <label class="font-semibold text-slate-600 block mb-1">Harga Satuan (Rp)</label>
-                        <input type="number" id="prod-price" min="0" required placeholder="0" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none focus:border-brand-500">
+                        <label class="font-semibold text-slate-600 block mb-1">Lokasi Rak/Gudang</label>
+                        <input type="text" id="prod-price" placeholder="Misal: B01.2 / Gudang" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none focus:border-brand-500">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="font-semibold text-slate-600 block mb-1">Stok Awal</label>
+                        <label class="font-semibold text-slate-600 block mb-1">Stok Akhir</label>
                         <input type="number" id="prod-stock" min="0" required placeholder="0" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none focus:border-brand-500">
                     </div>
                     <div>
@@ -539,24 +539,24 @@
         </div>
     </div>
 
-    <!-- MODAL: DELIVERY ORDER & FORMAT CETAK SURAT JALAN -->
+    <!-- MODAL: DELIVERY ORDER & FORMAT CETAK SURAT JALAN (FIXED) -->
     <div id="deliveryModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                    <i data-lucide="file-text" class="w-4 h-4 text-brand-500"></i> Form Formatting Delivery Order (Surat Jalan)
+                    <i data-lucide="file-text" class="w-4 h-4 text-brand-500"></i> Form Delivery Order (Surat Jalan)
                 </h3>
-                <button onclick="closeDeliveryModal()" class="text-slate-400 hover:text-slate-600 text-xl">&times;</button>
+                <button onclick="closeDeliveryModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-lg text-xs border border-slate-200">
                 <div>
                     <label class="block font-semibold text-slate-600 mb-1">Nama Pemesan / Tujuan</label>
-                    <input type="text" id="doCustomer" placeholder="Contoh: Unit Logistik / Kantin" value="Unit Logistik" class="w-full border rounded p-2 text-sm outline-none bg-white">
+                    <input type="text" id="doCustomer" oninput="updateDeliveryPreview()" placeholder="Contoh: Unit Logistik / ULP" value="Unit Logistik" class="w-full border rounded p-2 text-sm outline-none bg-white focus:border-brand-500">
                 </div>
                 <div>
                     <label class="block font-semibold text-slate-600 mb-1">Tanggal Delivery</label>
-                    <input type="date" id="doDate" class="w-full border rounded p-2 text-sm outline-none bg-white">
+                    <input type="date" id="doDate" onchange="updateDeliveryPreview()" class="w-full border rounded p-2 text-sm outline-none bg-white focus:border-brand-500">
                 </div>
             </div>
 
@@ -630,15 +630,15 @@
                     <div>
                         <label class="font-semibold text-slate-600 block mb-1">Status Karantina</label>
                         <select id="dmg-status" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none">
-                            <option value="Rusak Fisik">Rusak Fisik</option>
-                            <option value="Kadaluarsa (Expired)">Kadaluarsa (Expired)</option>
-                            <option value="Cacat Produksi">Cacat Produksi</option>
+                            <option value="segera dikeluarkan">Segera Dikeluarkan</option>
+                            <option value="kadaluwarsa">Kadaluwarsa</option>
+                            <option value="masih aman">Masih Aman</option>
                         </select>
                     </div>
                 </div>
                 <div>
-                    <label class="font-semibold text-slate-600 block mb-1">Keterangan / Tindakan</label>
-                    <input type="text" id="dmg-notes" placeholder="Misal: Retur ke supplier / Musnahkan" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none">
+                    <label class="font-semibold text-slate-600 block mb-1">Tgl Expired / Catatan</label>
+                    <input type="text" id="dmg-notes" placeholder="Misal: 28/12/2026 / Segera dikeluarkan" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none">
                 </div>
                 <div class="pt-2 flex justify-end gap-2">
                     <button type="button" onclick="closeDamagedModal()" class="px-3 py-1.5 border rounded-lg font-semibold text-slate-600">Batal</button>
@@ -652,17 +652,17 @@
     <div id="modal-supplier" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-xl max-w-sm w-full p-5 space-y-4 shadow-xl">
             <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-bold text-xs uppercase tracking-wider text-slate-900">Tambah Supplier</h3>
+                <h3 class="font-bold text-xs uppercase tracking-wider text-slate-900">Tambah Supplier / User</h3>
                 <button onclick="closeSupplierModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-4 h-4"></i></button>
             </div>
             <form id="form-supplier" onsubmit="saveSupplier(event)" class="space-y-3 text-xs">
                 <div>
-                    <label class="font-semibold text-slate-600 block mb-1">Nama Vendor / PT</label>
-                    <input type="text" id="sup-name" required placeholder="PT. Supply Utama" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none">
+                    <label class="font-semibold text-slate-600 block mb-1">Nama Vendor / PT / Akun</label>
+                    <input type="text" id="sup-name" required placeholder="Nama..." class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none">
                 </div>
                 <div>
-                    <label class="font-semibold text-slate-600 block mb-1">Kontak Person</label>
-                    <input type="text" id="sup-contact" placeholder="Nama Admin" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none">
+                    <label class="font-semibold text-slate-600 block mb-1">Kontak Person / Role</label>
+                    <input type="text" id="sup-contact" placeholder="CHECKER / ADMIN GUDANG" class="w-full border border-slate-200 p-2 rounded-lg focus:outline-none">
                 </div>
                 <div>
                     <label class="font-semibold text-slate-600 block mb-1">No. Telepon / WhatsApp</label>
@@ -681,7 +681,7 @@
         <div class="bg-white rounded-xl max-w-md w-full p-5 space-y-4 shadow-xl">
             <div class="flex justify-between items-center border-b pb-2">
                 <h3 class="font-bold text-xs uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
-                    <i data-lucide="scan" class="w-4 h-4 text-brand-500"></i> Scan Barcode Dus / SKU
+                    <i data-lucide="scan" class="w-4 h-4 text-brand-500"></i> Scan Barcode Dus / Produk
                 </h3>
                 <button onclick="closeScannerModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-4 h-4"></i></button>
             </div>
@@ -710,28 +710,98 @@
         const AUTH_USER = "MLGSMKN3BDG";
         const AUTH_PASS = "LOGISTIK2627";
 
-        // Data awal terintegrasi Portal Inventaris
+        // DATA MURNI 100% DARIPADA SPREADSHEET GUDANG SEKOLAH (DATA BASE APLIKASI GUDANG-1.xlsx)
         const INITIAL_SPREADSHEET_DATA = {
             suppliers: [
-                { id: "sup-1", code: "SUP-01", name: "PT. Logitech Indonesia", contact: "Distributor Tech", phone: "08123456789" },
-                { id: "sup-2", code: "SUP-02", name: "PT. PaperOne Nusantara", contact: "Sales ATK", phone: "08198765432" }
+                { id: "sup-1", code: "CHECKER", name: "CHECKER GUDANG", contact: "Role: CHECKER", phone: "-" },
+                { id: "sup-2", code: "MANAJER", name: "MANAJER LOGISTIK", contact: "Role: MANAJER", phone: "-" },
+                { id: "sup-3", code: "ADMIN", name: "ADMIN GUDANG", contact: "Role: ADMIN GUDANG", phone: "-" }
             ],
             products: [
-                { id: "prod-1", sku: "STK-ELK-001", name: "Logitech Wireless Mouse M185", category: "Elektronik", price: 165000, stock: 42, rop: 15 },
-                { id: "prod-2", sku: "STK-ELK-002", name: "Keyboard Mechanical RGB TKL", category: "Elektronik", price: 420000, stock: 8, rop: 10 },
-                { id: "prod-3", sku: "STK-ATK-001", name: "Kertas HVS A4 80gr PaperOne (Rim)", category: "ATK & Kantor", price: 55000, stock: 120, rop: 30 },
-                { id: "prod-4", sku: "STK-ATK-002", name: "Bantex Lever Arch File F4", category: "ATK & Kantor", price: 38500, stock: 12, rop: 15 },
-                { id: "prod-5", sku: "STK-FNB-001", name: "Kopi Robusta Lampung 1kg", category: "F&B Bahan Baku", price: 110000, stock: 25, rop: 10 },
-                { id: "prod-6", sku: "STK-FNB-002", name: "Sirup Vanilla Monin 700ml", category: "F&B Bahan Baku", price: 145000, stock: 3, rop: 5 },
-                { id: "prod-7", sku: "STK-KMS-001", name: "Kardus Packing Die Cut 20x10x5", category: "Kemasan", price: 2800, stock: 450, rop: 100 },
-                { id: "prod-8", sku: "STK-KMS-002", name: "Bubble Wrap Roll 50m x 1.25m", category: "Kemasan", price: 125000, stock: 0, rop: 8 },
-                { id: "prod-9", sku: "STK-ELK-003", name: "Kabel HDMI 2.1 Ultra High Speed 2m", category: "Elektronik", price: 85000, stock: 35, rop: 12 },
-                { id: "prod-10", sku: "STK-ATK-003", name: "Tinta Printer Epson 003 Black", category: "ATK & Kantor", price: 92000, stock: 4, rop: 10 }
+                { id: "prod-1", sku: "18993496110072", name: "TEPUNG TULIP", category: "PCS", price: 0, stock: 0, rop: 10, location: "Staging area" },
+                { id: "prod-2", sku: "18998866201343", name: "SEDAP WHITE CURRY", category: "PCS", price: 0, stock: 0, rop: 10, location: "B01.2" },
+                { id: "prod-3", sku: "8993539106003", name: "RON 88 600 ML", category: "DUS", price: 0, stock: 0, rop: 10, location: "D2" },
+                { id: "prod-4", sku: "10341330462", name: "RON 88 500 ML", category: "DUS", price: 0, stock: 85, rop: 15, location: "A01.3, A01.2, A01.1, B01.1, C01.2" },
+                { id: "prod-5", sku: "8993539105006", name: "RON 88 380ML", category: "PCS", price: 0, stock: 0, rop: 10, location: "C01.3" },
+                { id: "prod-6", sku: "8993539121501", name: "RON 88 1,5 L", category: "DUS", price: 0, stock: 13, rop: 10, location: "D2" },
+                { id: "prod-7", sku: "18993496111017", name: "MINYAKITA 1 Liter", category: "PCS", price: 0, stock: 0, rop: 10, location: "C01.1" },
+                { id: "prod-8", sku: "8992946535178", name: "MINYAK TROPICAL 1,5L", category: "BOTOL", price: 0, stock: 0, rop: 10, location: "C01.2" },
+                { id: "prod-9", sku: "18993496000151", name: "Minyak Sania", category: "PCS", price: 0, stock: 0, rop: 10, location: "BC" },
+                { id: "prod-10", sku: "18993379500235", name: "Minyak Sunco", category: "Pcs", price: 0, stock: 14, rop: 10, location: "Gudang" },
+                { id: "prod-11", sku: "8992946532795", name: "Minyak Rizki", category: "Pcs", price: 0, stock: 0, rop: 10, location: "C01.2" },
+                { id: "prod-12", sku: "8992826111089", name: "MINYAK GORENG FILMA", category: "PCS", price: 0, stock: 0, rop: 10, location: "D3" },
+                { id: "prod-13", sku: "8992826111188", name: "MINYAK FILMA 2 Liter", category: "PCS", price: 0, stock: 0, rop: 10, location: "Gudang" },
+                { id: "prod-14", sku: "38992628020153", name: "Minyak Bimoli", category: "PCS", price: 0, stock: 0, rop: 10, location: "Gudang" },
+                { id: "prod-15", sku: "18996001523237", name: "MIE GELAS SOTO AYAM", category: "RENCENG", price: 0, stock: 0, rop: 10, location: "C01.4" },
+                { id: "prod-16", sku: "18996001520427", name: "MIE GELAS SOSIS BBQ", category: "PCS", price: 0, stock: 0, rop: 10, location: "C01.4" },
+                { id: "prod-17", sku: "18996001523381", name: "MIE GELAS SOP BUNTUT", category: "PCS", price: 0, stock: 0, rop: 10, location: "Staging area" },
+                { id: "prod-18", sku: "18996001523220", name: "MIE GELAS KARI AYAM", category: "PCS", price: 0, stock: 0, rop: 10, location: "C01.4" },
+                { id: "prod-19", sku: "18996001523244", name: "MIE GELAS BASO SAPI", category: "PCS", price: 0, stock: 0, rop: 10, location: "C01.4" },
+                { id: "prod-20", sku: "18996001523213", name: "MIE GELAS AYAM BAWANG", category: "RENCENG", price: 0, stock: 0, rop: 10, location: "C01.4" },
+                { id: "prod-21", sku: "18888166603612", name: "Konguan Mini", category: "Dus", price: 0, stock: 0, rop: 10, location: "D01.3" },
+                { id: "prod-22", sku: "10089686010340", name: "INDOMIE SOTO", category: "PCS", price: 0, stock: 0, rop: 10, location: "B01.3" },
+                { id: "prod-23", sku: "10089686011279", name: "INDOMIE KOCOK BANDUNG", category: "PCS", price: 0, stock: 0, rop: 10, location: "B01.3" },
+                { id: "prod-24", sku: "10089686010524", name: "INDOMIE KARI", category: "PCS", price: 0, stock: 0, rop: 10, location: "B01.2" },
+                { id: "prod-25", sku: "10089686043683", name: "INDOMIE IGA PENYET", category: "PCS", price: 0, stock: 80, rop: 20, location: "B01.3" },
+                { id: "prod-26", sku: "10089686043270", name: "INDOMIE GORENG RICA RICA", category: "PCS", price: 0, stock: 85, rop: 20, location: "B01.2" },
+                { id: "prod-27", sku: "10089686011187", name: "INDOMIE GORENG RENDANG", category: "PCS", price: 0, stock: 5, rop: 10, location: "B01.3" },
+                { id: "prod-28", sku: "10089686010944", name: "INDOMIE GORENG ORIGINAL", category: "PCS", price: 0, stock: 99, rop: 20, location: "B01.2" },
+                { id: "prod-29", sku: "10089686010715", name: "INDOMIE GORENG CABE IJO", category: "PCS", price: 0, stock: 81, rop: 20, location: "B01.3" },
+                { id: "prod-30", sku: "10089686043430", name: "INDOMIE GORENG AYAM GEPREK", category: "PCS", price: 0, stock: 20, rop: 10, location: "B01.3" },
+                { id: "prod-31", sku: "10089686043201", name: "INDOMIE GORENG ACEH", category: "PCS", price: 0, stock: 80, rop: 20, location: "B01.2" },
+                { id: "prod-32", sku: "10089686910305", name: "INDOMIE EMPAL GENTONG", category: "PCS", price: 0, stock: 40, rop: 10, location: "Gudang" },
+                { id: "prod-33", sku: "10089686010012", name: "INDOMIE AYAM BAWANG", category: "PCS", price: 0, stock: 96, rop: 20, location: "B01.2" },
+                { id: "prod-34", sku: "8995180000000", name: "Gulaku Murni 1Kg", category: "Pcs", price: 0, stock: 0, rop: 10, location: "D01.3" },
+                { id: "prod-35", sku: "8993093665480", name: "GULA ROSE BRAND", category: "PCS", price: 0, stock: 0, rop: 10, location: "C01.1" },
+                { id: "prod-36", sku: "02881539", name: "Gula pasir lokal", category: "PCS", price: 0, stock: 0, rop: 10, location: "D01.1" },
+                { id: "prod-37", sku: "8993226568473", name: "GARAM DAPUR", category: "PCS", price: 0, stock: 0, rop: 10, location: "Staging area" },
+                { id: "prod-38", sku: "18993118731104", name: "BIHUNKU SOTO", category: "PCS", price: 0, stock: 0, rop: 10, location: "B01.3" },
+                { id: "prod-39", sku: "18993118938497", name: "BIHUNKU seduh soto ayam", category: "RENCENG", price: 0, stock: 0, rop: 10, location: "B01.2" },
+                { id: "prod-40", sku: "18993118938503", name: "BIHUNKU seduh Kaldu Ayam", category: "RENCENG", price: 0, stock: 0, rop: 10, location: "Gudang" },
+                { id: "prod-41", sku: "18993118938510", name: "BIHUNKU seduh bakso", category: "RENCENG", price: 0, stock: 0, rop: 10, location: "D01.1" },
+                { id: "prod-42", sku: "18993118000019", name: "BIHUNKU Bakso sapi", category: "PCS", price: 0, stock: 0, rop: 10, location: "B01.3" },
+                { id: "prod-43", sku: "18993118731043", name: "BIHUNKU AYAM BAWANG", category: "PCS", price: 0, stock: 0, rop: 10, location: "B01.3" },
+                { id: "prod-44", sku: "18993118938053", name: "BIHUNKU ASAM PEDAS", category: "PCS", price: 0, stock: 0, rop: 10, location: "B01.1" },
+                { id: "prod-45", sku: "8994096225817", name: "beras slyp super", category: "PCS", price: 0, stock: 0, rop: 10, location: "-" },
+                { id: "prod-46", sku: "8997204210019", name: "BERAS PULEN 5KG", category: "PCS", price: 0, stock: 0, rop: 10, location: "Staging area" },
+                { id: "prod-47", sku: "8993539102401", name: "AIR RON 88 CUP 200ml", category: "DUS", price: 0, stock: 8, rop: 5, location: "C01.2" },
+                { id: "prod-48", sku: "8993539322922", name: "AIR MINERAL PERFECT 500 ML", category: "DUS", price: 0, stock: 9, rop: 5, location: "Gudang" },
+                { id: "prod-49", sku: "8993539322939", name: "AIR MINERAL PERFECT 2L", category: "DUS", price: 0, stock: 0, rop: 5, location: "D01.3" },
+                { id: "prod-50", sku: "8993539322977", name: "AIR MINERAL PERFECT 1L", category: "PCS", price: 0, stock: 14, rop: 5, location: "C01.3" },
+                { id: "prod-51", sku: "112233445577", name: "Aci", category: "PCS", price: 0, stock: 0, rop: 10, location: "Staging area" },
+                { id: "prod-52", sku: "8994171102361", name: "TARIK MALAKA", category: "RENCENG", price: 0, stock: 54, rop: 10, location: "GUDANG" },
+                { id: "prod-53", sku: "8992946122002", name: "Minyak Tropical", category: "Satuan", price: 0, stock: 10, rop: 5, location: "Gudang" },
+                { id: "prod-54", sku: "8993093665497", name: "Gula rose brand", category: "Pcs", price: 0, stock: 0, rop: 10, location: "A01.1" }
             ],
-            damagedGoods: [],
+            damagedGoods: [
+                { id: "dmg-1", timestamp: "26/11/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 46, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan | Ket: TERSEDIA" },
+                { id: "dmg-2", timestamp: "28/12/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 31, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan" },
+                { id: "dmg-3", timestamp: "02/10/2026", productName: "Indomie Soto", sku: "10089686010340", qty: 5, status: "kadaluwarsa", notes: "Catatan: kadaluwarsa" },
+                { id: "dmg-4", timestamp: "05/01/2027", productName: "Indomie Soto", sku: "10089686010340", qty: 40, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan" },
+                { id: "dmg-5", timestamp: "28/12/2026", productName: "Indomie Goreng Original", sku: "10089686010944", qty: 29, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan" },
+                { id: "dmg-6", timestamp: "05/01/2027", productName: "Indomie Soto Mie", sku: "10089686010340", qty: 10, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan | Ket: TERSEDIA" },
+                { id: "dmg-7", timestamp: "19/05/2027", productName: "Indomie Rendang", sku: "10089686011187", qty: 40, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
+                { id: "dmg-8", timestamp: "15/05/2027", productName: "Indomie Goreng Original", sku: "10089686010944", qty: 40, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
+                { id: "dmg-9", timestamp: "15/01/2027", productName: "Indomie Rica-Rica", sku: "10089686043270", qty: 40, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan" },
+                { id: "dmg-10", timestamp: "07/01/2027", productName: "Indomie cabe ijo", sku: "10089686010715", qty: 40, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan" },
+                { id: "dmg-11", timestamp: "22/01/2027", productName: "Indomie cabe ijo", sku: "10089686010715", qty: 40, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan" },
+                { id: "dmg-12", timestamp: "21/01/2027", productName: "Indomie cabe ijo", sku: "10089686010715", qty: 40, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan" },
+                { id: "dmg-13", timestamp: "10/04/2028", productName: "Indomie cabe ijo", sku: "10089686010715", qty: 5, status: "masih aman", notes: "Catatan: masih aman" },
+                { id: "dmg-14", timestamp: "19/11/2027", productName: "Tarik Malaka", sku: "8994171102361", qty: 12, status: "masih aman", notes: "Catatan: masih aman" },
+                { id: "dmg-15", timestamp: "26/04/2027", productName: "Indomie Cabe Ijo", sku: "10089686010715", qty: 45, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
+                { id: "dmg-16", timestamp: "28/04/2027", productName: "Indomie Ayam Geprek", sku: "10089686043430", qty: 65, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
+                { id: "dmg-17", timestamp: "14/01/2027", productName: "Indomie Gentong", sku: "10089686910305", qty: 40, status: "segera dikeluarkan", notes: "Catatan: segera dikeluarkan | Ket: TERSEDIA" },
+                { id: "dmg-18", timestamp: "17/05/2027", productName: "Indomie Goreng Aceh", sku: "10089686043201", qty: 65, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
+                { id: "dmg-19", timestamp: "27/04/2027", productName: "Indomie Rica Rica", sku: "10089686043270", qty: 30, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
+                { id: "dmg-20", timestamp: "06/03/2027", productName: "Indomie Iga Penyet", sku: "10089686043683", qty: 95, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
+                { id: "dmg-21", timestamp: "17/05/2028", productName: "Sunco", sku: "18993379500235", qty: 46, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
+                { id: "dmg-22", timestamp: "30/03/2028", productName: "Tropical", sku: "8992946122002", qty: 1, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" },
+                { id: "dmg-23", timestamp: "10/07/2028", productName: "Gulaku", sku: "8995180000000", qty: 20, status: "masih aman", notes: "Catatan: masih aman | Ket: TERSEDIA" }
+            ],
             logs: [
-                { timestamp: "2026-10-31 08:30:15", productName: "Logitech Wireless Mouse M185", type: "IN", qty: 42, notes: "Sinkronisasi awal Portal" },
-                { timestamp: "2026-10-31 08:31:02", productName: "Keyboard Mechanical RGB TKL", type: "IN", qty: 8, notes: "Sinkronisasi awal Portal" }
+                { timestamp: "10/28/26 6:42", productName: "RON 88 500 ML", type: "IN", qty: 50, notes: "BARANG MASUK - Lokasi: A01.3, A01.2, A01.1 | Ket: BUSINESS CENTER" },
+                { timestamp: "10/28/26 6:43", productName: "RON 88 500 ML", type: "OUT", qty: 5, notes: "BARANG KELUAR - Ket: ULP" },
+                { timestamp: "10/29/26 7:47", productName: "AIR RON 88 CUP 200ml", type: "OUT", qty: 1, notes: "BARANG KELUAR - Ket: KURIKULUM" }
             ]
         };
 
@@ -775,7 +845,7 @@
         function initFirebaseSync() {
             db.ref('sistock_v2_pro/state').on('value', (snapshot) => {
                 const data = snapshot.val();
-                if (data) {
+                if (data && data.products && data.products.length > 0) {
                     state = {
                         suppliers: data.suppliers || [],
                         products: data.products || [],
@@ -885,10 +955,10 @@
         function renderDashboardStats() {
             document.getElementById('stat-total-products').innerText = state.products.length;
             
-            const totalVal = state.products.reduce((acc, item) => acc + (item.price * item.stock), 0);
-            document.getElementById('stat-total-value').innerText = `Rp ${totalVal.toLocaleString('id-ID')}`;
+            const totalStock = state.products.reduce((acc, item) => acc + (parseInt(item.stock) || 0), 0);
+            document.getElementById('stat-total-value').innerText = `${totalStock} Unit`;
 
-            const ropAlertCount = state.products.filter(p => p.stock <= p.rop).length;
+            const ropAlertCount = state.products.filter(p => parseInt(p.stock) <= parseInt(p.rop)).length;
             document.getElementById('stat-rop-alert').innerText = ropAlertCount;
 
             const totalDamaged = state.damagedGoods.reduce((acc, item) => acc + item.qty, 0);
@@ -899,16 +969,15 @@
                 topProductsContainer.innerHTML = `<p class="text-slate-400 text-xs italic">Belum ada data barang...</p>`;
             } else {
                 topProductsContainer.innerHTML = '';
-                const sortedProducts = [...state.products].sort((a,b) => (b.price * b.stock) - (a.price * a.stock)).slice(0, 4);
+                const sortedProducts = [...state.products].sort((a,b) => parseInt(b.stock) - parseInt(a.stock)).slice(0, 4);
                 sortedProducts.forEach((p) => {
-                    const itemVal = p.price * p.stock;
                     topProductsContainer.innerHTML += `
                         <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
                             <div class="truncate">
                                 <p class="text-xs font-bold text-slate-800 truncate">${p.name}</p>
-                                <p class="text-[10px] text-slate-400">Stok: ${p.stock} | ROP: ${p.rop}</p>
+                                <p class="text-[10px] text-slate-400">Lokasi: ${p.location || '-'}</p>
                             </div>
-                            <span class="text-xs font-bold text-brand-600">Rp ${itemVal.toLocaleString('id-ID')}</span>
+                            <span class="text-xs font-bold text-brand-600">${p.stock} ${p.category}</span>
                         </div>
                     `;
                 });
@@ -972,7 +1041,7 @@
                         <td class="p-3 font-mono font-bold text-brand-600">${p.sku}</td>
                         <td class="p-3 font-semibold text-slate-800">${p.name}</td>
                         <td class="p-3 text-slate-500">${p.category || '-'}</td>
-                        <td class="p-3 font-medium">Rp ${p.price.toLocaleString('id-ID')}</td>
+                        <td class="p-3 font-medium text-slate-600">${p.location || '-'}</td>
                         <td class="p-3 text-center text-slate-600 font-medium">${rop}</td>
                         <td class="p-3 text-center font-extrabold">${stock}</td>
                         <td class="p-3 text-center">${statusBadge}</td>
@@ -999,9 +1068,9 @@
                     <tr class="hover:bg-slate-50">
                         <td class="p-3 text-slate-400">${d.timestamp}</td>
                         <td class="p-3 font-bold text-slate-800">${d.productName} <span class="font-mono text-xs text-brand-600">(${d.sku})</span></td>
-                        <td class="p-3 font-extrabold text-rose-600">${d.qty} Unit</td>
-                        <td class="p-3"><span class="bg-rose-100 text-rose-700 px-2 py-0.5 rounded text-[10px] font-bold">${d.status}</span></td>
-                        <td class="p-3 text-slate-600">${d.notes}</td>
+                        <td class="p-3 font-extrabold text-rose-600">${d.qty}</td>
+                        <td class="p-3 text-slate-500">PCS</td>
+                        <td class="p-3"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded text-[10px] font-bold">${d.status}</span> <span class="text-slate-500 ml-1">(${d.notes})</span></td>
                         <td class="p-3 text-right">
                             <button onclick="deleteDamaged('${d.id}')" class="p-1 text-slate-400 hover:text-rose-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </td>
@@ -1015,7 +1084,7 @@
             const tbody = document.getElementById('suppliers-tbody');
             if(!tbody) return;
             if(state.suppliers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400 italic">Belum ada data supplier.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400 italic">Belum ada data supplier/user.</td></tr>`;
                 return;
             }
             tbody.innerHTML = '';
@@ -1038,7 +1107,7 @@
                 if(!el) return;
                 el.innerHTML = '<option value="">-- Pilih Barang Gudang --</option>';
                 state.products.forEach(p => {
-                    el.innerHTML += `<option value="${p.id}">${p.name} (SKU: ${p.sku}) - Stok: ${p.stock}</option>`;
+                    el.innerHTML += `<option value="${p.id}">${p.name} (Barcode: ${p.sku}) - Stok: ${p.stock}</option>`;
                 });
             });
         }
@@ -1052,7 +1121,8 @@
                 sku: sku,
                 name: document.getElementById('prod-name').value,
                 category: document.getElementById('prod-category').value,
-                price: parseFloat(document.getElementById('prod-price').value) || 0,
+                location: document.getElementById('prod-price').value || 'Gudang',
+                price: 0,
                 stock: parseInt(document.getElementById('prod-stock').value) || 0,
                 rop: parseInt(document.getElementById('prod-rop').value) || 10
             };
@@ -1067,7 +1137,7 @@
                     productName: newProd.name,
                     type: 'IN',
                     qty: newProd.stock,
-                    notes: 'Registrasi barang baru dengan Barcode Dus'
+                    notes: 'Registrasi barang baru ke sistem'
                 });
             }
 
@@ -1076,7 +1146,7 @@
         }
 
         function deleteProduct(id) {
-            if(confirm('Hapus barang ini dari daftar inventaris?')) {
+            if(confirm('Hapus barang ini dari daftar inventaris gudang?')) {
                 state.products = state.products.filter(p => p.id !== id);
                 saveStateToCloud();
             }
@@ -1089,10 +1159,10 @@
             document.getElementById('prod-sku').value = p.sku;
             document.getElementById('prod-name').value = p.name;
             document.getElementById('prod-category').value = p.category;
-            document.getElementById('prod-price').value = p.price;
+            document.getElementById('prod-price').value = p.location;
             document.getElementById('prod-stock').value = p.stock;
             document.getElementById('prod-rop').value = p.rop;
-            document.getElementById('modal-product-title').innerText = 'Edit Data Barang';
+            document.getElementById('modal-product-title').innerText = 'Edit Data Barang Gudang';
             document.getElementById('modal-product').classList.remove('hidden');
         }
 
@@ -1115,17 +1185,17 @@
                     prod.stock -= qty;
                 } else if(type === 'DAMAGED') {
                     if(prod.stock < qty) {
-                        alert('Stok tidak mencukupi untuk dipindahkan ke rusak!');
+                        alert('Stok tidak mencukupi untuk dipindahkan ke karantina!');
                         return;
                     }
                     prod.stock -= qty;
                     state.damagedGoods.push({
                         id: 'dmg-' + Date.now(),
-                        timestamp: new Date().toLocaleString('id-ID'),
+                        timestamp: new Date().toLocaleDateString('id-ID'),
                         productName: prod.name,
                         sku: prod.sku,
                         qty: qty,
-                        status: 'Rusak Fisik / Expired',
+                        status: 'Karantina',
                         notes: notes
                     });
                 } else if(type === 'OPNAME') {
@@ -1163,7 +1233,7 @@
                 prod.stock -= qty;
                 state.damagedGoods.push({
                     id: 'dmg-' + Date.now(),
-                    timestamp: new Date().toLocaleString('id-ID'),
+                    timestamp: new Date().toLocaleDateString('id-ID'),
                     productName: prod.name,
                     sku: prod.sku,
                     qty: qty,
@@ -1195,7 +1265,7 @@
             e.preventDefault();
             state.suppliers.push({
                 id: 'sup-' + Date.now(),
-                code: 'SUP-' + (state.suppliers.length + 1).toString().padStart(2, '0'),
+                code: 'USER-' + (state.suppliers.length + 1).toString().padStart(2, '0'),
                 name: document.getElementById('sup-name').value,
                 contact: document.getElementById('sup-contact').value,
                 phone: document.getElementById('sup-phone').value
@@ -1240,9 +1310,12 @@
             document.getElementById('recap-dmg-total').innerText = `${dmgTotal} Unit`;
         }
 
+        // --- FIXED DELIVERY ORDER (SURAT JALAN) FUNCTIONS ---
         function openDeliveryModal() {
             const dateInput = document.getElementById('doDate');
-            if(dateInput) dateInput.valueAsDate = new Date();
+            if(dateInput && !dateInput.value) {
+                dateInput.valueAsDate = new Date();
+            }
             renderDoSelector();
             updateDeliveryPreview();
             document.getElementById('deliveryModal').classList.remove('hidden');
@@ -1258,18 +1331,18 @@
             container.innerHTML = '';
 
             if(state.products.length === 0) {
-                container.innerHTML = '<p class="text-slate-400">Tidak ada stok barang tersedia.</p>';
+                container.innerHTML = '<p class="text-slate-400 p-2">Tidak ada stok barang tersedia.</p>';
                 return;
             }
 
             state.products.forEach((item) => {
                 container.innerHTML += `
-                    <div class="flex items-center justify-between gap-2 border-b border-slate-200 pb-1">
-                        <label class="flex items-center gap-2 cursor-pointer truncate">
-                            <input type="checkbox" class="do-checkbox" data-id="${item.id}" data-name="${item.name}" onchange="updateDeliveryPreview()">
-                            <span class="font-medium truncate">${item.name} (Stok: ${item.stock})</span>
+                    <div class="flex items-center justify-between gap-2 border-b border-slate-200 pb-1.5 pt-1">
+                        <label class="flex items-center gap-2 cursor-pointer truncate flex-1">
+                            <input type="checkbox" class="do-checkbox rounded border-slate-300 text-brand-500 focus:ring-brand-500" data-id="${item.id}" data-name="${item.name}" onchange="updateDeliveryPreview()">
+                            <span class="font-medium truncate text-slate-700">${item.name} <span class="text-slate-400 text-[10px]">(${item.category}, Stok: ${item.stock})</span></span>
                         </label>
-                        <input type="number" min="1" max="${item.stock}" value="1" id="doQty_${item.id}" class="w-16 border rounded p-1 text-center bg-white" onchange="updateDeliveryPreview()">
+                        <input type="number" min="1" max="${item.stock || 999}" value="1" id="doQty_${item.id}" class="w-16 border rounded p-1 text-center bg-white text-xs" onchange="updateDeliveryPreview()" onkeyup="updateDeliveryPreview()">
                     </div>
                 `;
             });
@@ -1279,8 +1352,14 @@
             const customerEl = document.getElementById('doCustomer');
             const dateEl = document.getElementById('doDate');
             
-            document.getElementById('previewCustomer').innerText = customerEl ? customerEl.value || '-' : '-';
-            document.getElementById('previewDate').innerText = dateEl ? dateEl.value || '-' : '-';
+            const customerVal = customerEl ? customerEl.value || '-' : '-';
+            const dateVal = dateEl ? dateEl.value || '-' : '-';
+
+            const previewCustomerEl = document.getElementById('previewCustomer');
+            const previewDateEl = document.getElementById('previewDate');
+            
+            if(previewCustomerEl) previewCustomerEl.innerText = customerVal;
+            if(previewDateEl) previewDateEl.innerText = dateVal;
 
             const tbody = document.getElementById('previewTableBody');
             if(!tbody) return;
@@ -1288,6 +1367,11 @@
 
             const checkboxes = document.querySelectorAll('.do-checkbox:checked');
             let no = 1;
+
+            if(checkboxes.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-slate-400 italic">Belum ada item yang dipilih untuk dikirim.</td></tr>`;
+                return;
+            }
 
             checkboxes.forEach((cb) => {
                 const id = cb.getAttribute('data-id');
@@ -1297,46 +1381,53 @@
 
                 tbody.innerHTML += `
                     <tr class="border-b border-slate-200">
-                        <td class="py-1.5 px-2 text-center font-mono">${no++}</td>
-                        <td class="py-1.5 px-2 font-medium">${name}</td>
-                        <td class="py-1.5 px-2 text-center font-bold">${qtyVal}</td>
+                        <td class="py-2 px-2 text-center font-mono text-slate-600">${no++}</td>
+                        <td class="py-2 px-2 font-medium text-slate-800">${name}</td>
+                        <td class="py-2 px-2 text-center font-bold text-slate-800">${qtyVal}</td>
                     </tr>
                 `;
             });
-
-            if(checkboxes.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-slate-400">Belum ada item yang dipilih untuk dikirim.</td></tr>`;
-            }
         }
 
         function printDeliveryOrder() {
             const printContent = document.getElementById('printArea').innerHTML;
             const printWindow = window.open('', '_blank', 'width=800,height=600');
+            if (!printWindow) {
+                alert('Pop-up terblokir oleh browser. Izinkan pop-up untuk mencetak dokumen.');
+                return;
+            }
             printWindow.document.write(`
                 <!DOCTYPE html>
                 <html>
                 <head>
+                    <meta charset="UTF-8">
                     <title>Surat Jalan - SISTOCK 2.0 SMKN 3 BANDUNG</title>
                     <script src="https://cdn.tailwindcss.com"><\/script>
                     <style>
-                        body { font-family: 'Inter', sans-serif; padding: 20px; }
-                        @media print { body { padding: 0; } }
+                        body { font-family: 'Inter', sans-serif; padding: 24px; background: #ffffff; color: #0f172a; }
+                        @media print { 
+                            body { padding: 0; } 
+                            .no-print { display: none; }
+                        }
                     </style>
                 </head>
-                <body onload="window.print(); window.close();">
-                    <div class="max-w-2xl mx-auto border p-6 rounded-lg bg-white">
+                <body>
+                    <div class="max-w-2xl mx-auto border p-6 rounded-lg bg-white shadow-sm">
                         ${printContent}
                     </div>
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() {
+                                window.print();
+                                window.close();
+                            }, 300);
+                        };
+                    <\/script>
                 </body>
                 </html>
             `);
             printWindow.document.close();
         }
-
-        const customerField = document.getElementById('doCustomer');
-        if(customerField) customerField.addEventListener('input', updateDeliveryPreview);
-        const dateField = document.getElementById('doDate');
-        if(dateField) dateField.addEventListener('change', updateDeliveryPreview);
 
         // --- MANAJEMEN SCANNER KAMERA ---
         function openScannerModal(mode = 'search') {
@@ -1385,7 +1476,7 @@
         function openProductModal() {
             document.getElementById('form-product').reset();
             document.getElementById('prod-id').value = '';
-            document.getElementById('modal-product-title').innerText = 'Registrasi Barang Baru (Scan Barcode Dus)';
+            document.getElementById('modal-product-title').innerText = 'Registrasi Barang Baru (Scan Barcode)';
             document.getElementById('modal-product').classList.remove('hidden');
         }
         function closeProductModal() { document.getElementById('modal-product').classList.add('hidden'); }
