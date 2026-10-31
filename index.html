@@ -22,7 +22,6 @@
     
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        
         @keyframes fadeInSlideUp {
             from { opacity: 0; transform: translateY(12px) scale(0.98); }
             to { opacity: 1; transform: translateY(0) scale(1); }
@@ -31,15 +30,12 @@
             0%, 100% { box-shadow: 0 0 15px rgba(249, 115, 22, 0.4); }
             50% { box-shadow: 0 0 30px rgba(249, 115, 22, 0.8); }
         }
-        
         .animate-tab-enter { animation: fadeInSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .jarvis-glow { animation: pulseGlow 2.5s infinite; }
         .toast-enter { animation: fadeInSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
         .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #fdba74; border-radius: 99px; }
-
         .btn-press:active { transform: scale(0.95); }
         .card-hover { transition: all 0.25s ease-in-out; }
         .card-hover:hover { transform: translateY(-3px); box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.08); }
@@ -92,8 +88,13 @@
                     <i data-lucide="log-in" class="w-4 h-4"></i> Masuk Sistem
                 </button>
             </form>
-            <div class="border-t border-slate-100 pt-3 text-center">
-                <p class="text-[10px] text-slate-400 font-semibold">Created By Naufal Alviano | Manajemen Logistik SMKN 3 Bandung 2026</p>
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/60 text-[11px] space-y-1">
+                <p class="font-bold text-slate-700">💡 Info Akun Akses:</p>
+                <p class="text-slate-500">• Admin Utama: <code class="text-brand-600 font-bold">MLGSMKN3BDG</code> / <code class="text-brand-600 font-bold">LOGISTIK2627</code></p>
+                <p class="text-slate-500">• Reviewer/Guru: <code class="text-brand-600 font-bold">BELAJAR</code> / <code class="text-brand-600 font-bold">123456</code></p>
+            </div>
+            <div class="border-t border-slate-100 pt-2 text-center">
+                <p class="text-[10px] text-slate-400 font-semibold">Created By Naufal Alviano | SMKN 3 Bandung 2026</p>
             </div>
         </div>
     </div>
@@ -104,12 +105,9 @@
         <!-- Header Utama -->
         <header class="bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 px-3 sm:px-4 py-3 flex items-center justify-between shadow-sm">
             <div class="flex items-center space-x-2.5 sm:space-x-3">
-                <!-- Tombol Hamburger Mobile -->
                 <button onclick="toggleMobileMenu()" class="md:hidden text-slate-700 hover:text-brand-500 p-2 rounded-xl bg-slate-100 hover:bg-brand-50 transition btn-press">
                     <i data-lucide="menu" class="w-5 h-5"></i>
                 </button>
-
-                <!-- Logo Header -->
                 <div class="bg-gradient-to-tr from-brand-600 to-brand-500 text-white p-2 sm:p-2.5 rounded-xl shadow-md shadow-brand-500/20">
                     <i data-lucide="package" class="w-5 h-5"></i>
                 </div>
@@ -118,7 +116,7 @@
                         SISTOCK 2.0
                         <span class="bg-brand-100 text-brand-700 text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase hidden sm:inline border border-brand-200">SMKN 3 BANDUNG</span>
                     </h1>
-                    <p class="text-[10px] sm:text-[11px] text-slate-500 font-medium hidden xs:block">Warehouse & Inventory Management</p>
+                    <p id="realtime-clock" class="text-[10px] sm:text-[11px] text-slate-500 font-semibold">Bandung (WIB): Memuat waktu...</p>
                 </div>
             </div>
 
@@ -142,7 +140,6 @@
             <aside class="w-64 bg-white border-r border-slate-200/80 hidden md:flex flex-col justify-between p-4 flex-shrink-0">
                 <div class="space-y-1">
                     <p class="text-[10px] font-extrabold text-slate-400 px-3 uppercase tracking-wider mb-2">Navigasi Utama</p>
-                    
                     <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-brand-600 bg-brand-50 shadow-sm">
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
                     </button>
@@ -160,6 +157,9 @@
                     </button>
                     <button onclick="switchTab('damaged')" id="nav-damaged" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:bg-slate-100/80">
                         <i data-lucide="alert-octagon" class="w-4 h-4 text-amber-500"></i> Karantina & FEFO
+                    </button>
+                    <button onclick="switchTab('barang-rusak')" id="nav-barang-rusak" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:bg-slate-100/80">
+                        <i data-lucide="shield-alert" class="w-4 h-4 text-rose-500"></i> Barang Rusak (Damaged)
                     </button>
                     <button onclick="switchTab('recap')" id="nav-recap" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:bg-slate-100/80">
                         <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Rekapitulasi Tren
@@ -215,6 +215,9 @@
                             <button onclick="switchTab('damaged'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold text-slate-700 hover:bg-brand-50 hover:text-brand-600 transition btn-press">
                                 <i data-lucide="alert-octagon" class="w-4 h-4 text-amber-500"></i> Karantina & FEFO
                             </button>
+                            <button onclick="switchTab('barang-rusak'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold text-slate-700 hover:bg-brand-50 hover:text-brand-600 transition btn-press">
+                                <i data-lucide="shield-alert" class="w-4 h-4 text-rose-500"></i> Barang Rusak (Damaged)
+                            </button>
                             <button onclick="switchTab('recap'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold text-slate-700 hover:bg-brand-50 hover:text-brand-600 transition btn-press">
                                 <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Rekapitulasi Tren
                             </button>
@@ -223,7 +226,6 @@
                             </button>
                         </div>
                     </div>
-
                     <div class="border-t border-slate-100 pt-3 text-center">
                         <p class="text-[10px] text-slate-400 font-semibold">SMKN 3 Bandung 2026</p>
                     </div>
@@ -233,9 +235,24 @@
             <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto p-3.5 sm:p-6 mb-6 custom-scrollbar space-y-5">
                 
+                <!-- KOTAK REMINDER NOTIFIKASI FEFO (REAL-TIME WIB) -->
+                <div id="fefo-reminder-banner" class="bg-gradient-to-r from-amber-500 to-brand-600 text-white p-4 sm:p-5 rounded-3xl shadow-lg border border-amber-400 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="bell-ring" class="w-6 h-6 animate-bounce"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xs sm:text-sm font-extrabold uppercase tracking-wide">⚠️ Peringatan FEFO & Kadaluwarsa Aktif</h3>
+                            <p id="reminder-text" class="text-[11px] text-amber-100 font-medium">Mengecek jadwal kedaluwarsa berbasis zona waktu Bandung (WIB)...</p>
+                        </div>
+                    </div>
+                    <button onclick="switchTab('damaged')" class="bg-white text-brand-700 hover:bg-brand-50 px-4 py-2 rounded-xl text-xs font-extrabold transition shadow-md btn-press whitespace-nowrap">
+                        Lihat Detail FEFO
+                    </button>
+                </div>
+
                 <!-- SECTION: DASHBOARD -->
                 <section id="section-dashboard" class="space-y-5 animate-tab-enter">
-                    
                     <div class="bg-gradient-to-r from-white to-orange-50/50 p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div class="space-y-1 text-center sm:text-left">
                             <h2 class="text-sm sm:text-base font-extrabold text-slate-900 uppercase tracking-wider">Aksi Cepat Transaksi Gudang</h2>
@@ -281,11 +298,11 @@
 
                         <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm card-hover">
                             <div class="flex items-center justify-between text-slate-500 mb-2">
-                                <span class="text-xs font-bold">FEFO & Karantina</span>
+                                <span class="text-xs font-bold">FEFO & Expired</span>
                                 <i data-lucide="alert-octagon" class="w-4 h-4 text-amber-500"></i>
                             </div>
                             <h3 id="stat-damaged-count" class="text-2xl font-black text-amber-600">0</h3>
-                            <p class="text-[10px] text-amber-600 font-bold mt-1">Status FEFO Karantina</p>
+                            <p class="text-[10px] text-amber-600 font-bold mt-1">Batch FEFO aktif</p>
                         </div>
                     </div>
 
@@ -521,31 +538,66 @@
                 <section id="section-damaged" class="space-y-4 hidden animate-tab-enter">
                     <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
                         <div>
-                            <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider text-rose-600 flex items-center gap-1.5">
-                                <i data-lucide="alert-octagon" class="w-4 h-4"></i> Karantina Barang FEFO & Expired
+                            <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider text-amber-600 flex items-center gap-1.5">
+                                <i data-lucide="alert-octagon" class="w-4 h-4"></i> Karantina Barang FEFO & Jadwal Kedaluwarsa
                             </h3>
-                            <p class="text-[10px] text-slate-400 font-medium">Pemisahan fisik stok cacat & tanggal kadaluarsa (FEFO)</p>
+                            <p class="text-[10px] text-slate-400 font-medium">Monitoring batch tanggal kadaluwarsa (First Expired, First Out)</p>
                         </div>
-                        <button onclick="openDamagedModal()" class="bg-rose-500 hover:bg-rose-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-md shadow-rose-500/20 btn-press">
-                            <i data-lucide="plus" class="w-4 h-4"></i> Catat FEFO
+                        <button onclick="openDamagedModal()" class="bg-amber-500 hover:bg-amber-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-md shadow-amber-500/20 btn-press">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Catat Batch FEFO
                         </button>
                     </div>
 
                     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
                         <div class="overflow-x-auto max-w-full">
-                            <table class="w-full text-left text-xs min-w-[600px]">
+                            <table class="w-full text-left text-xs min-w-[650px]">
                                 <thead class="bg-slate-50 text-slate-500 uppercase font-extrabold border-b border-slate-200">
                                     <tr>
-                                        <th class="p-3.5">Tanggal</th>
+                                        <th class="p-3.5">Tanggal Expired</th>
                                         <th class="p-3.5">Nama Barang</th>
-                                        <th class="p-3.5">Jumlah Fisik</th>
+                                        <th class="p-3.5">Jumlah</th>
                                         <th class="p-3.5">Satuan</th>
-                                        <th class="p-3.5">Status FEFO / Catatan</th>
+                                        <th class="p-3.5">Status FEFO / Reminder</th>
                                         <th class="p-3.5 text-right">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="damaged-tbody" class="divide-y divide-slate-100">
-                                    <tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Belum ada barang karantina.</td></tr>
+                                    <tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Memuat data FEFO...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: BARANG RUSAK (DAMAGED GOODS PHYSICAL) -->
+                <section id="section-barang-rusak" class="space-y-4 hidden animate-tab-enter">
+                    <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+                        <div>
+                            <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider text-rose-600 flex items-center gap-1.5">
+                                <i data-lucide="shield-alert" class="w-4 h-4"></i> Pencatatan Barang Rusak Fisik (Damaged Goods)
+                            </h3>
+                            <p class="text-[10px] text-slate-400 font-medium">Input kerusakan fisik yang otomatis memotong stok gudang utama</p>
+                        </div>
+                        <button onclick="openBarangRusakModal()" class="bg-rose-500 hover:bg-rose-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-md shadow-rose-500/20 btn-press">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Catat Barang Rusak
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto max-w-full">
+                            <table class="w-full text-left text-xs min-w-[650px]">
+                                <thead class="bg-slate-50 text-slate-500 uppercase font-extrabold border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-3.5">Waktu Laporan</th>
+                                        <th class="p-3.5">Nama Barang Rusak</th>
+                                        <th class="p-3.5">Qty Rusak</th>
+                                        <th class="p-3.5">Pelapor</th>
+                                        <th class="p-3.5">Keterangan Kerusakan</th>
+                                        <th class="p-3.5 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="barang-rusak-tbody" class="divide-y divide-slate-100">
+                                    <tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Belum ada barang rusak fisik tercatat.</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -569,7 +621,7 @@
                             <h3 id="recap-out-total" class="text-2xl font-black text-rose-600 mt-1">0 Unit</h3>
                         </div>
                         <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm card-hover">
-                            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Rusak & FEFO Expired</span>
+                            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Barang Rusak / Karantina</span>
                             <h3 id="recap-dmg-total" class="text-2xl font-black text-amber-600 mt-1">0 Unit</h3>
                         </div>
                     </div>
@@ -643,25 +695,24 @@
         </footer>
     </div>
 
-    <!-- FLOATING CHATBOT J.A.R.V.I.S WIDGET (NYUNDA INTERACTIVE GUIDE BOT) -->
+    <!-- FLOATING CHATBOT J.A.R.V.I.S GUIDEBOT ASSISTANT (NYUNDA) -->
     <div class="fixed bottom-5 right-5 z-40">
-        <button onclick="toggleJarvisChat()" class="bg-slate-900 hover:bg-brand-500 text-white p-3.5 sm:p-4 rounded-full shadow-2xl transition-all duration-300 flex items-center justify-center border-2 border-brand-500 group jarvis-glow btn-press" title="Tanya J.A.R.V.I.S AI">
+        <button onclick="toggleJarvisChat()" class="bg-slate-900 hover:bg-brand-500 text-white p-3.5 sm:p-4 rounded-full shadow-2xl transition-all duration-300 flex items-center justify-center border-2 border-brand-500 group jarvis-glow btn-press" title="Tanya J.A.R.V.I.S GuideBot">
             <i data-lucide="bot" class="w-6 h-6 group-hover:rotate-12 transition"></i>
         </button>
     </div>
 
-    <!-- Jendela Panel Chat J.A.R.V.I.S Guide Bot -->
+    <!-- Jendela Panel Chat J.A.R.V.I.S GuideBot -->
     <div id="jarvis-chat-modal" class="fixed bottom-16 sm:bottom-20 right-3 sm:right-6 w-[92vw] sm:w-96 bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-200/80 z-50 hidden flex flex-col overflow-hidden max-h-[80vh] sm:max-h-[550px] animate-tab-enter">
-        <!-- Header Bot -->
         <div class="bg-slate-900 text-white p-3.5 sm:p-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-tr from-brand-600 to-brand-500 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-brand-500/30">
                     <i data-lucide="bot" class="w-5 h-5"></i>
                 </div>
                 <div>
-                    <h3 class="text-xs font-extrabold tracking-wider text-brand-50">J.A.R.V.I.S GUIDE BOT</h3>
+                    <h3 class="text-xs font-extrabold tracking-wider text-brand-50">J.A.R.V.I.S GUIDEBOT</h3>
                     <p class="text-[9px] text-emerald-400 font-bold flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Live Nyunda Assistant
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Live Assistant (Nyunda)
                     </p>
                 </div>
             </div>
@@ -670,38 +721,25 @@
             </button>
         </div>
 
-        <!-- Area Riwayat Chat -->
         <div id="jarvis-messages" class="p-3.5 sm:p-4 flex-1 overflow-y-auto space-y-3 text-xs bg-slate-50/50 max-h-[260px] sm:max-h-[300px] custom-scrollbar">
             <div class="flex items-start gap-2">
                 <div class="bg-gradient-to-tr from-brand-500 to-brand-600 text-white p-3 rounded-2xl rounded-tl-none font-medium shadow-md max-w-[88%] leading-relaxed">
-                    Sampurasun Akang / Teteh! 👋 Saya <strong>J.A.R.V.I.S Guide Bot</strong>. Silakan klik opsi bantuan cepat di bawah atau ketik langsung apa saja terkait gudang SISTOCK 2.0 ini ya!
+                    Sampurasun Akang / Teteh! 👋 Saya <strong>J.A.R.V.I.S GuideBot Assistant</strong>. Silakan klik opsi bantuan cepat di bawah atau tanyakan apa saja tentang fitur gudang SISTOCK 2.0 ini!
                 </div>
             </div>
         </div>
 
-        <!-- TOMBOL OPSI INTERAKTIF (QUICK CHIPS) -->
+        <!-- QUICK CHIPS BUTTONS -->
         <div class="p-2 sm:p-2.5 bg-slate-100/90 border-t border-slate-200/80 flex flex-wrap gap-1.5 text-[10px] sm:text-[11px] font-bold">
-            <button onclick="sendJarvisOption('jelaskan inbound')" class="bg-white hover:bg-brand-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">
-                📥 Fitur Inbound
-            </button>
-            <button onclick="sendJarvisOption('jelaskan outbound')" class="bg-white hover:bg-brand-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">
-                📤 Fitur Outbound
-            </button>
-            <button onclick="sendJarvisOption('jelaskan opname')" class="bg-white hover:bg-brand-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">
-                🔎 Stock Opname
-            </button>
-            <button onclick="sendJarvisOption('jelaskan surat jalan')" class="bg-white hover:bg-brand-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">
-                📜 Surat Jalan (DO)
-            </button>
-            <button onclick="sendJarvisOption('cek fefo')" class="bg-white hover:bg-amber-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">
-                ☣️ Status FEFO
-            </button>
-            <button onclick="sendJarvisOption('nilai aset')" class="bg-white hover:bg-emerald-600 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">
-                💰 Valuasi Aset
-            </button>
+            <button onclick="sendJarvisOption('jelaskan inbound')" class="bg-white hover:bg-brand-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">📥 Fitur Inbound</button>
+            <button onclick="sendJarvisOption('jelaskan outbound')" class="bg-white hover:bg-brand-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">📤 Fitur Outbound</button>
+            <button onclick="sendJarvisOption('jelaskan opname')" class="bg-white hover:bg-brand-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">🔎 Stock Opname</button>
+            <button onclick="sendJarvisOption('jelaskan surat jalan')" class="bg-white hover:bg-brand-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">📜 Surat Jalan (DO)</button>
+            <button onclick="sendJarvisOption('cek fefo')" class="bg-white hover:bg-amber-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">☣️ Reminder FEFO</button>
+            <button onclick="sendJarvisOption('barang rusak')" class="bg-white hover:bg-rose-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">🛡️ Barang Rusak</button>
+            <button onclick="sendJarvisOption('nilai aset')" class="bg-white hover:bg-emerald-600 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">💰 Valuasi Aset</button>
         </div>
 
-        <!-- Input Chat Manual -->
         <form id="jarvis-form" onsubmit="handleJarvisChat(event)" class="p-2.5 sm:p-3 bg-white border-t border-slate-100 flex gap-2">
             <input type="text" id="jarvis-input" placeholder="Tanya Akang Jarvis..." class="flex-1 bg-slate-100 border border-slate-200 rounded-2xl px-3.5 py-2 text-xs focus:outline-none focus:border-brand-500 font-semibold text-slate-800">
             <button type="submit" class="bg-brand-500 hover:bg-brand-600 text-white px-3.5 py-2 rounded-2xl text-xs font-bold transition shadow-md shadow-brand-500/20 flex items-center justify-center btn-press">
@@ -830,39 +868,77 @@
         </div>
     </div>
 
-    <!-- MODAL: DAMAGED -->
+    <!-- MODAL: DAMAGED / FEFO BATCH -->
     <div id="modal-damaged" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter">
             <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-extrabold text-xs uppercase tracking-wider text-rose-600">Catat Karantina FEFO</h3>
+                <h3 class="font-extrabold text-xs uppercase tracking-wider text-amber-600">Catat Batch FEFO Baru</h3>
                 <button onclick="closeDamagedModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <form id="form-damaged" onsubmit="saveDamagedGood(event)" class="space-y-3 text-xs">
                 <div>
-                    <label class="font-bold text-slate-700 block mb-1">Pilih Barang</label>
+                    <label class="font-bold text-slate-700 block mb-1">Pilih Produk</label>
                     <select id="dmg-product-id" required class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none"></select>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="font-bold text-slate-700 block mb-1">Jumlah Fisik</label>
+                        <label class="font-bold text-slate-700 block mb-1">Jumlah (Qty)</label>
                         <input type="number" id="dmg-qty" min="1" required placeholder="Qty" class="w-full border border-slate-200 p-2.5 rounded-xl font-bold focus:outline-none">
                     </div>
                     <div>
-                        <label class="font-bold text-slate-700 block mb-1">Status Karantina</label>
+                        <label class="font-bold text-slate-700 block mb-1">Status FEFO</label>
                         <select id="dmg-status" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none">
-                            <option value="kadaluwarsa">🔴 Kadaluwarsa (Expired)</option>
                             <option value="segera dikeluarkan">🟡 Segera Dikeluarkan</option>
+                            <option value="kadaluwarsa">🔴 Kadaluwarsa (Expired)</option>
                             <option value="masih aman">🟢 Masih Aman</option>
                         </select>
                     </div>
                 </div>
                 <div>
-                    <label class="font-bold text-slate-700 block mb-1">Tgl Expired / Catatan FEFO</label>
-                    <input type="text" id="dmg-notes" placeholder="Tgl Expired / Catatan FEFO..." class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none">
+                    <label class="font-bold text-slate-700 block mb-1">Tanggal Kadaluwarsa (DD/MM/YYYY)</label>
+                    <input type="text" id="dmg-timestamp" placeholder="Contoh: 26/11/2026" required class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">Catatan FEFO</label>
+                    <input type="text" id="dmg-notes" placeholder="Catatan batch / ketersediaan..." class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none">
                 </div>
                 <div class="pt-2 flex justify-end gap-2">
                     <button type="button" onclick="closeDamagedModal()" class="px-4 py-2 border rounded-xl font-bold text-slate-600 btn-press">Batal</button>
-                    <button type="submit" class="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold btn-press">Simpan</button>
+                    <button type="submit" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold btn-press">Simpan FEFO</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: BARANG RUSAK FISIK (DAMAGED GOODS PHYSICAL) -->
+    <div id="modal-barang-rusak" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-extrabold text-xs uppercase tracking-wider text-rose-600">Catat Barang Rusak (Auto-Potong Stok)</h3>
+                <button onclick="closeBarangRusakModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form id="form-barang-rusak" onsubmit="saveBarangRusak(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">Pilih Produk Rusak</label>
+                    <select id="rusak-product-id" required class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none"></select>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">Jumlah Rusak (Qty)</label>
+                        <input type="number" id="rusak-qty" min="1" required placeholder="Qty" class="w-full border border-slate-200 p-2.5 rounded-xl font-bold focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">Pelapor / Checker</label>
+                        <input type="text" id="rusak-pelapor" value="Team Gudang" required class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">Keterangan Kerusakan</label>
+                    <input type="text" id="rusak-notes" placeholder="Contoh: Kemasan sobek, botol bocor..." required class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none">
+                </div>
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeBarangRusakModal()" class="px-4 py-2 border rounded-xl font-bold text-slate-600 btn-press">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold btn-press">Simpan & Potong Stok</button>
                 </div>
             </form>
         </div>
@@ -896,21 +972,21 @@
         </div>
     </div>
 
-    <!-- MODAL: SCANNER MULTI-FUNGSI -->
-    <div id="modal-scanner" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter">
-            <div class="flex justify-between items-center border-b pb-2">
+    <!-- MODAL: SCANNER MULTI-FUNGSI (OPTIMIZED MOBILE) -->
+    <div id="modal-scanner" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-3xl max-w-sm sm:max-w-md w-full p-4 sm:p-6 space-y-4 shadow-2xl animate-tab-enter flex flex-col items-center">
+            <div class="flex justify-between items-center w-full border-b pb-2">
                 <h3 class="font-extrabold text-xs uppercase tracking-wider text-slate-900 flex items-center gap-2">
                     <i data-lucide="scan" class="w-4 h-4 text-brand-500"></i> Pemindai Barcode Kamera
                 </h3>
                 <button onclick="closeScannerModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div class="space-y-3">
-                <div id="reader" class="w-full overflow-hidden rounded-2xl bg-slate-100 border border-slate-200"></div>
+            <div class="w-full space-y-3 flex flex-col items-center">
+                <div id="reader" class="w-full max-w-[300px] h-[220px] rounded-2xl bg-slate-100 border border-slate-200 overflow-hidden"></div>
                 <p id="scan-result-text" class="text-xs text-center text-slate-500 font-bold">Arahkan kamera ke barcode produk...</p>
             </div>
-            <div class="flex justify-end pt-2">
-                <button type="button" onclick="closeScannerModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-bold btn-press">Tutup Scanner</button>
+            <div class="w-full flex justify-end pt-2">
+                <button type="button" onclick="closeScannerModal()" class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-bold btn-press">Tutup Scanner</button>
             </div>
         </div>
     </div>
@@ -919,51 +995,86 @@
         const firebaseConfig = {
             databaseURL: "https://new-sistock-2026-default-rtdb.asia-southeast1.firebasedatabase.app/"
         };
-
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
 
-        const AUTH_USER = "MLGSMKN3BDG";
-        const AUTH_PASS = "LOGISTIK2627";
+        // 2 AKUN LOGIN
+        const ACCOUNTS = {
+            "MLGSMKN3BDG": "LOGISTIK2627",
+            "BELAJAR": "123456"
+        };
 
-        // DATABASE INVENTARIS DENGAN STATUS FEFO DARI SPREADSHEET
+        // DATABASE INVENTARIS AWAL LENGKAP DENGAN 23 DATA FEFO SPREADSHEET & BARANG RUSAK
         const INITIAL_SPREADSHEET_DATA = {
             suppliers: [
                 { id: "sup-1", code: "CHECKER", name: "CHECKER GUDANG", contact: "Role: CHECKER", phone: "-" },
                 { id: "sup-2", code: "MANAJER", name: "MANAJER LOGISTIK", contact: "Role: MANAJER", phone: "-" },
-                { id: "sup-3", code: "ADMIN", name: "ADMIN GUDANG", contact: "Role: ADMIN GUDANG", phone: "-" }
+                { id: "sup-3", code: "REVIEWER", name: "AKUN REVIEW/GURU", contact: "Role: BELAJAR", phone: "-" }
             ],
             products: [
                 { id: "prod-1", sku: "18993496110072", name: "TEPUNG TULIP", category: "PCS", price: 12500, stock: 0, rop: 10, location: "Staging area" },
                 { id: "prod-2", sku: "18998866201343", name: "SEDAP WHITE CURRY", category: "PCS", price: 3500, stock: 0, rop: 10, location: "B01.2" },
                 { id: "prod-3", sku: "8993539106003", name: "RON 88 600 ML", category: "DUS", price: 48000, stock: 0, rop: 10, location: "D2" },
-                { id: "prod-4", sku: "10341330462", name: "RON 88 500 ML", category: "DUS", price: 45000, stock: 85, rop: 15, location: "A01.3, A01.2" },
+                { id: "prod-4", sku: "10341330462", name: "RON 88 500 ML", category: "DUS", price: 45000, stock: 83, rop: 15, location: "A01.3, A01.2" },
                 { id: "prod-5", sku: "8993539105006", name: "RON 88 380ML", category: "PCS", price: 2500, stock: 0, rop: 10, location: "C01.3" },
                 { id: "prod-6", sku: "8993539121501", name: "RON 88 1,5 L", category: "DUS", price: 52000, stock: 13, rop: 10, location: "D2" },
-                { id: "prod-7", sku: "18993496111017", name: "MINYAKITA 1 Liter", category: "PCS", price: 14000, stock: 0, rop: 10, location: "C01.1" },
-                { id: "prod-8", sku: "8992946535178", name: "MINYAK TROPICAL 1,5L", category: "BOTOL", price: 24500, stock: 0, rop: 10, location: "C01.2" },
-                { id: "prod-22", sku: "10089686010340", name: "INDOMIE SOTO", category: "PCS", price: 3100, stock: 0, rop: 10, location: "B01.3" },
-                { id: "prod-27", sku: "10089686011187", name: "INDOMIE GORENG RENDANG", category: "PCS", price: 3300, stock: 5, rop: 10, location: "B01.3" },
-                { id: "prod-28", sku: "10089686010944", name: "INDOMIE GORENG ORIGINAL", category: "PCS", price: 3200, stock: 99, rop: 20, location: "B01.2" },
-                { id: "prod-33", sku: "10089686010012", name: "INDOMIE AYAM BAWANG", category: "PCS", price: 3100, stock: 96, rop: 20, location: "B01.2" }
+                { id: "prod-7", sku: "18993496111017", name: "MINYAKITA 1 Liter", category: "PCS", price: 14000, stock: 8, rop: 10, location: "C01.1" },
+                { id: "prod-8", sku: "8992946535178", name: "MINYAK TROPICAL 1,5L", category: "BOTOL", price: 24500, stock: 1, rop: 10, location: "C01.2" },
+                { id: "prod-22", sku: "10089686010340", name: "Indomie Soto", category: "PCS", price: 3100, stock: 45, rop: 10, location: "B01.3" },
+                { id: "prod-23", sku: "10089686010012", name: "Indomie Ayam Bawang", category: "PCS", price: 3100, stock: 77, rop: 20, location: "B01.2" },
+                { id: "prod-24", sku: "10089686010944", name: "Indomie Goreng", category: "PCS", price: 3200, stock: 134, rop: 20, location: "B01.2" },
+                { id: "prod-25", sku: "10089686010524", name: "Indomie Soto Mi", category: "PCS", price: 3300, stock: 10, rop: 10, location: "B01.3" },
+                { id: "prod-26", sku: "10089686011187", name: "Indomie Rendang", category: "PCS", price: 3300, stock: 40, rop: 10, location: "B01.3" },
+                { id: "prod-27", sku: "10089686043270", name: "Indomie Rica-Rica", category: "PCS", price: 3300, stock: 70, rop: 20, location: "B01.2" },
+                { id: "prod-28", sku: "10089686010715", name: "Indomie Cabe Ijo", category: "PCS", price: 3300, stock: 170, rop: 20, location: "B01.2" },
+                { id: "prod-29", sku: "18888166603612", name: "Tarik Malaka", category: "RENCENG", price: 15000, stock: 12, rop: 10, location: "C02.1" },
+                { id: "prod-30", sku: "10089686043430", name: "Indomie Ayam Geprek", category: "PCS", price: 3300, stock: 65, rop: 10, location: "B01.2" },
+                { id: "prod-31", sku: "10089686910305", name: "Indomie Gentong", category: "PCS", price: 3300, stock: 40, rop: 10, location: "B01.3" },
+                { id: "prod-32", sku: "10089686043683", name: "Indomie Iga Penyet", category: "PCS", price: 3300, stock: 95, rop: 20, location: "B01.2" },
+                { id: "prod-33", sku: "18993379500235", name: "Sunco", category: "PCS", price: 17000, stock: 46, rop: 10, location: "C01.1" },
+                { id: "prod-34", sku: "8995180000000", name: "Gulaku", category: "PCS", price: 17500, stock: 20, rop: 10, location: "C01.3" }
             ],
-            // STATUS FEFO YANG DI-INPUT DARIPADA SPREADSHEET PORTAL
+            // 23 DATA FEFO TERPISAH SESUAI SPREADSHEET PORTAL
             damagedGoods: [
-                { id: "dmg-1", timestamp: "02/10/2026", productName: "INDOMIE SOTO", sku: "10089686010340", qty: 5, status: "kadaluwarsa", notes: "Status FEFO: Kadaluwarsa / Expired" },
-                { id: "dmg-2", timestamp: "26/11/2026", productName: "INDOMIE AYAM BAWANG", sku: "10089686010012", qty: 46, status: "segera dikeluarkan", notes: "Status FEFO: Segera Dikeluarkan" },
-                { id: "dmg-3", timestamp: "31/10/2026", productName: "INDOMIE GORENG RENDANG", sku: "10089686011187", qty: 5, status: "segera dikeluarkan", notes: "Status FEFO: Perlu Restock / Monitoring" }
+                { id: "fefo-1", timestamp: "26/11/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 46, status: "segera dikeluarkan", notes: "Kadaluarsa: 26/11/2026 | Tersedia" },
+                { id: "fefo-2", timestamp: "28/12/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 31, status: "segera dikeluarkan", notes: "Kadaluarsa: 28/12/2026" },
+                { id: "fefo-3", timestamp: "02/10/2026", productName: "Indomie Soto", sku: "10089686010340", qty: 5, status: "kadaluwarsa", notes: "Kadaluwarsa: 02/10/2026 (Expired)" },
+                { id: "fefo-4", timestamp: "05/01/2027", productName: "Indomie Soto", sku: "10089686010340", qty: 40, status: "segera dikeluarkan", notes: "Kadaluwarsa: 05/01/2027" },
+                { id: "fefo-5", timestamp: "28/12/2026", productName: "Indomie Goreng", sku: "10089686010944", qty: 29, status: "segera dikeluarkan", notes: "Kadaluwarsa: 28/12/2026" },
+                { id: "fefo-6", timestamp: "05/01/2027", productName: "Indomie Soto Mi", sku: "10089686010524", qty: 10, status: "segera dikeluarkan", notes: "Kadaluwarsa: 05/01/2027 | Tersedia" },
+                { id: "fefo-7", timestamp: "19/05/2027", productName: "Indomie Rendang", sku: "10089686011187", qty: 40, status: "masih aman", notes: "Kadaluwarsa: 19/05/2027 | Tersedia" },
+                { id: "fefo-8", timestamp: "15/05/2027", productName: "Indomie Goreng", sku: "10089686010944", qty: 40, status: "masih aman", notes: "Kadaluwarsa: 15/05/2027 | Tersedia" },
+                { id: "fefo-9", timestamp: "15/01/2027", productName: "Indomie Rica-Rica", sku: "10089686043270", qty: 40, status: "segera dikeluarkan", notes: "Kadaluwarsa: 15/01/2027" },
+                { id: "fefo-10", timestamp: "07/01/2027", productName: "Indomie Cabe Ijo", sku: "10089686010715", qty: 40, status: "segera dikeluarkan", notes: "Kadaluwarsa: 07/01/2027" },
+                { id: "fefo-11", timestamp: "22/01/2027", productName: "Indomie Cabe Ijo", sku: "10089686010715", qty: 40, status: "segera dikeluarkan", notes: "Kadaluwarsa: 22/01/2027" },
+                { id: "fefo-12", timestamp: "21/01/2027", productName: "Indomie Cabe Ijo", sku: "10089686010715", qty: 40, status: "segera dikeluarkan", notes: "Kadaluwarsa: 21/01/2027" },
+                { id: "fefo-13", timestamp: "10/04/2028", productName: "Indomie Cabe Ijo", sku: "10089686010715", qty: 5, status: "masih aman", notes: "Kadaluwarsa: 10/04/2028" },
+                { id: "fefo-14", timestamp: "19/11/2027", productName: "Tarik Malaka", sku: "18888166603612", qty: 12, status: "masih aman", notes: "Kadaluwarsa: 19/11/2027" },
+                { id: "fefo-15", timestamp: "26/04/2027", productName: "Indomie Cabe Ijo", sku: "10089686010715", qty: 45, status: "masih aman", notes: "Kadaluwarsa: 26/04/2027 | Tersedia" },
+                { id: "fefo-16", timestamp: "28/04/2027", productName: "Indomie Ayam Geprek", sku: "10089686043430", qty: 65, status: "masih aman", notes: "Kadaluwarsa: 28/04/2027 | Tersedia" },
+                { id: "fefo-17", timestamp: "14/01/2027", productName: "Indomie Gentong", sku: "10089686910305", qty: 40, status: "segera dikeluarkan", notes: "Kadaluwarsa: 14/01/2027" },
+                { id: "fefo-18", timestamp: "17/05/2027", productName: "Indomie Goreng", sku: "10089686010944", qty: 65, status: "masih aman", notes: "Kadaluwarsa: 17/05/2027" },
+                { id: "fefo-19", timestamp: "27/04/2027", productName: "Indomie Rica-Rica", sku: "10089686043270", qty: 30, status: "masih aman", notes: "Kadaluwarsa: 27/04/2027 | Tersedia" },
+                { id: "fefo-20", timestamp: "06/03/2027", productName: "Indomie Iga Penyet", sku: "10089686043683", qty: 95, status: "masih aman", notes: "Kadaluwarsa: 06/03/2027 | Tersedia" },
+                { id: "fefo-21", timestamp: "17/05/2028", productName: "Sunco", sku: "18993379500235", qty: 46, status: "masih aman", notes: "Kadaluwarsa: 17/05/2028 | Tersedia" },
+                { id: "fefo-22", timestamp: "30/03/2028", productName: "Tropical", sku: "8992946535178", qty: 1, status: "masih aman", notes: "Kadaluwarsa: 30/03/2028 | Tersedia" },
+                { id: "fefo-23", timestamp: "10/07/2028", productName: "Gulaku", sku: "8995180000000", qty: 20, status: "masih aman", notes: "Kadaluwarsa: 10/07/2028 | Tersedia" }
+            ],
+            // DATA BARANG RUSAK FISIK (DAMAGED GOODS)
+            damagedPhysicalGoods: [
+                { id: "rusak-1", timestamp: "31/10/2026, 14.30", productName: "RON 88 500 ML", sku: "10341330462", qty: 2, pelapor: "Team Gudang", notes: "Botol penyok & bocor saat unboxing" }
             ],
             logs: [
-                { timestamp: "10/28/26 6:42", productName: "RON 88 500 ML", type: "IN", qty: 50, notes: "BARANG MASUK - Lokasi: A01.3" }
+                { timestamp: "10/31/26 23:18", productName: "RON 88 500 ML", type: "IN", qty: 85, notes: "BARANG MASUK - Lokasi: A01.3" }
             ]
         };
 
         let state = INITIAL_SPREADSHEET_DATA;
         let chartInstance = null;
         let html5QrCode = null;
-        let activeScanTarget = 'inbound'; 
+        let activeScanTarget = 'inbound';
 
         function showToast(msg, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -1000,15 +1111,15 @@
 
         function handleAuthLogin(e) {
             e.preventDefault();
-            const u = document.getElementById('login-username').value;
-            const p = document.getElementById('login-password').value;
+            const u = document.getElementById('login-username').value.trim();
+            const p = document.getElementById('login-password').value.trim();
             const errMsg = document.getElementById('login-error-msg');
 
-            if (u === AUTH_USER && p === AUTH_PASS) {
+            if (ACCOUNTS[u] && ACCOUNTS[u] === p) {
                 sessionStorage.setItem("sistock_auth", "true");
                 errMsg.classList.add('hidden');
                 checkSessionAuth();
-                showToast("Sampurasun! Wilujeng sumping di SISTOCK 2.0!");
+                showToast(`Sampurasun! Wilujeng sumping, ${u === 'BELAJAR' ? 'Akun Reviewer (BELAJAR)' : 'Naufal'}!`);
             } else {
                 errMsg.classList.remove('hidden');
             }
@@ -1020,6 +1131,51 @@
             showToast("Berhasil keluar dari portal.", "error");
         }
 
+        // REALTIME CLOCK BANDUNG (WIB) & FEFO REMINDER CHECKER
+        function initRealtimeClockAndReminders() {
+            setInterval(() => {
+                const now = new Date();
+                const options = { timeZone: 'Asia/Jakarta', hour12: false, weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+                const timeString = now.toLocaleString('id-ID', options);
+                const clockEl = document.getElementById('realtime-clock');
+                if(clockEl) clockEl.innerText = `Bandung (WIB): ${timeString}`;
+
+                checkFefoExpiringReminders(now);
+            }, 1000);
+        }
+
+        function checkFefoExpiringReminders(currentTime) {
+            const banner = document.getElementById('fefo-reminder-banner');
+            const reminderText = document.getElementById('reminder-text');
+            if(!banner || !reminderText || !state.damagedGoods) return;
+
+            let expiredCount = 0;
+            let nearCount = 0;
+
+            state.damagedGoods.forEach(item => {
+                if(!item.timestamp) return;
+                const parts = item.timestamp.split('/');
+                if(parts.length === 3) {
+                    const expDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+                    const diffTime = expDate - currentTime;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                    if(diffDays < 0) {
+                        expiredCount++;
+                    } else if(diffDays <= 3) {
+                        nearCount++;
+                    }
+                }
+            });
+
+            if(expiredCount > 0 || nearCount > 0) {
+                banner.classList.remove('hidden');
+                reminderText.innerHTML = `Ada <strong>${expiredCount} batch kedaluwarsa</strong> dan <strong>${nearCount} batch mendekati Exp (≤3 hari)</strong>! Segera periksa modul Karantina FEFO.`;
+            } else {
+                reminderText.innerHTML = `Semua batch stok terpantau aman dari batas kritis kedaluwarsa WIB.`;
+            }
+        }
+
         function initFirebaseSync() {
             db.ref('sistock_v2_pro/state').on('value', (snapshot) => {
                 const data = snapshot.val();
@@ -1028,6 +1184,7 @@
                         suppliers: data.suppliers || INITIAL_SPREADSHEET_DATA.suppliers,
                         products: data.products || [],
                         damagedGoods: data.damagedGoods || INITIAL_SPREADSHEET_DATA.damagedGoods,
+                        damagedPhysicalGoods: data.damagedPhysicalGoods || INITIAL_SPREADSHEET_DATA.damagedPhysicalGoods,
                         logs: data.logs || []
                     };
                 } else {
@@ -1048,7 +1205,6 @@
 
         function syncToGoogleSheets() {
             const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVyIpWceLZ9vkDxY9NPbFctcJtCjhqQcG9tfUAZnfqfH8BhoZ9CCA7CZsAwaqlqqt55w/exec";
-
             if (!confirm("Kirim full backup data terbaru ke Portal Google Sheets SMKN 3 BANDUNG?")) return;
 
             fetch(GOOGLE_APPS_SCRIPT_URL, {
@@ -1059,8 +1215,9 @@
                     action: "sync_stock",
                     products: state.products,
                     damagedGoods: state.damagedGoods,
+                    damagedPhysicalGoods: state.damagedPhysicalGoods,
                     logs: state.logs,
-                    timestamp: new Date().toLocaleString('id-ID')
+                    timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
                 })
             })
             .then(() => { showToast("✅ Full Backup berhasil dikirim ke Sheets!"); })
@@ -1071,11 +1228,12 @@
             lucide.createIcons();
             checkSessionAuth();
             initChart();
+            initRealtimeClockAndReminders();
             initFirebaseSync();
         });
 
         function switchTab(tabName) {
-            const sections = ['dashboard', 'inbound', 'outbound', 'opname', 'products', 'damaged', 'recap', 'suppliers'];
+            const sections = ['dashboard', 'inbound', 'outbound', 'opname', 'products', 'damaged', 'barang-rusak', 'recap', 'suppliers'];
             sections.forEach(s => {
                 const secEl = document.getElementById(`section-${s}`);
                 if(secEl) secEl.classList.add('hidden');
@@ -1091,7 +1249,7 @@
             if(targetSection) {
                 targetSection.classList.remove('hidden');
                 targetSection.classList.remove('animate-tab-enter');
-                void targetSection.offsetWidth; 
+                void targetSection.offsetWidth;
                 targetSection.classList.add('animate-tab-enter');
             }
             
@@ -1103,6 +1261,7 @@
 
             if(tabName === 'recap') renderRecapData();
             if(tabName === 'damaged') renderDamagedGoods();
+            if(tabName === 'barang-rusak') renderBarangRusak();
             if(tabName === 'suppliers') renderSuppliers();
         }
 
@@ -1110,6 +1269,7 @@
             renderDashboardStats();
             renderProducts();
             renderDamagedGoods();
+            renderBarangRusak();
             renderSuppliers();
             populateDropdowns();
             updateChartData();
@@ -1125,7 +1285,7 @@
             const ropAlertCount = state.products.filter(p => parseInt(p.stock) <= parseInt(p.rop)).length;
             document.getElementById('stat-rop-alert').innerText = ropAlertCount;
 
-            const activeDamagedCount = state.damagedGoods.length;
+            const activeDamagedCount = (state.damagedGoods ? state.damagedGoods.length : 0) + (state.damagedPhysicalGoods ? state.damagedPhysicalGoods.length : 0);
             document.getElementById('stat-damaged-count').innerText = activeDamagedCount;
 
             const topProductsContainer = document.getElementById('top-products-list');
@@ -1149,12 +1309,12 @@
             }
 
             const logsTbody = document.getElementById('dashboard-logs-tbody');
-            if(state.logs.length === 0) {
+            if(!state.logs || state.logs.length === 0) {
                 logsTbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Belum ada riwayat transaksi.</td></tr>`;
             } else {
                 logsTbody.innerHTML = '';
                 state.logs.slice(-5).reverse().forEach(log => {
-                    const badgeColor = log.type === 'IN' ? 'bg-emerald-100 text-emerald-700' : log.type === 'OUT' ? 'bg-rose-100 text-rose-700' : log.type === 'DAMAGED' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700';
+                    const badgeColor = log.type === 'IN' ? 'bg-emerald-100 text-emerald-700' : log.type === 'OUT' ? 'bg-rose-100 text-rose-700' : log.type === 'RUSAK' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700';
                     logsTbody.innerHTML += `
                         <tr class="hover:bg-slate-50/80 transition">
                             <td class="p-3 text-slate-400 font-medium">${log.timestamp}</td>
@@ -1229,7 +1389,7 @@
             if(!tbody) return;
 
             if(!state.damagedGoods || state.damagedGoods.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Belum ada barang karantina FEFO.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Belum ada data karantina FEFO.</td></tr>`;
                 return;
             }
 
@@ -1241,21 +1401,48 @@
 
                 if (statusLower.includes('kadaluwarsa') || statusLower.includes('expired')) {
                     badgeStyle = 'bg-rose-100 text-rose-800 font-bold';
-                    badgeText = '🔴 Kadaluwarsa (FEFO Expired)';
-                } else if (statusLower.includes('segera') || statusLower.includes('rusak')) {
+                    badgeText = '🔴 Kadaluwarsa (Expired)';
+                } else if (statusLower.includes('segera')) {
                     badgeStyle = 'bg-amber-100 text-amber-800 font-bold';
-                    badgeText = '🟡 Segera Dikeluarkan (FEFO Alert)';
+                    badgeText = '🟡 Segera Dikeluarkan (FEFO)';
                 }
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
-                        <td class="p-3.5 text-slate-400 font-medium">${d.timestamp}</td>
-                        <td class="p-3.5 font-bold text-slate-800">${d.productName} <span class="font-mono text-xs text-brand-600">(${d.sku})</span></td>
+                        <td class="p-3.5 font-bold text-brand-600">${d.timestamp}</td>
+                        <td class="p-3.5 font-bold text-slate-800">${d.productName} <span class="font-mono text-xs text-slate-400">(${d.sku})</span></td>
                         <td class="p-3.5 font-black text-slate-800">${d.qty}</td>
                         <td class="p-3.5 text-slate-500 font-medium">PCS</td>
                         <td class="p-3.5"><span class="${badgeStyle} px-2.5 py-1 rounded-full text-[10px]">${badgeText}</span> <span class="text-slate-500 ml-1 text-xs font-medium">(${d.notes || '-'})</span></td>
                         <td class="p-3.5 text-right">
                             <button onclick="deleteDamaged('${d.id}')" class="p-1.5 text-slate-400 hover:text-rose-500 btn-press"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        function renderBarangRusak() {
+            const tbody = document.getElementById('barang-rusak-tbody');
+            if(!tbody) return;
+
+            if(!state.damagedPhysicalGoods || state.damagedPhysicalGoods.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Belum ada barang rusak fisik tercatat.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            state.damagedPhysicalGoods.forEach(r => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3.5 text-slate-400 font-medium">${r.timestamp}</td>
+                        <td class="p-3.5 font-bold text-slate-800">${r.productName} <span class="font-mono text-xs text-rose-600">(${r.sku})</span></td>
+                        <td class="p-3.5 font-black text-rose-600">-${r.qty} PCS</td>
+                        <td class="p-3.5 text-slate-700 font-semibold">${r.pelapor}</td>
+                        <td class="p-3.5 text-slate-600 font-medium">${r.notes}</td>
+                        <td class="p-3.5 text-right">
+                            <button onclick="deleteBarangRusak('${r.id}')" class="p-1.5 text-slate-400 hover:text-rose-500 btn-press"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </td>
                     </tr>
                 `;
@@ -1290,7 +1477,7 @@
         }
 
         function populateDropdowns() {
-            const selects = ['in-product-id', 'out-product-id', 'opname-product-id', 'dmg-product-id'];
+            const selects = ['in-product-id', 'out-product-id', 'opname-product-id', 'dmg-product-id', 'rusak-product-id'];
             selects.forEach(id => {
                 const el = document.getElementById(id);
                 if(!el) return;
@@ -1314,13 +1501,12 @@
             if(prod) {
                 prod.stock += qty;
                 state.logs.push({
-                    timestamp: new Date().toLocaleString('id-ID'),
+                    timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
                     productName: prod.name,
                     type: 'IN',
                     qty: qty,
                     notes: `Masuk dari ${supplier} - ${notes}`
                 });
-
                 saveStateToCloud();
                 showToast(`Stok ${prod.name} bertambah +${qty} unit!`);
                 document.getElementById('form-inbound').reset();
@@ -1343,13 +1529,12 @@
                 }
                 prod.stock -= qty;
                 state.logs.push({
-                    timestamp: new Date().toLocaleString('id-ID'),
+                    timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
                     productName: prod.name,
                     type: 'OUT',
                     qty: qty,
                     notes: `Keluar ke ${destination} - ${notes}`
                 });
-
                 saveStateToCloud();
                 showToast(`Stok ${prod.name} keluar -${qty} unit!`);
                 document.getElementById('form-outbound').reset();
@@ -1369,13 +1554,12 @@
                 const diff = physicalQty - prod.stock;
                 prod.stock = physicalQty;
                 state.logs.push({
-                    timestamp: new Date().toLocaleString('id-ID'),
+                    timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
                     productName: prod.name,
                     type: 'OPNAME',
                     qty: physicalQty,
-                    notes: `Opname oleh ${auditor} (Selisih: ${diff >= 0 ? '+' + diff : diff}) - ${notes}`
+                    notes: `Opname ${auditor} (Selisih: ${diff >= 0 ? '+' + diff : diff}) - ${notes}`
                 });
-
                 saveStateToCloud();
                 showToast(`Stock Opname ${prod.name} diperbarui!`);
                 document.getElementById('form-opname-scan').reset();
@@ -1403,14 +1587,13 @@
             } else {
                 state.products.push(newProd);
                 state.logs.push({
-                    timestamp: new Date().toLocaleString('id-ID'),
+                    timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
                     productName: newProd.name,
                     type: 'IN',
                     qty: newProd.stock,
                     notes: 'Barang Baru Ditambahkan'
                 });
             }
-
             saveStateToCloud();
             closeProductModal();
             showToast('Data barang berhasil disimpan!');
@@ -1443,46 +1626,83 @@
             const prodId = document.getElementById('dmg-product-id').value;
             const qty = parseInt(document.getElementById('dmg-qty').value);
             const status = document.getElementById('dmg-status').value;
-            const notes = document.getElementById('dmg-notes').value || 'Karantina';
+            const timestamp = document.getElementById('dmg-timestamp').value;
+            const notes = document.getElementById('dmg-notes').value || 'FEFO Batch';
 
             const prod = state.products.find(p => p.id === prodId);
             if(prod) {
-                if(status !== 'masih aman' && prod.stock < qty) {
-                    showToast('Stok tidak mencukupi!', 'error');
-                    return;
-                }
-                if(status !== 'masih aman') prod.stock -= qty;
-
+                if(!state.damagedGoods) state.damagedGoods = [];
                 state.damagedGoods.push({
-                    id: 'dmg-' + Date.now(),
-                    timestamp: new Date().toLocaleDateString('id-ID'),
+                    id: 'fefo-' + Date.now(),
+                    timestamp: timestamp,
                     productName: prod.name,
                     sku: prod.sku,
                     qty: qty,
                     status: status,
                     notes: notes
                 });
-
-                state.logs.push({
-                    timestamp: new Date().toLocaleString('id-ID'),
-                    productName: prod.name,
-                    type: 'DAMAGED',
-                    qty: qty,
-                    notes: `FEFO Karantina: ${status} - ${notes}`
-                });
-
                 saveStateToCloud();
-                showToast('Data karantina FEFO disimpan!');
+                showToast('Batch FEFO berhasil dicatat!');
                 closeDamagedModal();
                 switchTab('damaged');
             }
         }
 
         function deleteDamaged(id) {
-            if(confirm('Hapus catatan karantina ini?')) {
+            if(confirm('Hapus catatan FEFO ini?')) {
                 state.damagedGoods = state.damagedGoods.filter(d => d.id !== id);
                 saveStateToCloud();
-                showToast('Catatan karantina dihapus.', 'error');
+                showToast('Catatan FEFO dihapus.', 'error');
+            }
+        }
+
+        // FUNGSI SIMPAN BARANG RUSAK (OTOMATIS POTONG STOK UTAMA)
+        function saveBarangRusak(e) {
+            e.preventDefault();
+            const prodId = document.getElementById('rusak-product-id').value;
+            const qty = parseInt(document.getElementById('rusak-qty').value);
+            const pelapor = document.getElementById('rusak-pelapor').value;
+            const notes = document.getElementById('rusak-notes').value;
+
+            const prod = state.products.find(p => p.id === prodId);
+            if(prod) {
+                if(prod.stock < qty) {
+                    showToast('Stok tidak mencukupi untuk dilaporkan rusak!', 'error');
+                    return;
+                }
+                prod.stock -= qty; // AUTO POTONG STOK
+
+                if(!state.damagedPhysicalGoods) state.damagedPhysicalGoods = [];
+                state.damagedPhysicalGoods.push({
+                    id: 'rusak-' + Date.now(),
+                    timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+                    productName: prod.name,
+                    sku: prod.sku,
+                    qty: qty,
+                    pelapor: pelapor,
+                    notes: notes
+                });
+
+                state.logs.push({
+                    timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+                    productName: prod.name,
+                    type: 'RUSAK',
+                    qty: qty,
+                    notes: `Barang Rusak Fisik dilaporkan oleh ${pelapor} - ${notes}`
+                });
+
+                saveStateToCloud();
+                showToast(`Laporan barang rusak disimpan, stok ${prod.name} otomatis terpotong -${qty}!`);
+                closeBarangRusakModal();
+                switchTab('barang-rusak');
+            }
+        }
+
+        function deleteBarangRusak(id) {
+            if(confirm('Hapus catatan barang rusak ini?')) {
+                state.damagedPhysicalGoods = state.damagedPhysicalGoods.filter(r => r.id !== id);
+                saveStateToCloud();
+                showToast('Catatan barang rusak dihapus.', 'error');
             }
         }
 
@@ -1502,7 +1722,6 @@
                 contact: contactEl ? contactEl.value || '-' : '-',
                 phone: phoneEl ? phoneEl.value || '-' : '-'
             });
-
             saveStateToCloud();
             closeSupplierModal();
             showToast('Supplier/User baru ditambahkan!');
@@ -1522,7 +1741,7 @@
             if(!recapTbody) return;
             recapTbody.innerHTML = '';
 
-            if(state.logs.length === 0) {
+            if(!state.logs || state.logs.length === 0) {
                 recapTbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Belum ada data rekapitulasi.</td></tr>`;
                 document.getElementById('recap-in-total').innerText = `0 Unit`;
                 document.getElementById('recap-out-total').innerText = `0 Unit`;
@@ -1533,7 +1752,7 @@
             state.logs.forEach(log => {
                 if(log.type === 'IN') inTotal += log.qty;
                 else if(log.type === 'OUT') outTotal += log.qty;
-                else if(log.type === 'DAMAGED') dmgTotal += log.qty;
+                else if(log.type === 'RUSAK') dmgTotal += log.qty;
 
                 recapTbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
@@ -1582,7 +1801,6 @@
         function updateDeliveryPreview() {
             const customerEl = document.getElementById('doCustomer');
             const dateEl = document.getElementById('doDate');
-            
             document.getElementById('previewCustomer').innerText = customerEl ? customerEl.value || '-' : '-';
             document.getElementById('previewDate').innerText = dateEl ? dateEl.value || '-' : '-';
 
@@ -1602,7 +1820,6 @@
                 const id = cb.getAttribute('data-id');
                 const name = cb.getAttribute('data-name');
                 const qtyVal = document.getElementById(`doQty_${id}`).value;
-
                 tbody.innerHTML += `
                     <tr class="border-b border-slate-200">
                         <td class="py-2 px-2 text-center font-mono text-slate-600 font-bold">${no++}</td>
@@ -1622,6 +1839,7 @@
             setTimeout(() => printWindow.print(), 300);
         }
 
+        // SCANNER KAMERA MOBILE OPTIMIZED
         function openDedicatedScanner(target) {
             activeScanTarget = target;
             document.getElementById('modal-scanner').classList.remove('hidden');
@@ -1629,11 +1847,10 @@
             
             html5QrCode.start(
                 { facingMode: "environment" },
-                { fps: 10, qrbox: { width: 250, height: 150 } },
+                { fps: 10, qrbox: { width: 220, height: 140 } },
                 (decodedText) => {
                     document.getElementById('scan-result-text').innerText = `Terdeteksi: ${decodedText}`;
                     closeScannerModal();
-                    
                     const matchedProd = state.products.find(p => p.sku === decodedText);
                     if(matchedProd) {
                         if(activeScanTarget === 'inbound') {
@@ -1661,7 +1878,7 @@
             
             html5QrCode.start(
                 { facingMode: "environment" },
-                { fps: 10, qrbox: { width: 250, height: 150 } },
+                { fps: 10, qrbox: { width: 220, height: 140 } },
                 (decodedText) => {
                     closeScannerModal();
                     if(mode === 'input') {
@@ -1688,10 +1905,12 @@
         function closeProductModal() { document.getElementById('modal-product').classList.add('hidden'); }
         function openDamagedModal() { document.getElementById('form-damaged').reset(); document.getElementById('modal-damaged').classList.remove('hidden'); }
         function closeDamagedModal() { document.getElementById('modal-damaged').classList.add('hidden'); }
+        function openBarangRusakModal() { document.getElementById('form-barang-rusak').reset(); document.getElementById('modal-barang-rusak').classList.remove('hidden'); }
+        function closeBarangRusakModal() { document.getElementById('modal-barang-rusak').classList.add('hidden'); }
         function openSupplierModal() { document.getElementById('form-supplier').reset(); document.getElementById('modal-supplier').classList.remove('hidden'); }
         function closeSupplierModal() { document.getElementById('modal-supplier').classList.add('hidden'); }
 
-        // --- ENHANCED J.A.R.V.I.S NYUNDA GUIDE BOT ENGINE ---
+        // --- ENHANCED J.A.R.V.I.S GUIDEBOT ASSISTANT (NYUNDA) ---
         function toggleJarvisChat() {
             const modal = document.getElementById('jarvis-chat-modal');
             if(modal) {
@@ -1748,64 +1967,47 @@
         function processAdvancedNyundaJarvis(text) {
             const q = text.toLowerCase();
 
-            // 1. SAPAAN NYUNDA
             if(q.includes('halo') || q.includes('hai') || q.includes('sampurasun') || q.includes('jarvis')) {
-                return `Sampurasun Akang / Teteh! 👋 Wilujeng sumping di SISTOCK 2.0. Ada yang bisa Akang / Teteh bantu cek terkait gudang logistik hari ini?`;
+                return `Sampurasun Akang / Teteh! 👋 Wilujeng sumping di SISTOCK 2.0. Ada yang bisa GuideBot bantu terkait inventaris logistik hari ini?`;
             }
 
-            // 2. PENJELASAN FEFO SPREADSHEET
-            if(q.includes('fefo') || q.includes('cek fefo') || q.includes('karantina')) {
-                return `☣️ <strong>STATUS FEFO & KARANTINA TERBARU (SINKRON SPREADSHEET):</strong><br><br>
-                • 🔴 <strong>Indomie Soto:</strong> 5 Pcs (Kadaluwarsa / Expired)<br>
-                • 🟡 <strong>Indomie Ayam Bawang:</strong> 46 Pcs (Segera Dikeluarkan)<br>
-                • 🟡 <strong>Indomie Goreng Rendang:</strong> 5 Pcs (Perlu Restock / Monitoring)<br><br>
-                <em>Sistem menerapkan prinsip First Expired, First Out (FEFO) secara otomatis.</em>`;
+            if(q.includes('fefo') || q.includes('cek fefo') || q.includes('reminder')) {
+                return `☣️ <strong>REMINDER SISTEM FEFO & KADALUWARSA:</strong><br><br>
+                SISTOCK 2.0 memantau seluruh 23 batch kadaluwarsa secara real-time berdasarkan zona waktu Bandung (WIB). Jika ada batch yang melewati tanggal exp atau mendekati H-3, kotak peringatan khusus akan otomatis menyala di atas dashboard!<br>
+                • Contoh: <em>Indomie Soto (Exp: 02/10/2026)</em> tercatat kadaluwarsa dan diprioritaskan penanganannya.`;
             }
 
-            // 3. INBOUND DETAIL
+            if(q.includes('rusak') || q.includes('barang rusak')) {
+                return `🛡️ <strong>MODUL PENCATATAN BARANG RUSAK FISIK:</strong><br><br>
+                Fitur ini dirancang khusus jika ada barang yang kemasannya sobek, pecah, atau rusak di gudang.<br>
+                • <strong>Cara Kerja:</strong> Masuk ke menu <em>Barang Rusak</em>, pilih produk dan jumlah kuantitas kerusakannya. Sistem akan **secara otomatis memotong stok gudang utama** dan mencatat laporan audit dengan aman.`;
+            }
+
             if(q.includes('inbound') || q.includes('jelaskan inbound')) {
-                return `📥 <strong>CARA PAKAI FITUR INBOUND (BARANG MASUK):</strong><br><br>
-                1. Buka menu <strong>Barang Masuk</strong> dari laci navigasi.<br>
-                2. Pilih barang atau klik tombol <strong>Scan</strong> untuk scan barcode fisik barang pakai kamera HP Akang / Teteh.<br>
-                3. Masukkan kuantitas (Qty) barang datang dan nama supplier/surat jalan.<br>
-                4. Klik <strong>Konfirmasi</strong>. Stok otomatis bertambah di Firebase real-time!`;
+                return `📥 <strong>DETAIL FITUR INBOUND (BARANG MASUK):</strong><br>
+                Digunakan saat kiriman barang dari supplier tiba di SMKN 3 Bandung. Bisa menggunakan scan kamera barcode agar SKU akurat dan stok otomatis bertambah secara live ke Firebase!`;
             }
 
-            // 4. OUTBOUND DETAIL
             if(q.includes('outbound') || q.includes('jelaskan outbound')) {
-                return `📤 <strong>CARA PAKAI FITUR OUTBOUND (BARANG KELUAR):</strong><br><br>
-                1. Buka menu <strong>Barang Keluar</strong>.<br>
-                2. Pilih produk yang mau dikeluarkan dan tentukan unit pemesan (misal: Unit Logistik / ULP).<br>
-                3. Masukkan Qty keluar.<br>
-                4. Klik <strong>Proses</strong>. Jika stok mencukupi, stok akan langsung terpotong aman.`;
+                return `📤 <strong>DETAIL FITUR OUTBOUND (BARANG KELUAR):</strong><br>
+                Digunakan untuk mendistribusikan barang keluar ke unit pemesan (ULP, lab, dll). Sistem memvalidasi agar tidak terjadi minus stok.`;
             }
 
-            // 5. STOCK OPNAME DETAIL
             if(q.includes('opname') || q.includes('jelaskan opname')) {
-                return `🔎 <strong>CARA PAKAI STOCK OPNAME (AUDIT FISIK):</strong><br><br>
-                Fitur ini dipakai untuk mencocokkan stok fisik di rak gudang dengan data komputer.<br>
-                1. Buka menu <strong>Stock Opname</strong>.<br>
-                2. Scan barcode barang di rak.<br>
-                3. Masukkan jumlah hitung fisik aktual.<br>
-                4. Sistem otomatis menghitung selisih (surplus/minus) dan mengupdate stok fisik terbaru.`;
+                return `🔎 <strong>STOCK OPNAME & AUDIT FISIK:</strong><br>
+                Mencocokkan jumlah fisik barang di rak dengan database komputer secara berkala.`;
             }
 
-            // 6. SURAT JALAN DO DETAIL
-            if(q.includes('surat jalan') || q.includes('jelaskan surat jalan') || q.includes('do')) {
-                return `📜 <strong>CARA CETAK SURAT JALAN (DELIVERY ORDER):</strong><br><br>
-                1. Klik tombol <strong>Surat Jalan DO</strong> di bagian atas header aplikasi.<br>
-                2. Centang barang-barang yang mau dikirim beserta kuantitasnya.<br>
-                3. Isi nama pemesan & tanggal delivery.<br>
-                4. Klik <strong>Cetak Surat Jalan</strong> untuk memunculkan dokumen siap print lengkap dengan kolom tanda tangan resmi!`;
+            if(q.includes('surat jalan') || q.includes('jelaskan surat jalan')) {
+                return `📜 <strong>SURAT JALAN / DELIVERY ORDER (DO):</strong><br>
+                Klik tombol DO di header atas untuk memilih barang, mengisi tujuan, dan mencetak surat jalan resmi siap tanda tangan.`;
             }
 
-            // 7. VALUASI ASET & TOTAL
             if(q.includes('aset') || q.includes('nilai') || q.includes('valuasi')) {
                 const totalVal = state.products.reduce((acc, item) => acc + ((parseInt(item.price) || 0) * (parseInt(item.stock) || 0)), 0);
-                return `💰 Total valuasi aset inventaris gudang Akang / Teteh saat ini adalah: <strong>Rp ${totalVal.toLocaleString('id-ID')}</strong>.`;
+                return `💰 Total valuasi finansial seluruh aset inventaris gudang saat ini adalah: <strong>Rp ${totalVal.toLocaleString('id-ID')}</strong>.`;
             }
 
-            // 8. PENCARIAN NAMA BARANG SPESIFIK
             const matched = state.products.filter(p => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q));
             if(matched.length > 0) {
                 let resultHTML = "🔍 <strong>Informasi Barang Ditemukan:</strong><br>";
@@ -1815,7 +2017,7 @@
                 return resultHTML;
             }
 
-            return `Waduh Akang / Teteh, Jarvis belum mengerti perintah tersebut. 😅<br>Coba klik salah satu tombol opsi cepat di atas ya!`;
+            return `Waduh Akang / Teteh, GuideBot belum paham perintah tersebut. 😅 Coba klik salah satu tombol opsi cepat di atas ya!`;
         }
 
         function escapeHtml(str) {
@@ -1827,7 +2029,7 @@
             chartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['Inbound', 'Outbound', 'Karantina', 'Opname'],
+                    labels: ['Inbound', 'Outbound', 'Rusak', 'Opname'],
                     datasets: [{
                         label: 'Mutasi Unit',
                         data: [0, 0, 0, 0],
@@ -1845,12 +2047,14 @@
         function updateChartData() {
             if(!chartInstance) return;
             let inSum = 0, outSum = 0, dmgSum = 0, opSum = 0;
-            state.logs.forEach(l => {
-                if(l.type === 'IN') inSum += l.qty;
-                if(l.type === 'OUT') outSum += l.qty;
-                if(l.type === 'DAMAGED') dmgSum += l.qty;
-                if(l.type === 'OPNAME') opSum += l.qty;
-            });
+            if(state.logs) {
+                state.logs.forEach(l => {
+                    if(l.type === 'IN') inSum += l.qty;
+                    if(l.type === 'OUT') outSum += l.qty;
+                    if(l.type === 'RUSAK') dmgSum += l.qty;
+                    if(l.type === 'OPNAME') opSum += l.qty;
+                });
+            }
             chartInstance.data.datasets[0].data = [inSum, outSum, dmgSum, opSum];
             chartInstance.update();
         }
