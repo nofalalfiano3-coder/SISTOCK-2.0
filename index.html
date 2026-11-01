@@ -364,14 +364,19 @@
                 <!-- SECTION: BARANG MASUK (INBOUND) -->
                 <section id="section-inbound" class="space-y-4 hidden animate-tab-enter">
                     <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/80 shadow-sm max-w-2xl mx-auto space-y-5">
-                        <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
-                            <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl shadow-sm">
-                                <i data-lucide="arrow-down-left" class="w-6 h-6"></i>
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                            <div class="flex items-center gap-3">
+                                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl shadow-sm">
+                                    <i data-lucide="arrow-down-left" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-extrabold text-sm text-slate-900 uppercase tracking-wider">Modul Barang Masuk (Inbound)</h3>
+                                    <p class="text-xs text-slate-400 font-medium">Penerimaan stok dari vendor ke gudang</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="font-extrabold text-sm text-slate-900 uppercase tracking-wider">Modul Barang Masuk (Inbound)</h3>
-                                <p class="text-xs text-slate-400 font-medium">Penerimaan stok dari vendor ke gudang</p>
-                            </div>
+                            <button onclick="printInboundLogs()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 btn-press">
+                                <i data-lucide="printer" class="w-4 h-4 text-emerald-600"></i> Print Rekap
+                            </button>
                         </div>
 
                         <form id="form-inbound" onsubmit="handleInboundSubmit(event)" class="space-y-4 text-xs">
@@ -856,7 +861,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-2xl text-xs border border-slate-200">
                 <div>
-                    <label class="block font-bold text-slate-700 mb-1">Receiver (Penerima / Tujuan)</label>
+                    <label class="block font-bold text-slate-700 mb-1">Penerima (Tujuan / Client)</label>
                     <input type="text" id="doCustomer" oninput="updateDeliveryPreview()" placeholder="Budi Santoso / Unit Logistik" value="Budi Santoso" class="w-full border rounded-xl p-2.5 text-xs outline-none bg-white font-semibold focus:border-brand-500">
                 </div>
                 <div>
@@ -870,7 +875,7 @@
                 <div id="doItemSelector" class="space-y-2 max-h-40 overflow-y-auto border p-3 rounded-2xl text-xs bg-slate-50 custom-scrollbar"></div>
             </div>
 
-            <!-- PREVIEW SURAT JALAN SESUAI REFERENSI MINIMALIS + BRANDING SISTOCK -->
+            <!-- PREVIEW SURAT JALAN SESUAI REFERENSI MINIMALIS + PENERIMA & KOSONG TTD -->
             <div id="printArea" class="border p-6 rounded-2xl bg-white space-y-5 text-slate-900 font-sans">
                 <div class="flex justify-between items-start border-b-2 border-slate-900 pb-4">
                     <div>
@@ -884,7 +889,7 @@
                 </div>
 
                 <div class="text-xs space-y-1">
-                    <p class="font-extrabold uppercase tracking-wider text-slate-400 text-[10px]">RECEIVER:</p>
+                    <p class="font-extrabold uppercase tracking-wider text-slate-400 text-[10px]">PENERIMA:</p>
                     <p id="previewCustomer" class="font-bold text-slate-800 text-sm">-</p>
                 </div>
 
@@ -901,12 +906,12 @@
 
                 <div class="grid grid-cols-2 gap-8 pt-16 text-xs text-center font-medium">
                     <div>
-                        <p class="mb-14 text-slate-600 font-semibold">Sender's Signature</p>
-                        <p class="font-bold border-t border-slate-400 pt-1 w-40 mx-auto">( Name and Signature )</p>
+                        <p class="mb-14 text-slate-600 font-semibold">Petugas Logistik</p>
+                        <p class="font-bold border-t border-slate-400 pt-1 w-40 mx-auto">&nbsp;</p>
                     </div>
                     <div>
-                        <p class="mb-14 text-slate-600 font-semibold">Recipient Signature</p>
-                        <p class="font-bold border-t border-slate-400 pt-1 w-40 mx-auto">( Name and Signature )</p>
+                        <p class="mb-14 text-slate-600 font-semibold">Penerima</p>
+                        <p class="font-bold border-t border-slate-400 pt-1 w-40 mx-auto">&nbsp;</p>
                     </div>
                 </div>
             </div>
@@ -1095,7 +1100,7 @@
                 { id: "rusak-1", timestamp: "31/10/2026, 14.30", productName: "RON 88 500 ML", sku: "10341330462", qty: 2, pelapor: "Team Gudang", notes: "Botol penyok & bocor saat unboxing" }
             ],
             logs: [
-                { timestamp: "10/31/26 23:18", productName: "RON 88 500 ML", type: "IN", qty: 85, notes: "BARANG MASUK - Lokasi: A01.3" }
+                { id: "log-init", timestamp: "10/31/26 23:18", productName: "RON 88 500 ML", type: "IN", qty: 85, notes: "BARANG MASUK - Rak: A01.3 | Vendor Utama" }
             ]
         };
 
@@ -1611,6 +1616,8 @@
                     id: 'log-' + Date.now(),
                     timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
                     productName: prod.name,
+                    sku: prod.sku,
+                    rack: prod.location || 'Utama',
                     type: 'IN',
                     qty: qty,
                     notes: `Masuk dari ${supplier} - Rak: ${prod.location || 'Utama'} | ${notes}`
@@ -1902,7 +1909,54 @@
             lucide.createIcons();
         }
 
-        // --- FITUR PRINT REKAP BARANG KELUAR & REKAPITULASI TREN ---
+        // --- FITUR PRINT REKAP INBOUND & OUTBOUND (TANPA SIGNATURE) ---
+        function printInboundLogs() {
+            const inboundLogs = state.logs ? state.logs.filter(l => l.type === 'IN') : [];
+            let rowsHTML = '';
+            if(inboundLogs.length === 0) {
+                rowsHTML = `<tr><td colspan="4" style="text-align:center; padding: 15px; color:#888;">Belum ada data barang masuk.</td></tr>`;
+            } else {
+                inboundLogs.forEach((l, idx) => {
+                    rowsHTML += `
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px; text-align:center;">${idx + 1}</td>
+                            <td style="padding: 8px;">${l.timestamp}</td>
+                            <td style="padding: 8px; font-weight:bold;">${l.productName}</td>
+                            <td style="padding: 8px; text-align:center; font-weight:bold;">${l.qty}</td>
+                            <td style="padding: 8px;">${l.notes}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            const printWin = window.open('', '_blank', 'width=800,height=600');
+            if(!printWin) return;
+            printWin.document.write(`
+                <html>
+                <head><title>Rekap Barang Masuk - SISTOCK 2.0</title></head>
+                <body style="font-family: sans-serif; padding: 20px; color: #111;">
+                    <h2 style="margin-bottom: 2px; text-transform: uppercase;">Rekapitulasi Barang Masuk (Inbound)</h2>
+                    <p style="font-size: 12px; color: #555; margin-top:0;">SISTOCK 2.0 — SMKN 3 BANDUNG</p>
+                    <hr style="border: 1px solid #222; margin: 15px 0;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+                        <thead>
+                            <tr style="background: #f4f4f4; border-bottom: 2px solid #222;">
+                                <th style="padding: 8px; text-align:center; width: 40px;">NO</th>
+                                <th style="padding: 8px;">WAKTU</th>
+                                <th style="padding: 8px;">NAMA BARANG</th>
+                                <th style="padding: 8px; text-align:center; width: 60px;">QTY</th>
+                                <th style="padding: 8px;">KETERANGAN / SUPPLIER</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rowsHTML}</tbody>
+                    </table>
+                </body>
+                </html>
+            `);
+            printWin.document.close();
+            setTimeout(() => printWin.print(), 300);
+        }
+
         function printOutboundLogs() {
             const outboundLogs = state.logs ? state.logs.filter(l => l.type === 'OUT') : [];
             let rowsHTML = '';
@@ -1943,10 +1997,6 @@
                         </thead>
                         <tbody>${rowsHTML}</tbody>
                     </table>
-                    <div style="margin-top: 40px; display: flex; justify-content: space-between; font-size: 12px;">
-                        <div style="text-align: center;"><p style="margin-bottom: 60px;">Penerima / Pemesan,</p><b>( _________________ )</b></div>
-                        <div style="text-align: center;"><p style="margin-bottom: 60px;">Petugas Logistik,</p><b>( _________________ )</b></div>
-                    </div>
                 </body>
                 </html>
             `);
@@ -2006,14 +2056,13 @@
             setTimeout(() => printWin.print(), 300);
         }
 
-        // --- FITUR NOMOR DO DINAMIS & SURAT JALAN MINIMALIS PROFESIONAL ---
+        // --- FITUR NOMOR DO DINAMIS & SURAT JALAN MINIMALIS PROFESIONAL (PENERIMA & TTD KOSONG) ---
         let currentDoNumber = 123412;
 
         function openDeliveryModal() {
             const dateInput = document.getElementById('doDate');
             if(dateInput && !dateInput.value) dateInput.valueAsDate = new Date();
             
-            // Set nomor DO dinamis (bertambah otomatis)
             document.getElementById('previewDoNumber').innerText = `DO${currentDoNumber}`;
             
             renderDoSelector();
@@ -2046,7 +2095,6 @@
             const dateEl = document.getElementById('doDate');
             document.getElementById('previewCustomer').innerText = customerEl ? customerEl.value || '-' : '-';
             
-            // Format tanggal agar tampil rapi seperti referensi (contoh: 31 July 2024 atau 31 Oktober 2026)
             if(dateEl && dateEl.value) {
                 const d = new Date(dateEl.value);
                 const options = { day: 'numeric', month: 'long', year: 'numeric' };
@@ -2095,7 +2143,6 @@
             printWindow.document.close();
             setTimeout(() => {
                 printWindow.print();
-                // Increment nomor DO agar dinamis berubah tiap selesai print
                 currentDoNumber++;
             }, 300);
         }
@@ -2261,7 +2308,7 @@
             if(q.includes('outbound') || q.includes('jelaskan outbound')) {
                 return `📤 <strong>PROSEDUR OPERASIONAL BAKU - BARANG KELUAR (OUTBOUND):</strong><br><br>
                 Modul Outbound mengelola proses pengeluaran stok untuk didistribusikan ke unit pemesan, ruang praktikum, atau kebutuhan instansi.<br>
-                • <strong>Fitur Baru:</strong> Dilengkapi tombol Print Rekap untuk mencetak bukti fisik pengeluaran barang secara instan.`;
+                • <strong>Fitur Baru:</strong> Dilengkapi tombol Print Rekap tanpa signature untuk mencetak bukti fisik pengeluaran barang secara instan.`;
             }
 
             if(q.includes('opname') || q.includes('jelaskan opname')) {
@@ -2273,7 +2320,7 @@
             if(q.includes('surat jalan') || q.includes('jelaskan surat jalan') || q.includes('do')) {
                 return `📜 <strong>ADMINISTRASI SURAT JALAN / DELIVERY ORDER (DO):</strong><br><br>
                 Fitur administratif resmi pengiriman barang dengan desain minimalis profesional.<br>
-                • <strong>Keunggulan:</strong> Nomor DO bersifat dinamis dan otomatis bertambah setiap selesai dicetak. Kolom mencakup Receiver, Tanggal, Tabel SKU/Barang/Rak, serta tanda tangan di bagian bawah.`;
+                • <strong>Keunggulan:</strong> Nomor DO bersifat dinamis dan otomatis bertambah setiap selesai dicetak. Kolom mencakup Penerima (Penerima), Tanggal, Tabel SKU/Barang/Rak, serta kolom tanda tangan kosong di bawah untuk ditulis manual.`;
             }
 
             if(q.includes('aset') || q.includes('nilai') || q.includes('valuasi')) {
