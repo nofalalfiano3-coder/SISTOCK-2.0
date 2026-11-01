@@ -1246,6 +1246,7 @@
             }, 1000);
         }
 
+        // FUNGSI REMINDER FEFO DENGAN TIMESTAMP MURNI (FIXED BUG)
         function checkFefoExpiringReminders(currentTime) {
             const banner = document.getElementById('fefo-reminder-banner');
             const reminderText = document.getElementById('reminder-text');
@@ -1255,7 +1256,10 @@
             let nearCount = 0;
             let safeCount = 0;
 
-            const today = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate());
+            const todayYear = currentTime.getFullYear();
+            const todayMonth = currentTime.getMonth();
+            const todayDate = currentTime.getDate();
+            const todayTimestamp = new Date(todayYear, todayMonth, todayDate).getTime();
 
             state.FEFO.forEach(item => {
                 if(!item.timestamp) return;
@@ -1265,8 +1269,8 @@
                     const month = parseInt(parts[1], 10) - 1;
                     const year = parseInt(parts[2], 10);
                     
-                    const expDate = new Date(year, month, day);
-                    const diffTime = expDate - today;
+                    const expTimestamp = new Date(year, month, day).getTime();
+                    const diffTime = expTimestamp - todayTimestamp;
                     const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
                     if(diffDays < 0) {
@@ -1283,15 +1287,15 @@
             
             let statusMessage = "";
             if(expiredCount > 0) {
-                statusMessage += `🔴 Ada <strong>${expiredCount} batch yang sudah lewat (expired)</strong>. `;
+                statusMessage += `🔴 Ada <strong>${expiredCount} batch kedaluwarsa</strong>. `;
             }
             if(nearCount > 0) {
-                statusMessage += `🟡 <strong>${nearCount} batch mendekati batas waktu (≤7 hari)</strong>. `;
+                statusMessage += `🟡 <strong>${nearCount} batch mendekati Exp (≤7 hari)</strong>. `;
             }
             if(expiredCount === 0 && nearCount === 0) {
                 statusMessage = `🟢 Semua <strong>${state.FEFO.length} batch FEFO</strong> terpantau aman dan belum melewati batas waktu.`;
             } else {
-                statusMessage += `Segera lakukan tindakan FEFO!`;
+                statusMessage += `Segera periksa modul Karantina FEFO!`;
             }
 
             reminderText.innerHTML = statusMessage;
@@ -1810,7 +1814,6 @@
             document.getElementById('modal-product').classList.remove('hidden');
         }
 
-        // Simpan FEFO (Langsung ke Node "FEFO" di Firebase)
         function saveDamagedGood(e) {
             e.preventDefault();
             const prodId = document.getElementById('dmg-product-id').value;
@@ -1839,7 +1842,6 @@
             }
         }
 
-        // Hapus FEFO dari Node "FEFO"
         function deleteDamaged(id) {
             if(confirm('Hapus catatan FEFO ini?')) {
                 state.FEFO = state.FEFO.filter(d => d.id !== id);
@@ -1848,7 +1850,6 @@
             }
         }
 
-        // Simpan Barang Rusak Fisik (Langsung ke Node "damagedgoods" di Firebase)
         function saveBarangRusak(e) {
             e.preventDefault();
             const prodId = document.getElementById('rusak-product-id').value;
@@ -1892,7 +1893,6 @@
             }
         }
 
-        // Hapus Barang Rusak Fisik dari Node "damagedgoods"
         function deleteBarangRusak(id) {
             if(confirm('Hapus catatan barang rusak ini?')) {
                 state.damagedgoods = state.damagedgoods.filter(r => r.id !== id);
