@@ -1253,29 +1253,48 @@
 
             let expiredCount = 0;
             let nearCount = 0;
+            let safeCount = 0;
+
+            const today = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate());
 
             state.FEFO.forEach(item => {
                 if(!item.timestamp) return;
                 const parts = item.timestamp.split('/');
                 if(parts.length === 3) {
-                    const expDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
-                    const diffTime = expDate - currentTime;
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    const day = parseInt(parts[0], 10);
+                    const month = parseInt(parts[1], 10) - 1;
+                    const year = parseInt(parts[2], 10);
+                    
+                    const expDate = new Date(year, month, day);
+                    const diffTime = expDate - today;
+                    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
                     if(diffDays < 0) {
                         expiredCount++;
-                    } else if(diffDays <= 3) {
+                    } else if(diffDays <= 7) {
                         nearCount++;
+                    } else {
+                        safeCount++;
                     }
                 }
             });
 
-            if(expiredCount > 0 || nearCount > 0) {
-                banner.classList.remove('hidden');
-                reminderText.innerHTML = `Ada <strong>${expiredCount} batch kedaluwarsa</strong> dan <strong>${nearCount} batch mendekati Exp (≤3 hari)</strong>! Segera periksa modul Karantina FEFO.`;
-            } else {
-                reminderText.innerHTML = `Semua batch stok terpantau aman dari batas kritis kedaluwarsa WIB.`;
+            if(banner) banner.classList.remove('hidden');
+            
+            let statusMessage = "";
+            if(expiredCount > 0) {
+                statusMessage += `🔴 Ada <strong>${expiredCount} batch yang sudah lewat (expired)</strong>. `;
             }
+            if(nearCount > 0) {
+                statusMessage += `🟡 <strong>${nearCount} batch mendekati batas waktu (≤7 hari)</strong>. `;
+            }
+            if(expiredCount === 0 && nearCount === 0) {
+                statusMessage = `🟢 Semua <strong>${state.FEFO.length} batch FEFO</strong> terpantau aman dan belum melewati batas waktu.`;
+            } else {
+                statusMessage += `Segera lakukan tindakan FEFO!`;
+            }
+
+            reminderText.innerHTML = statusMessage;
         }
 
         function initFirebaseSync() {
@@ -1291,7 +1310,6 @@
                         logs: data.logs ? Object.values(data.logs) : []
                     };
                 } else {
-                    // Konversi awal objek ke array untuk UI
                     state = {
                         suppliers: INITIAL_SPREADSHEET_DATA.suppliers,
                         products: INITIAL_SPREADSHEET_DATA.products,
@@ -1307,7 +1325,6 @@
 
         function saveStateToCloud() {
             const dbNode = getActiveFirebaseNode();
-            // Simpan data dalam struktur key-value murni di Firebase untuk FEFO & damagedgoods
             const fefoObj = {};
             state.FEFO.forEach(item => { fefoObj[item.id] = item; });
 
