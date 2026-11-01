@@ -378,7 +378,7 @@
                             <div>
                                 <label class="font-bold text-slate-700 block mb-1">Pilih Produk atau Scan Barcode</label>
                                 <div class="flex gap-2">
-                                    <select id="in-product-id" required class="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-brand-500 font-semibold text-slate-800">
+                                    <select id="in-product-id" onchange="onInboundProductChange()" required class="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-brand-500 font-semibold text-slate-800">
                                         <option value="">-- Pilih Barang Gudang --</option>
                                     </select>
                                     <button type="button" onclick="openDedicatedScanner('inbound')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3 rounded-xl font-bold flex items-center gap-1.5 shadow-md shadow-emerald-600/20 btn-press">
@@ -386,6 +386,14 @@
                                     </button>
                                 </div>
                             </div>
+                            
+                            <!-- INFO OTOMATIS MUNCUL SAAT PILIH / SCAN -->
+                            <div id="inbound-autofill-info" class="bg-emerald-50/80 border border-emerald-200 p-3.5 rounded-xl hidden space-y-1">
+                                <p class="text-[11px] font-bold text-emerald-800">📦 Informasi Barang Terdeteksi:</p>
+                                <p class="text-xs text-emerald-900 font-semibold">Nama: <span id="in-info-name" class="font-bold">-</span></p>
+                                <p class="text-xs text-emerald-900 font-semibold">Lokasi Rak: <span id="in-info-rack" class="font-bold text-brand-600">-</span></p>
+                            </div>
+
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label class="font-bold text-slate-700 block mb-1">Jumlah Masuk (Qty)</label>
@@ -410,23 +418,42 @@
                 <!-- SECTION: BARANG KELUAR (OUTBOUND) -->
                 <section id="section-outbound" class="space-y-4 hidden animate-tab-enter">
                     <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/80 shadow-sm max-w-2xl mx-auto space-y-5">
-                        <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
-                            <div class="p-3 bg-rose-50 text-rose-600 rounded-2xl shadow-sm">
-                                <i data-lucide="arrow-up-right" class="w-6 h-6"></i>
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                            <div class="flex items-center gap-3">
+                                <div class="p-3 bg-rose-50 text-rose-600 rounded-2xl shadow-sm">
+                                    <i data-lucide="arrow-up-right" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-extrabold text-sm text-slate-900 uppercase tracking-wider">Modul Barang Keluar (Outbound)</h3>
+                                    <p class="text-xs text-slate-400 font-medium">Distribusi stok keluar gudang untuk pemesan</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="font-extrabold text-sm text-slate-900 uppercase tracking-wider">Modul Barang Keluar (Outbound)</h3>
-                                <p class="text-xs text-slate-400 font-medium">Distribusi stok keluar gudang untuk pemesan</p>
-                            </div>
+                            <button onclick="printOutboundLogs()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 btn-press">
+                                <i data-lucide="printer" class="w-4 h-4 text-rose-600"></i> Print Rekap
+                            </button>
                         </div>
 
                         <form id="form-outbound" onsubmit="handleOutboundSubmit(event)" class="space-y-4 text-xs">
                             <div>
-                                <label class="font-bold text-slate-700 block mb-1">Pilih Produk Gudang</label>
-                                <select id="out-product-id" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-brand-500 font-semibold text-slate-800">
-                                    <option value="">-- Pilih Barang Gudang --</option>
-                                </select>
+                                <label class="font-bold text-slate-700 block mb-1">Pilih Produk atau Scan Barcode</label>
+                                <div class="flex gap-2">
+                                    <select id="out-product-id" onchange="onOutboundProductChange()" required class="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-brand-500 font-semibold text-slate-800">
+                                        <option value="">-- Pilih Barang Gudang --</option>
+                                    </select>
+                                    <button type="button" onclick="openDedicatedScanner('outbound')" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-3 rounded-xl font-bold flex items-center gap-1.5 shadow-md shadow-rose-600/20 btn-press">
+                                        <i data-lucide="scan" class="w-4 h-4"></i> Scan
+                                    </button>
+                                </div>
                             </div>
+
+                            <!-- INFO OTOMATIS MUNCUL SAAT PILIH / SCAN -->
+                            <div id="outbound-autofill-info" class="bg-rose-50/80 border border-rose-200 p-3.5 rounded-xl hidden space-y-1">
+                                <p class="text-[11px] font-bold text-rose-800">📦 Informasi Barang Terdeteksi:</p>
+                                <p class="text-xs text-rose-900 font-semibold">Nama: <span id="out-info-name" class="font-bold">-</span></p>
+                                <p class="text-xs text-rose-900 font-semibold">Lokasi Rak: <span id="out-info-rack" class="font-bold text-brand-600">-</span></p>
+                                <p class="text-xs text-rose-900 font-semibold">Stok Tersedia: <span id="out-info-stock" class="font-bold text-emerald-600">-</span></p>
+                            </div>
+
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label class="font-bold text-slate-700 block mb-1">Jumlah Keluar (Qty)</label>
@@ -526,6 +553,7 @@
                                         <th class="p-3.5">SKU / Barcode</th>
                                         <th class="p-3.5">Nama Barang</th>
                                         <th class="p-3.5">Satuan</th>
+                                        <th class="p-3.5">Lokasi Rak</th>
                                         <th class="p-3.5">Harga Satuan</th>
                                         <th class="p-3.5 font-bold text-slate-700">Total Nilai</th>
                                         <th class="p-3.5 text-center">ROP (Min)</th>
@@ -535,7 +563,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="products-tbody" class="divide-y divide-slate-100">
-                                    <tr><td colspan="9" class="p-6 text-center text-slate-400 italic">Memuat data inventaris...</td></tr>
+                                    <tr><td colspan="10" class="p-6 text-center text-slate-400 italic">Memuat data inventaris...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -614,9 +642,14 @@
 
                 <!-- SECTION: RECAPITULATION -->
                 <section id="section-recap" class="space-y-5 hidden animate-tab-enter">
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
-                        <h3 class="font-extrabold text-sm text-slate-900 uppercase tracking-wider">Rekapitulasi Tren Logistik</h3>
-                        <p class="text-xs text-slate-400 font-medium">Ringkasan akumulasi seluruh mutasi barang</p>
+                    <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+                        <div>
+                            <h3 class="font-extrabold text-sm text-slate-900 uppercase tracking-wider">Rekapitulasi Tren Logistik</h3>
+                            <p class="text-xs text-slate-400 font-medium">Ringkasan akumulasi seluruh mutasi barang</p>
+                        </div>
+                        <button onclick="printRecapLogs()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 btn-press">
+                            <i data-lucide="printer" class="w-4 h-4 text-brand-600"></i> Print Rekapitulasi
+                        </button>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -645,10 +678,11 @@
                                         <th class="p-3">Tipe</th>
                                         <th class="p-3">Qty</th>
                                         <th class="p-3">Keterangan</th>
+                                        <th class="p-3 text-right">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="recap-tbody" class="divide-y divide-slate-100">
-                                    <tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Belum ada data rekapitulasi.</td></tr>
+                                    <tr><td colspan="6" class="p-4 text-center text-slate-400 italic">Belum ada data rekapitulasi.</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -784,17 +818,21 @@
                         <input type="text" id="prod-category" placeholder="PCS / DUS" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500">
                     </div>
                     <div>
-                        <label class="font-bold text-slate-700 block mb-1">Harga Satuan (Rp)</label>
-                        <input type="number" id="prod-price" min="0" required placeholder="0" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500">
+                        <label class="font-bold text-slate-700 block mb-1">Lokasi Rak Penyimpanan</label>
+                        <input type="text" id="prod-location" placeholder="Contoh: A01.2" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500">
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-2">
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">Harga (Rp)</label>
+                        <input type="number" id="prod-price" min="0" required placeholder="0" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500">
+                    </div>
                     <div>
                         <label class="font-bold text-slate-700 block mb-1">Stok Akhir</label>
                         <input type="number" id="prod-stock" min="0" required placeholder="0" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500">
                     </div>
                     <div>
-                        <label class="font-bold text-slate-700 block mb-1">Batas ROP (Min)</label>
+                        <label class="font-bold text-slate-700 block mb-1">ROP (Min)</label>
                         <input type="number" id="prod-rop" min="0" required placeholder="10" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500">
                     </div>
                 </div>
@@ -806,7 +844,7 @@
         </div>
     </div>
 
-    <!-- MODAL: DELIVERY ORDER -->
+    <!-- MODAL: DELIVERY ORDER (SURAT JALAN) - PROFESIONAL MINIMALIS -->
     <div id="deliveryModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 z-50">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6 space-y-4 animate-tab-enter">
             <div class="flex justify-between items-center border-b pb-3">
@@ -818,8 +856,8 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-2xl text-xs border border-slate-200">
                 <div>
-                    <label class="block font-bold text-slate-700 mb-1">Nama Pemesan / Tujuan</label>
-                    <input type="text" id="doCustomer" oninput="updateDeliveryPreview()" placeholder="Unit Logistik / ULP" value="Unit Logistik" class="w-full border rounded-xl p-2.5 text-xs outline-none bg-white font-semibold focus:border-brand-500">
+                    <label class="block font-bold text-slate-700 mb-1">Receiver (Penerima / Tujuan)</label>
+                    <input type="text" id="doCustomer" oninput="updateDeliveryPreview()" placeholder="Budi Santoso / Unit Logistik" value="Budi Santoso" class="w-full border rounded-xl p-2.5 text-xs outline-none bg-white font-semibold focus:border-brand-500">
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 mb-1">Tanggal Delivery</label>
@@ -832,37 +870,43 @@
                 <div id="doItemSelector" class="space-y-2 max-h-40 overflow-y-auto border p-3 rounded-2xl text-xs bg-slate-50 custom-scrollbar"></div>
             </div>
 
-            <div id="printArea" class="border p-4 sm:p-6 rounded-2xl bg-white space-y-4 text-slate-900">
-                <div class="flex justify-between items-start border-b-2 border-slate-800 pb-3">
+            <!-- PREVIEW SURAT JALAN SESUAI REFERENSI MINIMALIS + BRANDING SISTOCK -->
+            <div id="printArea" class="border p-6 rounded-2xl bg-white space-y-5 text-slate-900 font-sans">
+                <div class="flex justify-between items-start border-b-2 border-slate-900 pb-4">
                     <div>
-                        <h2 class="text-lg sm:text-xl font-black tracking-wide uppercase text-brand-600">DELIVERY ORDER (SURAT JALAN)</h2>
-                        <p class="text-xs font-bold text-slate-700">SISTOCK 2.0 — SMKN 3 BANDUNG</p>
+                        <h2 class="text-xl font-black tracking-wider uppercase text-slate-900">DELIVERY ORDER</h2>
+                        <p class="text-[10px] font-bold text-brand-600 uppercase tracking-widest mt-0.5">SISTOCK 2.0 — SMKN 3 BANDUNG</p>
                     </div>
-                    <div class="text-right text-xs font-semibold">
-                        <p><strong>Tgl Kirim:</strong> <span id="previewDate">-</span></p>
-                        <p><strong>Pemesan:</strong> <span id="previewCustomer">-</span></p>
+                    <div class="text-right text-xs">
+                        <p id="previewDoNumber" class="font-mono font-bold text-slate-800 text-sm">DO123412</p>
+                        <p id="previewDate" class="text-slate-600 font-medium">-</p>
                     </div>
+                </div>
+
+                <div class="text-xs space-y-1">
+                    <p class="font-extrabold uppercase tracking-wider text-slate-400 text-[10px]">RECEIVER:</p>
+                    <p id="previewCustomer" class="font-bold text-slate-800 text-sm">-</p>
                 </div>
 
                 <table class="w-full text-left text-xs border-collapse">
                     <thead>
-                        <tr class="border-b-2 border-slate-300 bg-slate-100">
-                            <th class="py-2 px-2 w-12 text-center">NO</th>
-                            <th class="py-2 px-2">NAMA PRODUK</th>
-                            <th class="py-2 px-2 w-24 text-center">QTY</th>
+                        <tr class="border-b-2 border-slate-800 text-slate-700 font-extrabold uppercase text-[10px]">
+                            <th class="py-2.5 px-2">DESCRIPTION (BARANG / SKU / RAK)</th>
+                            <th class="py-2.5 px-2 w-20 text-center">QUANTITY</th>
+                            <th class="py-2.5 px-2 w-20 text-right">UNITS</th>
                         </tr>
                     </thead>
                     <tbody id="previewTableBody" class="divide-y divide-slate-200"></tbody>
                 </table>
 
-                <div class="grid grid-cols-2 gap-4 pt-12 text-xs text-center font-medium">
+                <div class="grid grid-cols-2 gap-8 pt-16 text-xs text-center font-medium">
                     <div>
-                        <p class="mb-12">Penerima Barang,</p>
-                        <p class="font-bold underline">( _________________ )</p>
+                        <p class="mb-14 text-slate-600 font-semibold">Sender's Signature</p>
+                        <p class="font-bold border-t border-slate-400 pt-1 w-40 mx-auto">( Name and Signature )</p>
                     </div>
                     <div>
-                        <p class="mb-12">Petugas Logistik SMKN 3,</p>
-                        <p class="font-bold underline">( _________________ )</p>
+                        <p class="mb-14 text-slate-600 font-semibold">Recipient Signature</p>
+                        <p class="font-bold border-t border-slate-400 pt-1 w-40 mx-auto">( Name and Signature )</p>
                     </div>
                 </div>
             </div>
@@ -1025,7 +1069,7 @@
                 { id: "prod-1", sku: "18993496110072", name: "TEPUNG TULIP", category: "PCS", price: 12500, stock: 0, rop: 10, location: "Staging area" },
                 { id: "prod-2", sku: "18998866201343", name: "SEDAP WHITE CURRY", category: "PCS", price: 3500, stock: 0, rop: 10, location: "B01.2" },
                 { id: "prod-3", sku: "8993539106003", name: "RON 88 600 ML", category: "DUS", price: 48000, stock: 0, rop: 10, location: "D2" },
-                { id: "prod-4", sku: "10341330462", name: "RON 88 500 ML", category: "DUS", price: 45000, stock: 83, rop: 15, location: "A01.3, A01.2" },
+                { id: "prod-4", sku: "10341330462", name: "RON 88 500 ML", category: "DUS", price: 45000, stock: 83, rop: 15, location: "A01.3" },
                 { id: "prod-5", sku: "8993539105006", name: "RON 88 380ML", category: "PCS", price: 2500, stock: 0, rop: 10, location: "C01.3" },
                 { id: "prod-6", sku: "8993539121501", name: "RON 88 1,5 L", category: "DUS", price: 52000, stock: 13, rop: 10, location: "D2" },
                 { id: "prod-7", sku: "18993496111017", name: "MINYAKITA 1 Liter", category: "PCS", price: 14000, stock: 8, rop: 10, location: "C01.1" },
@@ -1045,29 +1089,7 @@
                 { id: "prod-34", sku: "8995180000000", name: "Gulaku", category: "PCS", price: 17500, stock: 20, rop: 10, location: "C01.3" }
             ],
             damagedGoods: [
-                { id: "fefo-1", timestamp: "26/11/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 46, status: "segera dikeluarkan", notes: "Kadaluarsa: 26/11/2026 | Tersedia" },
-                { id: "fefo-2", timestamp: "28/12/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 31, status: "segera dikeluarkan", notes: "Kadaluarsa: 28/12/2026" },
-                { id: "fefo-3", timestamp: "02/10/2026", productName: "Indomie Soto", sku: "10089686010340", qty: 5, status: "kadaluwarsa", notes: "Kadaluwarsa: 02/10/2026 (Expired)" },
-                { id: "fefo-4", timestamp: "05/01/2027", productName: "Indomie Soto", sku: "10089686010340", qty: 40, status: "segera dikeluarkan", notes: "Kadaluwarsa: 05/01/2027" },
-                { id: "fefo-5", timestamp: "28/12/2026", productName: "Indomie Goreng", sku: "10089686010944", qty: 29, status: "segera dikeluarkan", notes: "Kadaluwarsa: 28/12/2026" },
-                { id: "fefo-6", timestamp: "05/01/2027", productName: "Indomie Soto Mi", sku: "10089686010524", qty: 10, status: "segera dikeluarkan", notes: "Kadaluwarsa: 05/01/2027 | Tersedia" },
-                { id: "fefo-7", timestamp: "19/05/2027", productName: "Indomie Rendang", sku: "10089686011187", qty: 40, status: "masih aman", notes: "Kadaluwarsa: 19/05/2027 | Tersedia" },
-                { id: "fefo-8", timestamp: "15/05/2027", productName: "Indomie Goreng", sku: "10089686010944", qty: 40, status: "masih aman", notes: "Kadaluwarsa: 15/05/2027 | Tersedia" },
-                { id: "fefo-9", timestamp: "15/01/2027", productName: "Indomie Rica-Rica", sku: "10089686043270", qty: 40, status: "segera dikeluarkan", notes: "Kadaluwarsa: 15/01/2027" },
-                { id: "fefo-10", timestamp: "07/01/2027", productName: "Indomie Cabe Ijo", sku: "10089686010715", qty: 40, status: "segera dikeluarkan", notes: "Kadaluwarsa: 07/01/2027" },
-                { id: "fefo-11", timestamp: "22/01/2027", productName: "Indomie Cabe Ijo", sku: "10089686010715", qty: 40, status: "segera dikeluarkan", notes: "Kadaluwarsa: 22/01/2027" },
-                { id: "fefo-12", timestamp: "21/01/2027", productName: "Indomie Cabe Ijo", sku: "10089686010715", qty: 40, status: "segera dikeluarkan", notes: "Kadaluwarsa: 21/01/2027" },
-                { id: "fefo-13", timestamp: "10/04/2028", productName: "Indomie Cabe Ijo", sku: "10089686010715", qty: 5, status: "masih aman", notes: "Kadaluwarsa: 10/04/2028" },
-                { id: "fefo-14", timestamp: "19/11/2027", productName: "Tarik Malaka", sku: "18888166603612", qty: 12, status: "masih aman", notes: "Kadaluwarsa: 19/11/2027" },
-                { id: "fefo-15", timestamp: "26/04/2027", productName: "Indomie Cabe Ijo", sku: "10089686010715", qty: 45, status: "masih aman", notes: "Kadaluwarsa: 26/04/2027 | Tersedia" },
-                { id: "fefo-16", timestamp: "28/04/2027", productName: "Indomie Ayam Geprek", sku: "10089686043430", qty: 65, status: "masih aman", notes: "Kadaluwarsa: 28/04/2027 | Tersedia" },
-                { id: "fefo-17", timestamp: "14/01/2027", productName: "Indomie Gentong", sku: "10089686910305", qty: 40, status: "segera dikeluarkan", notes: "Kadaluwarsa: 14/01/2027" },
-                { id: "fefo-18", timestamp: "17/05/2027", productName: "Indomie Goreng", sku: "10089686010944", qty: 65, status: "masih aman", notes: "Kadaluwarsa: 17/05/2027" },
-                { id: "fefo-19", timestamp: "27/04/2027", productName: "Indomie Rica-Rica", sku: "10089686043270", qty: 30, status: "masih aman", notes: "Kadaluwarsa: 27/04/2027 | Tersedia" },
-                { id: "fefo-20", timestamp: "06/03/2027", productName: "Indomie Iga Penyet", sku: "10089686043683", qty: 95, status: "masih aman", notes: "Kadaluwarsa: 06/03/2027 | Tersedia" },
-                { id: "fefo-21", timestamp: "17/05/2028", productName: "Sunco", sku: "18993379500235", qty: 46, status: "masih aman", notes: "Kadaluwarsa: 17/05/2028 | Tersedia" },
-                { id: "fefo-22", timestamp: "30/03/2028", productName: "Tropical", sku: "8992946535178", qty: 1, status: "masih aman", notes: "Kadaluwarsa: 30/03/2028 | Tersedia" },
-                { id: "fefo-23", timestamp: "10/07/2028", productName: "Gulaku", sku: "8995180000000", qty: 20, status: "masih aman", notes: "Kadaluwarsa: 10/07/2028 | Tersedia" }
+                { id: "fefo-1", timestamp: "26/11/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 46, status: "segera dikeluarkan", notes: "Kadaluarsa: 26/11/2026 | Tersedia" }
             ],
             damagedPhysicalGoods: [
                 { id: "rusak-1", timestamp: "31/10/2026, 14.30", productName: "RON 88 500 ML", sku: "10341330462", qty: 2, pelapor: "Team Gudang", notes: "Botol penyok & bocor saat unboxing" }
@@ -1163,7 +1185,7 @@
 
             if (ACCOUNTS[u] && ACCOUNTS[u] === p) {
                 sessionStorage.setItem("sistock_auth", "true");
-                sessionStorage.setItem("sistock_username", u); // SIMPAN STATUS AKUN ACTIF
+                sessionStorage.setItem("sistock_username", u);
                 if(errMsg) errMsg.classList.add('hidden');
                 checkSessionAuth();
                 showToast(`Login berhasil! Masuk sebagai ${u}.`);
@@ -1352,7 +1374,7 @@
                         <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100/80">
                             <div class="truncate">
                                 <p class="text-xs font-bold text-slate-800 truncate">${p.name}</p>
-                                <p class="text-[10px] text-slate-400 font-semibold">Stok: ${p.stock} ${p.category || 'PCS'}</p>
+                                <p class="text-[10px] text-slate-400 font-semibold">Stok: ${p.stock} ${p.category || 'PCS'} | Rak: ${p.location || '-'}</p>
                             </div>
                             <span class="text-xs font-extrabold text-brand-600">Rp ${itemVal.toLocaleString('id-ID')}</span>
                         </div>
@@ -1392,7 +1414,7 @@
             );
 
             if(filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400 italic">Tidak ada barang ditemukan.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="p-6 text-center text-slate-400 italic">Tidak ada barang ditemukan.</td></tr>`;
                 return;
             }
 
@@ -1421,6 +1443,7 @@
                         <td class="p-3.5 font-mono font-bold text-brand-600">${p.sku}</td>
                         <td class="p-3.5 font-bold text-slate-800">${p.name}</td>
                         <td class="p-3.5 text-slate-500 font-medium">${p.category || '-'}</td>
+                        <td class="p-3.5 font-bold text-slate-700">${p.location || 'Gudang Utama'}</td>
                         <td class="p-3.5 font-semibold text-slate-600">Rp ${price.toLocaleString('id-ID')}</td>
                         <td class="p-3.5 font-extrabold text-emerald-700">Rp ${totalAssetVal.toLocaleString('id-ID')}</td>
                         <td class="p-3.5 text-center text-slate-600 font-semibold">${rop}</td>
@@ -1536,10 +1559,42 @@
                 const currentVal = el.value;
                 el.innerHTML = '<option value="">-- Pilih Barang Gudang --</option>';
                 state.products.forEach(p => {
-                    el.innerHTML += `<option value="${p.id}">${p.name} (SKU: ${p.sku}) - Stok: ${p.stock}</option>`;
+                    el.innerHTML += `<option value="${p.id}">${p.name} (SKU: ${p.sku}) - Rak: ${p.location || 'Utama'}</option>`;
                 });
                 if(currentVal) el.value = currentVal;
             });
+        }
+
+        // --- FITUR AUTO-FILL SAAT PILIH / SCAN DI INBOUND & OUTBOUND ---
+        function onInboundProductChange() {
+            const prodId = document.getElementById('in-product-id').value;
+            const infoBox = document.getElementById('inbound-autofill-info');
+            if(!prodId) {
+                if(infoBox) infoBox.classList.add('hidden');
+                return;
+            }
+            const prod = state.products.find(p => p.id === prodId);
+            if(prod) {
+                document.getElementById('in-info-name').innerText = prod.name;
+                document.getElementById('in-info-rack').innerText = prod.location || 'Gudang Utama';
+                if(infoBox) infoBox.classList.remove('hidden');
+            }
+        }
+
+        function onOutboundProductChange() {
+            const prodId = document.getElementById('out-product-id').value;
+            const infoBox = document.getElementById('outbound-autofill-info');
+            if(!prodId) {
+                if(infoBox) infoBox.classList.add('hidden');
+                return;
+            }
+            const prod = state.products.find(p => p.id === prodId);
+            if(prod) {
+                document.getElementById('out-info-name').innerText = prod.name;
+                document.getElementById('out-info-rack').innerText = prod.location || 'Gudang Utama';
+                document.getElementById('out-info-stock').innerText = `${prod.stock} ${prod.category || 'PCS'}`;
+                if(infoBox) infoBox.classList.remove('hidden');
+            }
         }
 
         function handleInboundSubmit(e) {
@@ -1553,15 +1608,17 @@
             if(prod) {
                 prod.stock += qty;
                 state.logs.push({
+                    id: 'log-' + Date.now(),
                     timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
                     productName: prod.name,
                     type: 'IN',
                     qty: qty,
-                    notes: `Masuk dari ${supplier} - ${notes}`
+                    notes: `Masuk dari ${supplier} - Rak: ${prod.location || 'Utama'} | ${notes}`
                 });
                 saveStateToCloud();
                 showToast(`Stok ${prod.name} bertambah +${qty} unit!`);
                 document.getElementById('form-inbound').reset();
+                document.getElementById('inbound-autofill-info').classList.add('hidden');
                 switchTab('dashboard');
             }
         }
@@ -1581,15 +1638,19 @@
                 }
                 prod.stock -= qty;
                 state.logs.push({
+                    id: 'log-' + Date.now(),
                     timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
                     productName: prod.name,
+                    sku: prod.sku,
+                    rack: prod.location || 'Utama',
                     type: 'OUT',
                     qty: qty,
-                    notes: `Keluar ke ${destination} - ${notes}`
+                    notes: `Keluar ke ${destination} - Rak: ${prod.location || 'Utama'} | ${notes}`
                 });
                 saveStateToCloud();
                 showToast(`Stok ${prod.name} keluar -${qty} unit!`);
                 document.getElementById('form-outbound').reset();
+                document.getElementById('outbound-autofill-info').classList.add('hidden');
                 switchTab('dashboard');
             }
         }
@@ -1606,6 +1667,7 @@
                 const diff = physicalQty - prod.stock;
                 prod.stock = physicalQty;
                 state.logs.push({
+                    id: 'log-' + Date.now(),
                     timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
                     productName: prod.name,
                     type: 'OPNAME',
@@ -1628,6 +1690,7 @@
                 sku: sku,
                 name: document.getElementById('prod-name').value,
                 category: document.getElementById('prod-category').value,
+                location: document.getElementById('prod-location').value || 'Gudang Utama',
                 price: parseFloat(document.getElementById('prod-price').value) || 0,
                 stock: parseInt(document.getElementById('prod-stock').value) || 0,
                 rop: parseInt(document.getElementById('prod-rop').value) || 10
@@ -1639,11 +1702,12 @@
             } else {
                 state.products.push(newProd);
                 state.logs.push({
+                    id: 'log-' + Date.now(),
                     timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
                     productName: newProd.name,
                     type: 'IN',
                     qty: newProd.stock,
-                    notes: 'Barang Baru Ditambahkan'
+                    notes: `Barang Baru Ditambahkan - Rak: ${newProd.location}`
                 });
             }
             saveStateToCloud();
@@ -1666,6 +1730,7 @@
             document.getElementById('prod-sku').value = p.sku;
             document.getElementById('prod-name').value = p.name;
             document.getElementById('prod-category').value = p.category;
+            document.getElementById('prod-location').value = p.location || '';
             document.getElementById('prod-price').value = p.price;
             document.getElementById('prod-stock').value = p.stock;
             document.getElementById('prod-rop').value = p.rop;
@@ -1735,6 +1800,7 @@
                 });
 
                 state.logs.push({
+                    id: 'log-' + Date.now(),
                     timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
                     productName: prod.name,
                     type: 'RUSAK',
@@ -1786,6 +1852,16 @@
             }
         }
 
+        // --- FITUR HAPUS DI REKAPITULASI & TREN ---
+        function deleteLogItem(id) {
+            if(confirm('Hapus riwayat log transaksi ini dari rekapitulasi?')) {
+                state.logs = state.logs.filter(l => l.id !== id);
+                saveStateToCloud();
+                renderRecapData();
+                showToast('Log transaksi berhasil dihapus.', 'error');
+            }
+        }
+
         function renderRecapData() {
             let inTotal = 0, outTotal = 0, dmgTotal = 0;
             const recapTbody = document.getElementById('recap-tbody');
@@ -1793,7 +1869,7 @@
             recapTbody.innerHTML = '';
 
             if(!state.logs || state.logs.length === 0) {
-                recapTbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Belum ada data rekapitulasi.</td></tr>`;
+                recapTbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400 italic">Belum ada data rekapitulasi.</td></tr>`;
                 document.getElementById('recap-in-total').innerText = `0 Unit`;
                 document.getElementById('recap-out-total').innerText = `0 Unit`;
                 document.getElementById('recap-dmg-total').innerText = `0 Unit`;
@@ -1805,6 +1881,7 @@
                 else if(log.type === 'OUT') outTotal += log.qty;
                 else if(log.type === 'RUSAK') dmgTotal += log.qty;
 
+                const logId = log.id || ('log-' + Math.random());
                 recapTbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
                         <td class="p-3 text-slate-400 font-medium">${log.timestamp}</td>
@@ -1812,6 +1889,9 @@
                         <td class="p-3"><span class="px-2.5 py-1 text-[10px] rounded-md font-extrabold bg-slate-100 text-slate-700">${log.type}</span></td>
                         <td class="p-3 font-black text-slate-900">${log.qty}</td>
                         <td class="p-3 text-slate-500 font-medium">${log.notes}</td>
+                        <td class="p-3 text-right">
+                            <button onclick="deleteLogItem('${logId}')" class="p-1 text-slate-400 hover:text-rose-500 btn-press"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </td>
                     </tr>
                 `;
             });
@@ -1819,11 +1899,123 @@
             document.getElementById('recap-in-total').innerText = `${inTotal} Unit`;
             document.getElementById('recap-out-total').innerText = `${outTotal} Unit`;
             document.getElementById('recap-dmg-total').innerText = `${dmgTotal} Unit`;
+            lucide.createIcons();
         }
+
+        // --- FITUR PRINT REKAP BARANG KELUAR & REKAPITULASI TREN ---
+        function printOutboundLogs() {
+            const outboundLogs = state.logs ? state.logs.filter(l => l.type === 'OUT') : [];
+            let rowsHTML = '';
+            if(outboundLogs.length === 0) {
+                rowsHTML = `<tr><td colspan="4" style="text-align:center; padding: 15px; color:#888;">Belum ada data barang keluar.</td></tr>`;
+            } else {
+                outboundLogs.forEach((l, idx) => {
+                    rowsHTML += `
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px; text-align:center;">${idx + 1}</td>
+                            <td style="padding: 8px;">${l.timestamp}</td>
+                            <td style="padding: 8px; font-weight:bold;">${l.productName}</td>
+                            <td style="padding: 8px; text-align:center; font-weight:bold;">${l.qty}</td>
+                            <td style="padding: 8px;">${l.notes}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            const printWin = window.open('', '_blank', 'width=800,height=600');
+            if(!printWin) return;
+            printWin.document.write(`
+                <html>
+                <head><title>Rekap Barang Keluar - SISTOCK 2.0</title></head>
+                <body style="font-family: sans-serif; padding: 20px; color: #111;">
+                    <h2 style="margin-bottom: 2px; text-transform: uppercase;">Rekapitulasi Barang Keluar (Outbound)</h2>
+                    <p style="font-size: 12px; color: #555; margin-top:0;">SISTOCK 2.0 — SMKN 3 BANDUNG</p>
+                    <hr style="border: 1px solid #222; margin: 15px 0;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+                        <thead>
+                            <tr style="background: #f4f4f4; border-bottom: 2px solid #222;">
+                                <th style="padding: 8px; text-align:center; width: 40px;">NO</th>
+                                <th style="padding: 8px;">WAKTU</th>
+                                <th style="padding: 8px;">NAMA BARANG</th>
+                                <th style="padding: 8px; text-align:center; width: 60px;">QTY</th>
+                                <th style="padding: 8px;">KETERANGAN / TUJUAN</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rowsHTML}</tbody>
+                    </table>
+                    <div style="margin-top: 40px; display: flex; justify-content: space-between; font-size: 12px;">
+                        <div style="text-align: center;"><p style="margin-bottom: 60px;">Penerima / Pemesan,</p><b>( _________________ )</b></div>
+                        <div style="text-align: center;"><p style="margin-bottom: 60px;">Petugas Logistik,</p><b>( _________________ )</b></div>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWin.document.close();
+            setTimeout(() => printWin.print(), 300);
+        }
+
+        function printRecapLogs() {
+            let rowsHTML = '';
+            if(!state.logs || state.logs.length === 0) {
+                rowsHTML = `<tr><td colspan="5" style="text-align:center; padding: 15px; color:#888;">Belum ada data rekapitulasi.</td></tr>`;
+            } else {
+                state.logs.forEach((l, idx) => {
+                    rowsHTML += `
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px; text-align:center;">${idx + 1}</td>
+                            <td style="padding: 8px;">${l.timestamp}</td>
+                            <td style="padding: 8px; font-weight:bold;">${l.productName}</td>
+                            <td style="padding: 8px; text-align:center;"><span style="padding: 2px 6px; background:#eee; border-radius:4px; font-weight:bold;">${l.type}</span></td>
+                            <td style="padding: 8px; text-align:center; font-weight:bold;">${l.qty}</td>
+                            <td style="padding: 8px;">${l.notes}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            const printWin = window.open('', '_blank', 'width=800,height=600');
+            if(!printWin) return;
+            printWin.document.write(`
+                <html>
+                <head><title>Rekapitulasi Tren Logistik - SISTOCK 2.0</title></head>
+                <body style="font-family: sans-serif; padding: 20px; color: #111;">
+                    <h2 style="margin-bottom: 2px; text-transform: uppercase;">Laporan Rekapitulasi Tren Logistik</h2>
+                    <p style="font-size: 12px; color: #555; margin-top:0;">SISTOCK 2.0 — SMKN 3 BANDUNG</p>
+                    <hr style="border: 1px solid #222; margin: 15px 0;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+                        <thead>
+                            <tr style="background: #f4f4f4; border-bottom: 2px solid #222;">
+                                <th style="padding: 8px; text-align:center; width: 40px;">NO</th>
+                                <th style="padding: 8px;">WAKTU</th>
+                                <th style="padding: 8px;">NAMA BARANG</th>
+                                <th style="padding: 8px; text-align:center; width: 70px;">TIPE</th>
+                                <th style="padding: 8px; text-align:center; width: 60px;">QTY</th>
+                                <th style="padding: 8px;">KETERANGAN</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rowsHTML}</tbody>
+                    </table>
+                    <div style="margin-top: 40px; text-align: right; font-size: 12px;">
+                        <p style="margin-bottom: 60px;">Mengetahui, Manajer Logistik</p>
+                        <b>( _________________ )</b>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWin.document.close();
+            setTimeout(() => printWin.print(), 300);
+        }
+
+        // --- FITUR NOMOR DO DINAMIS & SURAT JALAN MINIMALIS PROFESIONAL ---
+        let currentDoNumber = 123412;
 
         function openDeliveryModal() {
             const dateInput = document.getElementById('doDate');
             if(dateInput && !dateInput.value) dateInput.valueAsDate = new Date();
+            
+            // Set nomor DO dinamis (bertambah otomatis)
+            document.getElementById('previewDoNumber').innerText = `DO${currentDoNumber}`;
+            
             renderDoSelector();
             updateDeliveryPreview();
             document.getElementById('deliveryModal').classList.remove('hidden');
@@ -1840,8 +2032,8 @@
                 container.innerHTML += `
                     <div class="flex items-center justify-between gap-2 border-b border-slate-200/80 pb-2 pt-1">
                         <label class="flex items-center gap-2 cursor-pointer truncate flex-1">
-                            <input type="checkbox" class="do-checkbox rounded border-slate-300 text-brand-500 focus:ring-brand-500" data-id="${item.id}" data-name="${item.name}" onchange="updateDeliveryPreview()">
-                            <span class="font-bold truncate text-slate-700">${item.name} <span class="text-slate-400 font-medium text-[10px]">(${item.category}, Stok: ${item.stock})</span></span>
+                            <input type="checkbox" class="do-checkbox rounded border-slate-300 text-brand-500 focus:ring-brand-500" data-id="${item.id}" data-name="${item.name}" data-sku="${item.sku || '-'}" data-rack="${item.location || 'Utama'}" data-unit="${item.category || 'PCS'}" onchange="updateDeliveryPreview()">
+                            <span class="font-bold truncate text-slate-700">${item.name} <span class="text-slate-400 font-medium text-[10px]">(${item.category}, Rak: ${item.location || 'Utama'}, Stok: ${item.stock})</span></span>
                         </label>
                         <input type="number" min="1" max="${item.stock || 999}" value="1" id="doQty_${item.id}" class="w-16 border rounded-lg p-1 text-center bg-white text-xs font-bold" onchange="updateDeliveryPreview()" onkeyup="updateDeliveryPreview()">
                     </div>
@@ -1853,14 +2045,21 @@
             const customerEl = document.getElementById('doCustomer');
             const dateEl = document.getElementById('doDate');
             document.getElementById('previewCustomer').innerText = customerEl ? customerEl.value || '-' : '-';
-            document.getElementById('previewDate').innerText = dateEl ? dateEl.value || '-' : '-';
+            
+            // Format tanggal agar tampil rapi seperti referensi (contoh: 31 July 2024 atau 31 Oktober 2026)
+            if(dateEl && dateEl.value) {
+                const d = new Date(dateEl.value);
+                const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                document.getElementById('previewDate').innerText = d.toLocaleDateString('id-ID', options);
+            } else {
+                document.getElementById('previewDate').innerText = '-';
+            }
 
             const tbody = document.getElementById('previewTableBody');
             if(!tbody) return;
             tbody.innerHTML = '';
 
             const checkboxes = document.querySelectorAll('.do-checkbox:checked');
-            let no = 1;
 
             if(checkboxes.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-slate-400 italic">Belum ada item yang dipilih.</td></tr>`;
@@ -1870,12 +2069,19 @@
             checkboxes.forEach((cb) => {
                 const id = cb.getAttribute('data-id');
                 const name = cb.getAttribute('data-name');
+                const sku = cb.getAttribute('data-sku');
+                const rack = cb.getAttribute('data-rack');
+                const unit = cb.getAttribute('data-unit');
                 const qtyVal = document.getElementById(`doQty_${id}`).value;
+
                 tbody.innerHTML += `
                     <tr class="border-b border-slate-200">
-                        <td class="py-2 px-2 text-center font-mono text-slate-600 font-bold">${no++}</td>
-                        <td class="py-2 px-2 font-bold text-slate-800">${name}</td>
-                        <td class="py-2 px-2 text-center font-black text-slate-800">${qtyVal}</td>
+                        <td class="py-3 px-2">
+                            <p class="font-extrabold text-slate-900">${name}</p>
+                            <p class="text-[10px] text-slate-500 font-medium">SKU: ${sku} | Rak: ${rack}</p>
+                        </td>
+                        <td class="py-3 px-2 text-center font-black text-slate-900">${qtyVal}</td>
+                        <td class="py-3 px-2 text-right font-semibold text-slate-700">${unit}</td>
                     </tr>
                 `;
             });
@@ -1887,7 +2093,11 @@
             if (!printWindow) return;
             printWindow.document.write(`<html><head><title>Surat Jalan - SISTOCK 2.0</title><script src="https://cdn.tailwindcss.com"><\/script></head><body class="p-8">${printContent}</body></html>`);
             printWindow.document.close();
-            setTimeout(() => printWindow.print(), 300);
+            setTimeout(() => {
+                printWindow.print();
+                // Increment nomor DO agar dinamis berubah tiap selesai print
+                currentDoNumber++;
+            }, 300);
         }
 
         function openDedicatedScanner(target) {
@@ -1906,13 +2116,19 @@
                         if(activeScanTarget === 'inbound') {
                             switchTab('inbound');
                             document.getElementById('in-product-id').value = matchedProd.id;
+                            onInboundProductChange();
                             document.getElementById('in-qty').focus();
+                        } else if(activeScanTarget === 'outbound') {
+                            switchTab('outbound');
+                            document.getElementById('out-product-id').value = matchedProd.id;
+                            onOutboundProductChange();
+                            document.getElementById('out-qty').focus();
                         } else if(activeScanTarget === 'opname') {
                             switchTab('opname');
                             document.getElementById('opname-product-id').value = matchedProd.id;
                             document.getElementById('opname-qty').focus();
                         }
-                        showToast(`Barcode Cocok: ${matchedProd.name}`);
+                        showToast(`Barcode Cocok: ${matchedProd.name} (Rak: ${matchedProd.location || 'Utama'})`);
                     } else {
                         showToast(`SKU "${decodedText}" tidak ada di database!`, 'error');
                     }
@@ -2026,7 +2242,7 @@
                 SISTOCK 2.0 menerapkan manajemen batch berbasis waktu real-time WIB secara otomatis:<br>
                 • <strong>Prinsip Kerja:</strong> Barang yang memiliki tanggal kedaluwarsa paling awal wajib didistribusikan atau dikeluarkan terlebih dahulu.<br>
                 • <strong>Sistem Peringatan Dini:</strong> Kotak notifikasi khusus pada dashboard akan memunculkan alarm visual jika terdapat batch yang telah melewati masa kedaluwarsa ataupun mendekati batas kritis (dalam rentang waktu H-3 hari).<br>
-                • <strong>Integrasi Database:</strong> Seluruh 23 batch dari spreadsheet portal terpetakan secara presisi per tanggal expired untuk memudahkan auditor dalam melakukan inspeksi berkala.`;
+                • <strong>Integrasi Database:</strong> Seluruh batch dari spreadsheet portal terpetakan secara presisi per tanggal expired untuk memudahkan auditor dalam melakukan inspeksi berkala.`;
             }
 
             if(q.includes('rusak') || q.includes('barang rusak')) {
@@ -2039,14 +2255,13 @@
             if(q.includes('inbound') || q.includes('jelaskan inbound')) {
                 return `📥 <strong>PROSEDUR OPERASIONAL BAKU - BARANG MASUK (INBOUND):</strong><br><br>
                 Modul Inbound mencatat seluruh penerimaan barang dari vendor atau pemasok eksternal.<br>
-                • <strong>Langkah Kerja:</strong> Buka menu Barang Masuk, pilih item atau gunakan pemindai kamera (*scanner*) untuk membaca barcode SKU secara instan. Masukkan kuantitas kedatangan serta nomor surat jalan.<br>
-                • <strong>Dampak Sistem:</strong> Stok fisik di database pusat akan bertambah secara real-time dan terekam ke dalam file log riwayat mutasi gudang.`;
+                • <strong>Langkah Kerja:</strong> Buka menu Barang Masuk, pilih item atau gunakan pemindai kamera (*scanner*) untuk membaca barcode SKU secara instan. Sistem otomatis menampilkan nama barang dan lokasi rak penyimpanannya.`;
             }
 
             if(q.includes('outbound') || q.includes('jelaskan outbound')) {
                 return `📤 <strong>PROSEDUR OPERASIONAL BAKU - BARANG KELUAR (OUTBOUND):</strong><br><br>
                 Modul Outbound mengelola proses pengeluaran stok untuk didistribusikan ke unit pemesan, ruang praktikum, atau kebutuhan instansi.<br>
-                • <strong>Validasi Keamanan:</strong> Sistem secara otomatis memeriksa ketersediaan stok; jika kuantitas permintaan melebihi stok yang ada di gudang, transaksi akan ditolak untuk mencegah terjadinya selisih minus.`;
+                • <strong>Fitur Baru:</strong> Dilengkapi tombol Print Rekap untuk mencetak bukti fisik pengeluaran barang secara instan.`;
             }
 
             if(q.includes('opname') || q.includes('jelaskan opname')) {
@@ -2057,8 +2272,8 @@
 
             if(q.includes('surat jalan') || q.includes('jelaskan surat jalan') || q.includes('do')) {
                 return `📜 <strong>ADMINISTRASI SURAT JALAN / DELIVERY ORDER (DO):</strong><br><br>
-                Fitur administratif resmi untuk pengiriman barang.<br>
-                • <strong>Cara Penggunaan:</strong> Akses menu Surat Jalan DO di header atas, centang produk beserta kuantitas yang dilampirkan, tetapkan nama penerima dan tanggal pengiriman, lalu cetak dokumen dengan format formal lengkap beserta kolom tanda tangan resmi.`;
+                Fitur administratif resmi pengiriman barang dengan desain minimalis profesional.<br>
+                • <strong>Keunggulan:</strong> Nomor DO bersifat dinamis dan otomatis bertambah setiap selesai dicetak. Kolom mencakup Receiver, Tanggal, Tabel SKU/Barang/Rak, serta tanda tangan di bagian bawah.`;
             }
 
             if(q.includes('aset') || q.includes('nilai') || q.includes('valuasi')) {
