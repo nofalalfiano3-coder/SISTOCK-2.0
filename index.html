@@ -232,7 +232,7 @@
             <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto p-3.5 sm:p-6 mb-6 custom-scrollbar space-y-5">
                 
-                <!-- BANNER NOTIFIKASI SANDBOX MODE (GURU / REVIEWER) -->
+                <!-- BANNER NOTIFIKASI SANDBOX MODE -->
                 <div id="sandbox-alert-banner" class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white p-4 rounded-3xl shadow-lg border border-sky-400 hidden flex items-center justify-between gap-3">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -245,7 +245,7 @@
                     </div>
                 </div>
 
-                <!-- KOTAK REMINDER NOTIFIKASI FEFO (REAL-TIME WIB) -->
+                <!-- KOTAK REMINDER NOTIFIKASI FEFO -->
                 <div id="fefo-reminder-banner" class="bg-gradient-to-r from-amber-500 to-brand-600 text-white p-4 sm:p-5 rounded-3xl shadow-lg border border-amber-400 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0">
@@ -394,7 +394,6 @@
                                 </div>
                             </div>
                             
-                            <!-- INFO OTOMATIS MUNCUL SAAT PILIH / SCAN -->
                             <div id="inbound-autofill-info" class="bg-emerald-50/80 border border-emerald-200 p-3.5 rounded-xl hidden space-y-1">
                                 <p class="text-[11px] font-bold text-emerald-800">📦 Informasi Barang Terdeteksi:</p>
                                 <p class="text-xs text-emerald-900 font-semibold">Nama: <span id="in-info-name" class="font-bold">-</span></p>
@@ -453,7 +452,6 @@
                                 </div>
                             </div>
 
-                            <!-- INFO OTOMATIS MUNCUL SAAT PILIH / SCAN -->
                             <div id="outbound-autofill-info" class="bg-rose-50/80 border border-rose-200 p-3.5 rounded-xl hidden space-y-1">
                                 <p class="text-[11px] font-bold text-rose-800">📦 Informasi Barang Terdeteksi:</p>
                                 <p class="text-xs text-rose-900 font-semibold">Nama: <span id="out-info-name" class="font-bold">-</span></p>
@@ -548,8 +546,8 @@
                     <div class="flex flex-wrap gap-2 text-xs font-bold items-center bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
                         <span class="text-slate-400 mr-2 uppercase text-[10px] tracking-wider">Status Stok:</span>
                         <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full border border-emerald-200">🟢 Aman (> ROP)</span>
-                        <span class="px-3 py-1 bg-amber-100 text-amber-800 rounded-full border border-amber-200">🟡 ROP Warning (≤ ROP)</span>
-                        <span class="px-3 py-1 bg-rose-100 text-rose-800 rounded-full border border-rose-200">🔴 Habis (0)</span>
+                        <span class="px-3 py-1 bg-amber-100 text-amber-800 rounded-full border border-emerald-200">🟡 ROP Warning (≤ ROP)</span>
+                        <span class="px-3 py-1 bg-rose-100 text-rose-800 rounded-full border border-emerald-200">🔴 Habis (0)</span>
                     </div>
 
                     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
@@ -577,14 +575,14 @@
                     </div>
                 </section>
 
-                <!-- SECTION: DAMAGED & FEFO EXPIRED GOODS -->
+                <!-- SECTION: FEFO (NODE "FEFO") -->
                 <section id="section-damaged" class="space-y-4 hidden animate-tab-enter">
                     <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
                         <div>
                             <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider text-amber-600 flex items-center gap-1.5">
                                 <i data-lucide="alert-octagon" class="w-4 h-4"></i> Karantina Barang FEFO & Jadwal Kedaluwarsa
                             </h3>
-                            <p class="text-[10px] text-slate-400 font-medium">Monitoring batch tanggal kadaluwarsa (First Expired, First Out)</p>
+                            <p class="text-[10px] text-slate-400 font-medium">Monitoring batch tanggal kadaluwarsa (First Expired, First Out) -> Node Firebase: <strong>FEFO</strong></p>
                         </div>
                         <button onclick="openDamagedModal()" class="bg-amber-500 hover:bg-amber-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-md shadow-amber-500/20 btn-press">
                             <i data-lucide="plus" class="w-4 h-4"></i> Catat Batch FEFO
@@ -612,14 +610,14 @@
                     </div>
                 </section>
 
-                <!-- SECTION: BARANG RUSAK (DAMAGED GOODS PHYSICAL) -->
+                <!-- SECTION: BARANG RUSAK FISIK (NODE "damagedgoods") -->
                 <section id="section-barang-rusak" class="space-y-4 hidden animate-tab-enter">
                     <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
                         <div>
                             <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider text-rose-600 flex items-center gap-1.5">
                                 <i data-lucide="shield-alert" class="w-4 h-4"></i> Pencatatan Barang Rusak Fisik (Damaged Goods)
                             </h3>
-                            <p class="text-[10px] text-slate-400 font-medium">Input kerusakan fisik yang otomatis memotong stok gudang utama</p>
+                            <p class="text-[10px] text-slate-400 font-medium">Input kerusakan fisik yang otomatis memotong stok gudang -> Node Firebase: <strong>damagedgoods</strong></p>
                         </div>
                         <button onclick="openBarangRusakModal()" class="bg-rose-500 hover:bg-rose-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-md shadow-rose-500/20 btn-press">
                             <i data-lucide="plus" class="w-4 h-4"></i> Catat Barang Rusak
@@ -778,7 +776,6 @@
             </div>
         </div>
 
-        <!-- QUICK CHIPS BUTTONS -->
         <div class="p-2 sm:p-2.5 bg-slate-100/90 border-t border-slate-200/80 flex flex-wrap gap-1.5 text-[10px] sm:text-[11px] font-bold">
             <button onclick="sendJarvisOption('jelaskan inbound')" class="bg-white hover:bg-brand-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">📥 Fitur Inbound</button>
             <button onclick="sendJarvisOption('jelaskan outbound')" class="bg-white hover:bg-brand-500 hover:text-white text-slate-700 px-2.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm btn-press">📤 Fitur Outbound</button>
@@ -851,7 +848,7 @@
         </div>
     </div>
 
-    <!-- MODAL: DELIVERY ORDER (SURAT JALAN) - PROFESIONAL MINIMALIS -->
+    <!-- MODAL: DELIVERY ORDER (SURAT JALAN) -->
     <div id="deliveryModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 z-50">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6 space-y-4 animate-tab-enter">
             <div class="flex justify-between items-center border-b pb-3">
@@ -877,7 +874,6 @@
                 <div id="doItemSelector" class="space-y-2 max-h-40 overflow-y-auto border p-3 rounded-2xl text-xs bg-slate-50 custom-scrollbar"></div>
             </div>
 
-            <!-- PREVIEW SURAT JALAN SESUAI REFERENSI MINIMALIS + PENERIMA & KOSONG TTD -->
             <div id="printArea" class="border p-6 rounded-2xl bg-white space-y-5 text-slate-900 font-sans">
                 <div class="flex justify-between items-start border-b-2 border-slate-900 pb-4">
                     <div>
@@ -927,7 +923,7 @@
         </div>
     </div>
 
-    <!-- MODAL: DAMAGED / FEFO BATCH -->
+    <!-- MODAL: FEFO BATCH (NODE "FEFO") -->
     <div id="modal-damaged" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter">
             <div class="flex justify-between items-center border-b pb-2">
@@ -969,7 +965,7 @@
         </div>
     </div>
 
-    <!-- MODAL: BARANG RUSAK FISIK (DAMAGED GOODS PHYSICAL) -->
+    <!-- MODAL: BARANG RUSAK FISIK (NODE "damagedgoods") -->
     <div id="modal-barang-rusak" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter">
             <div class="flex justify-between items-center border-b pb-2">
@@ -1065,7 +1061,7 @@
             "BELAJAR": "123456"
         };
 
-        // DATABASE INVENTARIS AWAL (DENGAN NODE "damaged" BERSIH DARI RON 88)
+        // DATABASE INVENTARIS AWAL (DENGAN 23 DATA FEFO & BARANG RUSAK FISIK TERPISAH)
         const INITIAL_SPREADSHEET_DATA = {
             suppliers: [
                 { id: "sup-1", code: "CHECKER", name: "CHECKER GUDANG", contact: "Role: CHECKER", phone: "-" },
@@ -1095,16 +1091,49 @@
                 { id: "prod-33", sku: "18993379500235", name: "Sunco", category: "PCS", price: 17000, stock: 46, rop: 10, location: "C01.1" },
                 { id: "prod-34", sku: "8995180000000", name: "Gulaku", category: "PCS", price: 17500, stock: 20, rop: 10, location: "C01.3" }
             ],
-            damaged: [], // Node khusus FEFO tersinkronisasi bersih
-            damagedPhysicalGoods: [
-                { id: "rusak-1", timestamp: "31/10/2026, 14.30", productName: "RON 88 500 ML", sku: "10341330462", qty: 2, pelapor: "Team Gudang", notes: "Botol penyok & bocor saat unboxing" }
-            ],
+            // 23 DATA FEFO SESUAI SCREENSHOT GOOGLE SHEETS
+            FEFO: {
+                "fefo-1": { id: "fefo-1", timestamp: "26/11/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 46, status: "segera dikeluarkan", notes: "TERSEDIA" },
+                "fefo-2": { id: "fefo-2", timestamp: "28/12/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 31, status: "segera dikeluarkan", notes: "TERSEDIA" },
+                "fefo-3": { id: "fefo-3", timestamp: "02/10/2026", productName: "Indomie Soto", sku: "10089686010340", qty: 5, status: "kadaluwarsa", notes: "-" },
+                "fefo-4": { id: "fefo-4", timestamp: "05/01/2027", productName: "Indomie Soto", sku: "10089686010340", qty: 40, status: "segera dikeluarkan", notes: "-" },
+                "fefo-5": { id: "fefo-5", timestamp: "28/12/2026", productName: "Indomie Goreng", sku: "10089686010944", qty: 29, status: "segera dikeluarkan", notes: "TERSEDIA" },
+                "fefo-6": { id: "fefo-6", timestamp: "05/01/2027", productName: "Indomie Soto Mi", sku: "10089686010524", qty: 10, status: "segera dikeluarkan", notes: "TERSEDIA" },
+                "fefo-7": { id: "fefo-7", timestamp: "19/05/2027", productName: "Indomie Rendang", sku: "10089686011187", qty: 40, status: "masih aman", notes: "TERSEDIA" },
+                "fefo-8": { id: "fefo-8", timestamp: "15/05/2027", productName: "Indomie Goreng", sku: "10089686010944", qty: 40, status: "masih aman", notes: "TERSEDIA" },
+                "fefo-9": { id: "fefo-9", timestamp: "15/01/2027", productName: "Indomie Rica-Rica", sku: "10089686043270", qty: 40, status: "segera dikeluarkan", notes: "-" },
+                "fefo-10": { id: "fefo-10", timestamp: "07/01/2027", productName: "Indomie cabe ijo", sku: "10089686010715", qty: 40, status: "segera dikeluarkan", notes: "-" },
+                "fefo-11": { id: "fefo-11", timestamp: "22/01/2027", productName: "Indomie cabe ijo", sku: "10089686010715", qty: 40, status: "segera dikeluarkan", notes: "-" },
+                "fefo-12": { id: "fefo-12", timestamp: "21/01/2027", productName: "Indomie cabe ijo", sku: "10089686010715", qty: 40, status: "segera dikeluarkan", notes: "-" },
+                "fefo-13": { id: "fefo-13", timestamp: "10/04/2028", productName: "Indomie cabe ijo", sku: "10089686010715", qty: 5, status: "masih aman", notes: "-" },
+                "fefo-14": { id: "fefo-14", timestamp: "19/11/2027", productName: "Tarik Malaka", sku: "18888166603612", qty: 12, status: "masih aman", notes: "TERSEDIA" },
+                "fefo-15": { id: "fefo-15", timestamp: "26/04/2027", productName: "Indomie Cabe ijo", sku: "10089686010715", qty: 45, status: "masih aman", notes: "TERSEDIA" },
+                "fefo-16": { id: "fefo-16", timestamp: "28/04/2027", productName: "Indomie Ayam Geprek", sku: "10089686043430", qty: 65, status: "masih aman", notes: "TERSEDIA" },
+                "fefo-17": { id: "fefo-17", timestamp: "14/01/2027", productName: "Indomie Gentong", sku: "10089686910305", qty: 40, status: "segera dikeluarkan", notes: "TERSEDIA" },
+                "fefo-18": { id: "fefo-18", timestamp: "17/05/2027", productName: "Indomie Goreng", sku: "10089686010944", qty: 65, status: "masih aman", notes: "TERSEDIA" },
+                "fefo-19": { id: "fefo-19", timestamp: "27/04/2027", productName: "Indomie Rica Ri", sku: "10089686043270", qty: 30, status: "masih aman", notes: "TERSEDIA" },
+                "fefo-20": { id: "fefo-20", timestamp: "06/03/2027", productName: "Indomie Iga Penyet", sku: "10089686043683", qty: 95, status: "masih aman", notes: "TERSEDIA" },
+                "fefo-21": { id: "fefo-21", timestamp: "17/05/2028", productName: "Sunco", sku: "18993379500235", qty: 46, status: "masih aman", notes: "TERSEDIA" },
+                "fefo-22": { id: "fefo-22", timestamp: "30/03/2028", productName: "Tropical", sku: "8992946535178", qty: 1, status: "masih aman", notes: "TERSEDIA" },
+                "fefo-23": { id: "fefo-23", timestamp: "10/07/2028", productName: "Gulaku", sku: "8995180000000", qty: 20, status: "masih aman", notes: "TERSEDIA" }
+            },
+            // BARANG RUSAK FISIK DI NODE "damagedgoods"
+            damagedgoods: {
+                "rusak-1": { id: "rusak-1", timestamp: "31/10/2026, 14.30", productName: "RON 88 500 ML", sku: "10341330462", qty: 2, pelapor: "Team Gudang", notes: "Botol penyok & bocor saat unboxing" }
+            },
             logs: [
                 { id: "log-init", timestamp: "10/31/26 23:18", productName: "RON 88 500 ML", type: "IN", qty: 85, notes: "BARANG MASUK - Rak: A01.3 | Vendor Utama" }
             ]
         };
 
-        let state = INITIAL_SPREADSHEET_DATA;
+        let state = {
+            suppliers: INITIAL_SPREADSHEET_DATA.suppliers,
+            products: INITIAL_SPREADSHEET_DATA.products,
+            FEFO: [],
+            damagedgoods: [],
+            logs: INITIAL_SPREADSHEET_DATA.logs
+        };
+
         let chartInstance = null;
         let html5QrCode = null;
         let activeScanTarget = 'inbound';
@@ -1220,12 +1249,12 @@
         function checkFefoExpiringReminders(currentTime) {
             const banner = document.getElementById('fefo-reminder-banner');
             const reminderText = document.getElementById('reminder-text');
-            if(!banner || !reminderText || !state.damaged) return;
+            if(!banner || !reminderText || !state.FEFO) return;
 
             let expiredCount = 0;
             let nearCount = 0;
 
-            state.damaged.forEach(item => {
+            state.FEFO.forEach(item => {
                 if(!item.timestamp) return;
                 const parts = item.timestamp.split('/');
                 if(parts.length === 3) {
@@ -1257,12 +1286,19 @@
                     state = {
                         suppliers: data.suppliers || INITIAL_SPREADSHEET_DATA.suppliers,
                         products: data.products || [],
-                        damaged: data.damaged || [], // Node FEFO cloud
-                        damagedPhysicalGoods: data.damagedPhysicalGoods || INITIAL_SPREADSHEET_DATA.damagedPhysicalGoods,
-                        logs: data.logs || []
+                        FEFO: data.FEFO ? Object.values(data.FEFO) : [],
+                        damagedgoods: data.damagedgoods ? Object.values(data.damagedgoods) : [],
+                        logs: data.logs ? Object.values(data.logs) : []
                     };
                 } else {
-                    state = INITIAL_SPREADSHEET_DATA;
+                    // Konversi awal objek ke array untuk UI
+                    state = {
+                        suppliers: INITIAL_SPREADSHEET_DATA.suppliers,
+                        products: INITIAL_SPREADSHEET_DATA.products,
+                        FEFO: Object.values(INITIAL_SPREADSHEET_DATA.FEFO),
+                        damagedgoods: Object.values(INITIAL_SPREADSHEET_DATA.damagedgoods),
+                        logs: INITIAL_SPREADSHEET_DATA.logs
+                    };
                     saveStateToCloud();
                 }
                 refreshUI();
@@ -1271,7 +1307,22 @@
 
         function saveStateToCloud() {
             const dbNode = getActiveFirebaseNode();
-            db.ref(dbNode).set(state).then(() => {
+            // Simpan data dalam struktur key-value murni di Firebase untuk FEFO & damagedgoods
+            const fefoObj = {};
+            state.FEFO.forEach(item => { fefoObj[item.id] = item; });
+
+            const damagedObj = {};
+            state.damagedgoods.forEach(item => { damagedObj[item.id] = item; });
+
+            const payload = {
+                suppliers: state.suppliers,
+                products: state.products,
+                FEFO: fefoObj,
+                damagedgoods: damagedObj,
+                logs: state.logs
+            };
+
+            db.ref(dbNode).set(payload).then(() => {
                 refreshUI();
             }).catch((error) => {
                 console.error("Gagal sync ke Firebase:", error);
@@ -1292,8 +1343,8 @@
                     action: "sync_stock",
                     userMode: activeUser,
                     products: state.products,
-                    damaged: state.damaged,
-                    damagedPhysicalGoods: state.damagedPhysicalGoods,
+                    FEFO: state.FEFO,
+                    damagedgoods: state.damagedgoods,
                     logs: state.logs,
                     timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
                 })
@@ -1362,7 +1413,7 @@
             const ropAlertCount = state.products.filter(p => parseInt(p.stock) <= parseInt(p.rop)).length;
             document.getElementById('stat-rop-alert').innerText = ropAlertCount;
 
-            const activeDamagedCount = (state.damaged ? state.damaged.length : 0) + (state.damagedPhysicalGoods ? state.damagedPhysicalGoods.length : 0);
+            const activeDamagedCount = (state.FEFO ? state.FEFO.length : 0) + (state.damagedgoods ? state.damagedgoods.length : 0);
             document.getElementById('stat-damaged-count').innerText = activeDamagedCount;
 
             const topProductsContainer = document.getElementById('top-products-list');
@@ -1466,13 +1517,13 @@
             const tbody = document.getElementById('damaged-tbody');
             if(!tbody) return;
 
-            if(!state.damaged || state.damaged.length === 0) {
+            if(!state.FEFO || state.FEFO.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Belum ada data karantina FEFO.</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = '';
-            state.damaged.forEach(d => {
+            state.FEFO.forEach(d => {
                 const statusLower = (d.status || '').toLowerCase();
                 let badgeStyle = 'bg-emerald-100 text-emerald-800 font-bold';
                 let badgeText = '🟢 Masih Aman';
@@ -1505,13 +1556,13 @@
             const tbody = document.getElementById('barang-rusak-tbody');
             if(!tbody) return;
 
-            if(!state.damagedPhysicalGoods || state.damagedPhysicalGoods.length === 0) {
+            if(!state.damagedgoods || state.damagedgoods.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Belum ada barang rusak fisik tercatat.</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = '';
-            state.damagedPhysicalGoods.forEach(r => {
+            state.damagedgoods.forEach(r => {
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
                         <td class="p-3.5 text-slate-400 font-medium">${r.timestamp}</td>
@@ -1742,6 +1793,7 @@
             document.getElementById('modal-product').classList.remove('hidden');
         }
 
+        // Simpan FEFO (Langsung ke Node "FEFO" di Firebase)
         function saveDamagedGood(e) {
             e.preventDefault();
             const prodId = document.getElementById('dmg-product-id').value;
@@ -1752,9 +1804,10 @@
 
             const prod = state.products.find(p => p.id === prodId);
             if(prod) {
-                if(!state.damaged) state.damaged = [];
-                state.damaged.push({
-                    id: 'fefo-' + Date.now(),
+                if(!state.FEFO) state.FEFO = [];
+                const uniqueKey = 'fefo-' + Date.now();
+                state.FEFO.push({
+                    id: uniqueKey,
                     timestamp: timestamp,
                     productName: prod.name,
                     sku: prod.sku,
@@ -1763,26 +1816,22 @@
                     notes: notes
                 });
                 saveStateToCloud();
-                showToast('Batch FEFO berhasil dicatat ke Cloud!');
+                showToast('Batch FEFO berhasil dicatat ke Node FEFO Cloud!');
                 closeDamagedModal();
                 switchTab('damaged');
             }
         }
 
+        // Hapus FEFO dari Node "FEFO"
         function deleteDamaged(id) {
             if(confirm('Hapus catatan FEFO ini?')) {
-                state.damaged = state.damaged.filter(d => d.id !== id);
-                const dbNode = getActiveFirebaseNode();
-                db.ref(dbNode).set(state).then(() => {
-                    renderDamagedGoods();
-                    showToast('Catatan FEFO berhasil dihapus permanen.', 'error');
-                }).catch((error) => {
-                    console.error("Gagal menghapus dari database:", error);
-                    showToast('Gagal menghapus data dari server.', 'error');
-                });
+                state.FEFO = state.FEFO.filter(d => d.id !== id);
+                saveStateToCloud();
+                showToast('Catatan FEFO berhasil dihapus permanen.', 'error');
             }
         }
 
+        // Simpan Barang Rusak Fisik (Langsung ke Node "damagedgoods" di Firebase)
         function saveBarangRusak(e) {
             e.preventDefault();
             const prodId = document.getElementById('rusak-product-id').value;
@@ -1798,9 +1847,10 @@
                 }
                 prod.stock -= qty;
 
-                if(!state.damagedPhysicalGoods) state.damagedPhysicalGoods = [];
-                state.damagedPhysicalGoods.push({
-                    id: 'rusak-' + Date.now(),
+                if(!state.damagedgoods) state.damagedgoods = [];
+                const uniqueKey = 'rusak-' + Date.now();
+                state.damagedgoods.push({
+                    id: uniqueKey,
                     timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
                     productName: prod.name,
                     sku: prod.sku,
@@ -1819,23 +1869,18 @@
                 });
 
                 saveStateToCloud();
-                showToast(`Laporan barang rusak disimpan, stok ${prod.name} otomatis terpotong -${qty}!`);
+                showToast(`Laporan barang rusak disimpan ke Node damagedgoods, stok ${prod.name} terpotong -${qty}!`);
                 closeBarangRusakModal();
                 switchTab('barang-rusak');
             }
         }
 
+        // Hapus Barang Rusak Fisik dari Node "damagedgoods"
         function deleteBarangRusak(id) {
             if(confirm('Hapus catatan barang rusak ini?')) {
-                state.damagedPhysicalGoods = state.damagedPhysicalGoods.filter(r => r.id !== id);
-                const dbNode = getActiveFirebaseNode();
-                db.ref(dbNode).set(state).then(() => {
-                    renderBarangRusak();
-                    showToast('Catatan barang rusak dihapus permanen.', 'error');
-                }).catch((error) => {
-                    console.error("Gagal menghapus barang rusak:", error);
-                    showToast('Gagal menghapus data dari server.', 'error');
-                });
+                state.damagedgoods = state.damagedgoods.filter(r => r.id !== id);
+                saveStateToCloud();
+                showToast('Catatan barang rusak dihapus permanen.', 'error');
             }
         }
 
@@ -1863,29 +1908,16 @@
         function deleteSupplier(id) {
             if(confirm('Hapus data supplier/user ini?')) {
                 state.suppliers = state.suppliers.filter(s => s.id !== id);
-                const dbNode = getActiveFirebaseNode();
-                db.ref(dbNode).set(state).then(() => {
-                    renderSuppliers();
-                    showToast('Supplier dihapus permanen.', 'error');
-                }).catch((error) => {
-                    console.error("Gagal menghapus supplier:", error);
-                    showToast('Gagal menghapus data dari server.', 'error');
-                });
+                saveStateToCloud();
+                showToast('Supplier dihapus permanen.', 'error');
             }
         }
 
         function deleteLogItem(id) {
             if(confirm('Hapus riwayat log transaksi ini dari rekapitulasi?')) {
                 state.logs = state.logs.filter(l => l.id !== id);
-                const dbNode = getActiveFirebaseNode();
-                db.ref(dbNode).set(state).then(() => {
-                    renderRecapData();
-                    renderDashboardStats();
-                    showToast('Log transaksi berhasil dihapus permanen.', 'error');
-                }).catch((error) => {
-                    console.error("Gagal menghapus log:", error);
-                    showToast('Gagal menghapus log dari server.', 'error');
-                });
+                saveStateToCloud();
+                showToast('Log transaksi berhasil dihapus permanen.', 'error');
             }
         }
 
@@ -2298,51 +2330,17 @@
             const q = text.toLowerCase();
 
             if(q.includes('halo') || q.includes('hai') || q.includes('jarvis')) {
-                return `Selamat datang! Saya J.A.R.V.I.S GuideBot Assistant. Sistem manajemen logistik ini dirancang komprehensif untuk mendukung operasional pergudangan SMKN 3 Bandung. Silakan pilih menu bantuan di bawah untuk penjelasan mendetail mengenai setiap modul.`;
+                return `Selamat datang! Saya J.A.R.V.I.S GuideBot Assistant. Sistem manajemen logistik ini dirancang komprehensif untuk mendukung operasional pergudangan SMKN 3 Bandung.`;
             }
 
             if(q.includes('fefo') || q.includes('cek fefo') || q.includes('reminder')) {
                 return `☣️ <strong>ANALISIS & PROSEDUR OPERASIONAL FEFO (First Expired, First Out):</strong><br><br>
-                SISTOCK 2.0 menerapkan manajemen batch berbasis waktu real-time WIB secara otomatis:<br>
-                • <strong>Prinsip Kerja:</strong> Barang yang memiliki tanggal kedaluwarsa paling awal wajib didistribusikan atau dikeluarkan terlebih dahulu.<br>
-                • <strong>Sistem Peringatan Dini:</strong> Kotak notifikasi khusus pada dashboard akan memunculkan alarm visual jika terdapat batch yang telah melewati masa kedaluwarsa ataupun mendekati batas kritis (dalam rentang waktu H-3 hari).<br>
-                • <strong>Integrasi Database:</strong> Seluruh batch dari spreadsheet portal terpetakan secara presisi per tanggal expired untuk memudahkan auditor dalam melakukan inspeksi berkala.`;
+                SISTOCK 2.0 mengelola batch FEFO pada node cloud <strong>FEFO</strong> secara terpisah dan presisi per tanggal kedaluwarsa.`;
             }
 
             if(q.includes('rusak') || q.includes('barang rusak')) {
-                return `🛡️ <strong>MODUL PENCATATAN KELAINAN FISIK & BARANG RUSAK (DAMAGED GOODS):</strong><br><br>
-                Modul ini menangani inventaris yang mengalami cacat kemasan, robek, pecah, atau kontaminasi fisik selama proses bongkar muat (*unloading*) maupun penyimpanan.<br>
-                • <strong>Mekanisme Otomatis:</strong> Ketika operator mencatat laporan pada menu <em>Barang Rusak</em>, sistem secara instan dan otomatis memotong kuantitas stok pada database produk utama.<br>
-                • <strong>Audit Log:</strong> Setiap transaksi penghapusan stok akibat kerusakan tercatat secara permanen di riwayat rekapitulasi guna menjaga akurasi laporan pertanggungjawaban kepada manajemen logistik.`;
-            }
-
-            if(q.includes('inbound') || q.includes('jelaskan inbound')) {
-                return `📥 <strong>PROSEDUR OPERASIONAL BAKU - BARANG MASUK (INBOUND):</strong><br><br>
-                Modul Inbound mencatat seluruh penerimaan barang dari vendor atau pemasok eksternal.<br>
-                • <strong>Langkah Kerja:</strong> Buka menu Barang Masuk, pilih item atau gunakan pemindai kamera (*scanner*) untuk membaca barcode SKU secara instan. Sistem otomatis menampilkan nama barang dan lokasi rak penyimpanannya.`;
-            }
-
-            if(q.includes('outbound') || q.includes('jelaskan outbound')) {
-                return `📤 <strong>PROSEDUR OPERASIONAL BAKU - BARANG KELUAR (OUTBOUND):</strong><br><br>
-                Modul Outbound mengelola proses pengeluaran stok untuk didistribusikan ke unit pemesan, ruang praktikum, atau kebutuhan instansi.<br>
-                • <strong>Fitur Baru:</strong> Dilengkapi tombol Print Rekap tanpa signature untuk mencetak bukti fisik pengeluaran barang secara instan.`;
-            }
-
-            if(q.includes('opname') || q.includes('jelaskan opname')) {
-                return `🔎 <strong>PROSEDUR STOCK OPNAME & AUDIT INVENTARIS:</strong><br><br>
-                Stock Opname adalah proses verifikasi berkala untuk mencocokkan catatan digital dalam sistem dengan kondisi fisik aktual di rak penyimpanan.<br>
-                • <strong>Fitur Unggulan:</strong> Memanfaatkan pemindai kamera barcode guna mempercepat proses audit. Sistem otomatis menghitung selisih (*variance*) surplus maupun susut demi akurasi pelaporan akhir.`;
-            }
-
-            if(q.includes('surat jalan') || q.includes('jelaskan surat jalan') || q.includes('do')) {
-                return `📜 <strong>ADMINISTRASI SURAT JALAN / DELIVERY ORDER (DO):</strong><br><br>
-                Fitur administratif resmi pengiriman barang dengan desain minimalis profesional.<br>
-                • <strong>Keunggulan:</strong> Nomor DO bersifat dinamis dan otomatis bertambah setiap selesai dicetak. Kolom mencakup Penerima, Tanggal, Tabel SKU/Barang/Rak, serta kolom tanda tangan kosong di bawah untuk ditulis manual.`;
-            }
-
-            if(q.includes('aset') || q.includes('nilai') || q.includes('valuasi')) {
-                const totalVal = state.products.reduce((acc, item) => acc + ((parseInt(item.price) || 0) * (parseInt(item.stock) || 0)), 0);
-                return `💰 Berdasarkan kalkulasi real-time sistem, total valuasi finansial seluruh aset inventaris gudang saat ini adalah sebesar <strong>Rp ${totalVal.toLocaleString('id-ID')}</strong>.`;
+                return `🛡️ <strong>MODUL PENCATATAN KELAINAN FISIK (DAMAGED GOODS):</strong><br><br>
+                Modul ini terhubung langsung dengan node Firebase <strong>damagedgoods</strong> dan secara otomatis memotong stok gudang utama saat dilaporkan.`;
             }
 
             const matched = state.products.filter(p => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q));
@@ -2354,7 +2352,7 @@
                 return resultHTML;
             }
 
-            return `Mohon maaf, perintah tersebut belum dikenali oleh sistem J.A.R.V.I.S. Silakan gunakan tombol navigasi cepat di atas untuk mendapatkan panduan detail modul logistik.`;
+            return `Mohon maaf, perintah tersebut belum dikenali oleh sistem J.A.R.V.I.S. Silakan gunakan tombol navigasi cepat di bawah.`;
         }
 
         function escapeHtml(str) {
