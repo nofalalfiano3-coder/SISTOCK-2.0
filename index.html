@@ -1246,7 +1246,7 @@
             }, 1000);
         }
 
-        // FUNGSI REMINDER FEFO DENGAN TIMESTAMP MURNI (FIXED BUG)
+        // FUNGSI REMINDER FEFO DENGAN TIMESTAMP MURNI
         function checkFefoExpiringReminders(currentTime) {
             const banner = document.getElementById('fefo-reminder-banner');
             const reminderText = document.getElementById('reminder-text');
@@ -1350,28 +1350,41 @@
             });
         }
 
+        // FUNGSI SINKRONISASI GOOGLE SHEETS YANG DISEMPURNAKAN (TEXT/PLAIN MENGHINDARI CORS ERROR)
         function syncToGoogleSheets() {
             const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVyIpWceLZ9vkDxY9NPbFctcJtCjhqQcG9tfUAZnfqfH8BhoZ9CCA7CZsAwaqlqqt55w/exec";
-            const activeUser = sessionStorage.getItem("sistock_username");
+            const activeUser = sessionStorage.getItem("sistock_username") || "MLGSMKN3BDG";
             
             if (!confirm(`Kirim backup data dari ${activeUser === 'BELAJAR' ? 'SANDBOX MODE' : 'WAREHOUSE UTAMA'} ke Google Sheets SMKN 3 BANDUNG?`)) return;
 
+            showToast("Sedang mengirim data ke Google Sheets...", "success");
+
+            const payloadData = {
+                action: "sync_stock",
+                userMode: activeUser,
+                products: state.products,
+                FEFO: state.FEFO,
+                damagedgoods: state.damagedgoods,
+                logs: state.logs,
+                timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
+            };
+
             fetch(GOOGLE_APPS_SCRIPT_URL, {
                 method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    action: "sync_stock",
-                    userMode: activeUser,
-                    products: state.products,
-                    FEFO: state.FEFO,
-                    damagedgoods: state.damagedgoods,
-                    logs: state.logs,
-                    timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
-                })
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8",
+                },
+                body: JSON.stringify(payloadData)
             })
-            .then(() => { showToast("✅ Backup berhasil dikirim ke Sheets!"); })
-            .catch(() => { showToast("❌ Gagal terhubung ke Sheets.", "error"); });
+            .then(response => response.text())
+            .then(result => {
+                console.log("Response Apps Script:", result);
+                showToast("✅ Backup data berhasil dikirim ke Google Sheets!");
+            })
+            .catch(error => {
+                console.error("Error Sync Sheets:", error);
+                showToast("❌ Gagal terhubung ke Google Sheets. Periksa URL deployment.", "error");
+            });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
