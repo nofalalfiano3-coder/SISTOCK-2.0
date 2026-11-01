@@ -1065,7 +1065,7 @@
             "BELAJAR": "123456"
         };
 
-        // DATABASE INVENTARIS AWAL
+        // DATABASE INVENTARIS AWAL (DENGAN NODE "damaged" BERSIH DARI RON 88)
         const INITIAL_SPREADSHEET_DATA = {
             suppliers: [
                 { id: "sup-1", code: "CHECKER", name: "CHECKER GUDANG", contact: "Role: CHECKER", phone: "-" },
@@ -1095,9 +1095,7 @@
                 { id: "prod-33", sku: "18993379500235", name: "Sunco", category: "PCS", price: 17000, stock: 46, rop: 10, location: "C01.1" },
                 { id: "prod-34", sku: "8995180000000", name: "Gulaku", category: "PCS", price: 17500, stock: 20, rop: 10, location: "C01.3" }
             ],
-            damagedGoods: [
-                { id: "fefo-1", timestamp: "26/11/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 46, status: "segera dikeluarkan", notes: "Kadaluarsa: 26/11/2026 | Tersedia" }
-            ],
+            damaged: [], // Node khusus FEFO tersinkronisasi bersih
             damagedPhysicalGoods: [
                 { id: "rusak-1", timestamp: "31/10/2026, 14.30", productName: "RON 88 500 ML", sku: "10341330462", qty: 2, pelapor: "Team Gudang", notes: "Botol penyok & bocor saat unboxing" }
             ],
@@ -1222,12 +1220,12 @@
         function checkFefoExpiringReminders(currentTime) {
             const banner = document.getElementById('fefo-reminder-banner');
             const reminderText = document.getElementById('reminder-text');
-            if(!banner || !reminderText || !state.damagedGoods) return;
+            if(!banner || !reminderText || !state.damaged) return;
 
             let expiredCount = 0;
             let nearCount = 0;
 
-            state.damagedGoods.forEach(item => {
+            state.damaged.forEach(item => {
                 if(!item.timestamp) return;
                 const parts = item.timestamp.split('/');
                 if(parts.length === 3) {
@@ -1259,7 +1257,7 @@
                     state = {
                         suppliers: data.suppliers || INITIAL_SPREADSHEET_DATA.suppliers,
                         products: data.products || [],
-                        damagedGoods: data.damagedGoods || INITIAL_SPREADSHEET_DATA.damagedGoods,
+                        damaged: data.damaged || [], // Node FEFO cloud
                         damagedPhysicalGoods: data.damagedPhysicalGoods || INITIAL_SPREADSHEET_DATA.damagedPhysicalGoods,
                         logs: data.logs || []
                     };
@@ -1294,7 +1292,7 @@
                     action: "sync_stock",
                     userMode: activeUser,
                     products: state.products,
-                    damagedGoods: state.damagedGoods,
+                    damaged: state.damaged,
                     damagedPhysicalGoods: state.damagedPhysicalGoods,
                     logs: state.logs,
                     timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
@@ -1364,7 +1362,7 @@
             const ropAlertCount = state.products.filter(p => parseInt(p.stock) <= parseInt(p.rop)).length;
             document.getElementById('stat-rop-alert').innerText = ropAlertCount;
 
-            const activeDamagedCount = (state.damagedGoods ? state.damagedGoods.length : 0) + (state.damagedPhysicalGoods ? state.damagedPhysicalGoods.length : 0);
+            const activeDamagedCount = (state.damaged ? state.damaged.length : 0) + (state.damagedPhysicalGoods ? state.damagedPhysicalGoods.length : 0);
             document.getElementById('stat-damaged-count').innerText = activeDamagedCount;
 
             const topProductsContainer = document.getElementById('top-products-list');
@@ -1468,13 +1466,13 @@
             const tbody = document.getElementById('damaged-tbody');
             if(!tbody) return;
 
-            if(!state.damagedGoods || state.damagedGoods.length === 0) {
+            if(!state.damaged || state.damaged.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Belum ada data karantina FEFO.</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = '';
-            state.damagedGoods.forEach(d => {
+            state.damaged.forEach(d => {
                 const statusLower = (d.status || '').toLowerCase();
                 let badgeStyle = 'bg-emerald-100 text-emerald-800 font-bold';
                 let badgeText = '🟢 Masih Aman';
@@ -1754,8 +1752,8 @@
 
             const prod = state.products.find(p => p.id === prodId);
             if(prod) {
-                if(!state.damagedGoods) state.damagedGoods = [];
-                state.damagedGoods.push({
+                if(!state.damaged) state.damaged = [];
+                state.damaged.push({
                     id: 'fefo-' + Date.now(),
                     timestamp: timestamp,
                     productName: prod.name,
@@ -1765,16 +1763,15 @@
                     notes: notes
                 });
                 saveStateToCloud();
-                showToast('Batch FEFO berhasil dicatat!');
+                showToast('Batch FEFO berhasil dicatat ke Cloud!');
                 closeDamagedModal();
                 switchTab('damaged');
             }
         }
 
-        // --- PERBAIKAN BUG HAPUS FEFO (TERSINKRONISASI PERMANEN KE FIREBASE) ---
         function deleteDamaged(id) {
             if(confirm('Hapus catatan FEFO ini?')) {
-                state.damagedGoods = state.damagedGoods.filter(d => d.id !== id);
+                state.damaged = state.damaged.filter(d => d.id !== id);
                 const dbNode = getActiveFirebaseNode();
                 db.ref(dbNode).set(state).then(() => {
                     renderDamagedGoods();
@@ -1828,7 +1825,6 @@
             }
         }
 
-        // --- PERBAIKAN BUG HAPUS BARANG RUSAK FISIK ---
         function deleteBarangRusak(id) {
             if(confirm('Hapus catatan barang rusak ini?')) {
                 state.damagedPhysicalGoods = state.damagedPhysicalGoods.filter(r => r.id !== id);
@@ -1864,7 +1860,6 @@
             showToast('Supplier/User baru ditambahkan!');
         }
 
-        // --- PERBAIKAN BUG HAPUS SUPPLIER ---
         function deleteSupplier(id) {
             if(confirm('Hapus data supplier/user ini?')) {
                 state.suppliers = state.suppliers.filter(s => s.id !== id);
@@ -1879,7 +1874,6 @@
             }
         }
 
-        // --- PERBAIKAN BUG HAPUS LOG DI REKAPITULASI ---
         function deleteLogItem(id) {
             if(confirm('Hapus riwayat log transaksi ini dari rekapitulasi?')) {
                 state.logs = state.logs.filter(l => l.id !== id);
