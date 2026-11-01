@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SISTOCK 2.0 - SMKN 3 BANDUNG</title>
+    <!-- Favicon / Logo Tab -->
+    <link rel="icon" type="image/png" href="favicon.png">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -1109,13 +1111,12 @@
         let html5QrCode = null;
         let activeScanTarget = 'inbound';
 
-        // METODE FITUR SANDBOX DATABASE PARTITIONING (AKUN BELAJAR DAFTAR TERPISAH)
         function getActiveFirebaseNode() {
             const activeUser = sessionStorage.getItem("sistock_username");
             if (activeUser === "BELAJAR") {
-                return 'sistock_v2_pro/sandbox_state'; // Database Latihan/Reviewer Terpisah
+                return 'sistock_v2_pro/sandbox_state';
             }
-            return 'sistock_v2_pro/state'; // Database Warehouse Utama
+            return 'sistock_v2_pro/state';
         }
 
         function updateUIBadgesForAccount() {
@@ -1206,7 +1207,6 @@
             showToast("Berhasil keluar dari portal.", "error");
         }
 
-        // REALTIME CLOCK BANDUNG (WIB) & FEFO REMINDER CHECKER
         function initRealtimeClockAndReminders() {
             setInterval(() => {
                 const now = new Date();
@@ -1570,7 +1570,6 @@
             });
         }
 
-        // --- FITUR AUTO-FILL SAAT PILIH / SCAN DI INBOUND & OUTBOUND ---
         function onInboundProductChange() {
             const prodId = document.getElementById('in-product-id').value;
             const infoBox = document.getElementById('inbound-autofill-info');
@@ -1772,11 +1771,18 @@
             }
         }
 
+        // --- PERBAIKAN BUG HAPUS FEFO (TERSINKRONISASI PERMANEN KE FIREBASE) ---
         function deleteDamaged(id) {
             if(confirm('Hapus catatan FEFO ini?')) {
                 state.damagedGoods = state.damagedGoods.filter(d => d.id !== id);
-                saveStateToCloud();
-                showToast('Catatan FEFO dihapus.', 'error');
+                const dbNode = getActiveFirebaseNode();
+                db.ref(dbNode).set(state).then(() => {
+                    renderDamagedGoods();
+                    showToast('Catatan FEFO berhasil dihapus permanen.', 'error');
+                }).catch((error) => {
+                    console.error("Gagal menghapus dari database:", error);
+                    showToast('Gagal menghapus data dari server.', 'error');
+                });
             }
         }
 
@@ -1822,11 +1828,18 @@
             }
         }
 
+        // --- PERBAIKAN BUG HAPUS BARANG RUSAK FISIK ---
         function deleteBarangRusak(id) {
             if(confirm('Hapus catatan barang rusak ini?')) {
                 state.damagedPhysicalGoods = state.damagedPhysicalGoods.filter(r => r.id !== id);
-                saveStateToCloud();
-                showToast('Catatan barang rusak dihapus.', 'error');
+                const dbNode = getActiveFirebaseNode();
+                db.ref(dbNode).set(state).then(() => {
+                    renderBarangRusak();
+                    showToast('Catatan barang rusak dihapus permanen.', 'error');
+                }).catch((error) => {
+                    console.error("Gagal menghapus barang rusak:", error);
+                    showToast('Gagal menghapus data dari server.', 'error');
+                });
             }
         }
 
@@ -1851,21 +1864,34 @@
             showToast('Supplier/User baru ditambahkan!');
         }
 
+        // --- PERBAIKAN BUG HAPUS SUPPLIER ---
         function deleteSupplier(id) {
             if(confirm('Hapus data supplier/user ini?')) {
                 state.suppliers = state.suppliers.filter(s => s.id !== id);
-                saveStateToCloud();
-                showToast('Supplier dihapus.', 'error');
+                const dbNode = getActiveFirebaseNode();
+                db.ref(dbNode).set(state).then(() => {
+                    renderSuppliers();
+                    showToast('Supplier dihapus permanen.', 'error');
+                }).catch((error) => {
+                    console.error("Gagal menghapus supplier:", error);
+                    showToast('Gagal menghapus data dari server.', 'error');
+                });
             }
         }
 
-        // --- FITUR HAPUS DI REKAPITULASI & TREN ---
+        // --- PERBAIKAN BUG HAPUS LOG DI REKAPITULASI ---
         function deleteLogItem(id) {
             if(confirm('Hapus riwayat log transaksi ini dari rekapitulasi?')) {
                 state.logs = state.logs.filter(l => l.id !== id);
-                saveStateToCloud();
-                renderRecapData();
-                showToast('Log transaksi berhasil dihapus.', 'error');
+                const dbNode = getActiveFirebaseNode();
+                db.ref(dbNode).set(state).then(() => {
+                    renderRecapData();
+                    renderDashboardStats();
+                    showToast('Log transaksi berhasil dihapus permanen.', 'error');
+                }).catch((error) => {
+                    console.error("Gagal menghapus log:", error);
+                    showToast('Gagal menghapus log dari server.', 'error');
+                });
             }
         }
 
@@ -1909,7 +1935,6 @@
             lucide.createIcons();
         }
 
-        // --- FITUR PRINT REKAP INBOUND & OUTBOUND (TANPA SIGNATURE) ---
         function printInboundLogs() {
             const inboundLogs = state.logs ? state.logs.filter(l => l.type === 'IN') : [];
             let rowsHTML = '';
@@ -2056,7 +2081,6 @@
             setTimeout(() => printWin.print(), 300);
         }
 
-        // --- FITUR NOMOR DO DINAMIS & SURAT JALAN MINIMALIS PROFESIONAL (PENERIMA & TTD KOSONG) ---
         let currentDoNumber = 123412;
 
         function openDeliveryModal() {
@@ -2223,7 +2247,6 @@
         function openSupplierModal() { document.getElementById('form-supplier').reset(); document.getElementById('modal-supplier').classList.remove('hidden'); }
         function closeSupplierModal() { document.getElementById('modal-supplier').classList.add('hidden'); }
 
-        // --- ENHANCED J.A.R.V.I.S GUIDEBOT ASSISTANT ---
         function toggleJarvisChat() {
             const modal = document.getElementById('jarvis-chat-modal');
             if(modal) {
@@ -2320,7 +2343,7 @@
             if(q.includes('surat jalan') || q.includes('jelaskan surat jalan') || q.includes('do')) {
                 return `📜 <strong>ADMINISTRASI SURAT JALAN / DELIVERY ORDER (DO):</strong><br><br>
                 Fitur administratif resmi pengiriman barang dengan desain minimalis profesional.<br>
-                • <strong>Keunggulan:</strong> Nomor DO bersifat dinamis dan otomatis bertambah setiap selesai dicetak. Kolom mencakup Penerima (Penerima), Tanggal, Tabel SKU/Barang/Rak, serta kolom tanda tangan kosong di bawah untuk ditulis manual.`;
+                • <strong>Keunggulan:</strong> Nomor DO bersifat dinamis dan otomatis bertambah setiap selesai dicetak. Kolom mencakup Penerima, Tanggal, Tabel SKU/Barang/Rak, serta kolom tanda tangan kosong di bawah untuk ditulis manual.`;
             }
 
             if(q.includes('aset') || q.includes('nilai') || q.includes('valuasi')) {
