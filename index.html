@@ -4,13 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SISTOCK 2.0 - SMKN 3 BANDUNG</title>
+    <!-- Favicon / Logo Tab -->
     <link rel="icon" type="image/png" href="favicon.png">
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- HTML5 QR Code Scanner CDN -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <!-- Google Font: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -238,20 +245,23 @@
                     </div>
                 </div>
 
-                <!-- KOTAK REMINDER NOTIFIKASI FEFO DENGAN TOMBOL DISMISS DI DASHBOARD -->
-                <div id="fefo-reminder-banner" class="bg-gradient-to-r from-amber-500 to-brand-600 text-white p-4 sm:p-5 rounded-3xl shadow-lg border border-amber-400 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div class="flex items-center gap-3">
+                <!-- KOTAK REMINDER NOTIFIKASI FEFO (KLIK UNTUK DETAIL KADALUWARSA / MENDEKATI EXP) -->
+                <div id="fefo-reminder-banner" class="bg-gradient-to-r from-amber-500 to-brand-600 text-white p-4 sm:p-5 rounded-3xl shadow-lg border border-amber-400 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 cursor-pointer hover:opacity-95 transition" onclick="openFefoDetailModalFromBanner(event)">
+                    <div class="flex items-center gap-3 pointer-events-none">
                         <div class="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0">
                             <i data-lucide="bell-ring" class="w-6 h-6 animate-bounce"></i>
                         </div>
                         <div>
-                            <h3 class="text-xs sm:text-sm font-extrabold uppercase tracking-wide">⚠️ Peringatan FEFO & Kadaluwarsa Aktif</h3>
+                            <h3 class="text-xs sm:text-sm font-extrabold uppercase tracking-wide flex items-center gap-2">
+                                ⚠️ Peringatan FEFO & Kadaluwarsa Aktif 
+                                <span class="bg-white/20 text-white text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wider">Klik untuk Rincian</span>
+                            </h3>
                             <p id="reminder-text" class="text-[11px] text-amber-100 font-medium">Mengecek jadwal kedaluwarsa berbasis zona waktu Bandung (WIB)...</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2" onclick="event.stopPropagation()">
                         <button onclick="switchTab('damaged')" class="bg-white text-brand-700 hover:bg-brand-50 px-4 py-2 rounded-xl text-xs font-extrabold transition shadow-md btn-press whitespace-nowrap">
-                            Lihat Detail FEFO
+                            Lihat Karantina FEFO
                         </button>
                         <button onclick="dismissDashboardReminder()" title="Sembunyikan Banner dari Dashboard" class="bg-white/20 hover:bg-white/30 text-white p-2 rounded-xl transition btn-press">
                             <i data-lucide="x" class="w-4 h-4"></i>
@@ -582,9 +592,14 @@
                             </h3>
                             <p class="text-[10px] text-slate-400 font-medium">Monitoring batch tanggal kadaluwarsa (First Expired, First Out) -> Node Firebase: <strong>FEFO</strong></p>
                         </div>
-                        <button onclick="openDamagedModal()" class="bg-amber-500 hover:bg-amber-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-md shadow-amber-500/20 btn-press">
-                            <i data-lucide="plus" class="w-4 h-4"></i> Catat Batch FEFO
-                        </button>
+                        <div class="flex items-center gap-2">
+                            <button onclick="confirmResetAllFefo()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 btn-press">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i> Reset All FEFO
+                            </button>
+                            <button onclick="openDamagedModal()" class="bg-amber-500 hover:bg-amber-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-md shadow-amber-500/20 btn-press">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Catat Batch FEFO
+                            </button>
+                        </div>
                     </div>
 
                     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
@@ -1044,6 +1059,25 @@
         </div>
     </div>
 
+    <!-- MODAL: DETAIL FEFO KADALUWARSA / MENDEKATI EXP -->
+    <div id="modal-fefo-detail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-extrabold text-sm uppercase tracking-wider text-amber-600 flex items-center gap-2">
+                    <i data-lucide="alert-octagon" class="w-5 h-5"></i> Rincian Status Batch FEFO Gudang
+                </h3>
+                <button onclick="closeFefoDetailModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="fefo-detail-content" class="space-y-3 text-xs">
+                <!-- Konten dinamis rincian batch -->
+            </div>
+            <div class="pt-3 border-t flex justify-end gap-2">
+                <button onclick="switchTab('damaged'); closeFefoDetailModal();" class="px-4 py-2 bg-brand-500 text-white font-bold rounded-xl text-xs btn-press">Kelola Karantina FEFO</button>
+                <button onclick="closeFefoDetailModal()" class="px-4 py-2 bg-slate-200 text-slate-700 font-bold rounded-xl text-xs btn-press">Tutup</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const firebaseConfig = {
             databaseURL: "https://new-sistock-2026-default-rtdb.asia-southeast1.firebasedatabase.app/"
@@ -1059,7 +1093,7 @@
             "BELAJAR": "123456"
         };
 
-        // DATABASE INVENTARIS AWAL (CLEANED FEFO BATCHES)
+        // DATABASE INVENTARIS AWAL
         const INITIAL_SPREADSHEET_DATA = {
             suppliers: [
                 { id: "sup-1", code: "CHECKER", name: "CHECKER GUDANG", contact: "Role: CHECKER", phone: "-" },
@@ -1089,7 +1123,6 @@
                 { id: "prod-33", sku: "18993379500235", name: "Sunco", category: "PCS", price: 17000, stock: 46, rop: 10, location: "C01.1" },
                 { id: "prod-34", sku: "8995180000000", name: "Gulaku", category: "PCS", price: 17500, stock: 20, rop: 10, location: "C01.3" }
             ],
-            // CLEAN FEFO BATCHES (TANPA BATCH GANTUNG/MISTERIUS / TANGGAL LAMPAU)
             FEFO: {
                 "fefo-1": { id: "fefo-1", timestamp: "26/11/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 46, status: "segera dikeluarkan", notes: "TERSEDIA" },
                 "fefo-2": { id: "fefo-2", timestamp: "28/12/2026", productName: "Indomie Ayam Bawang", sku: "10089686010012", qty: 31, status: "segera dikeluarkan", notes: "TERSEDIA" },
@@ -1133,7 +1166,7 @@
         let chartInstance = null;
         let html5QrCode = null;
         let activeScanTarget = 'inbound';
-        let isDashboardReminderDismissed = false; // Status hide banner di dashboard
+        let isDashboardReminderDismissed = false;
 
         function getActiveFirebaseNode() {
             const activeUser = sessionStorage.getItem("sistock_username");
@@ -1243,7 +1276,6 @@
             }, 1000);
         }
 
-        // FUNGSI REMINDER FEFO YANG SUDAH DI-FIX (ROBUST & TIDAK ADA BATCH MISTERIUS)
         function checkFefoExpiringReminders(currentTime) {
             const banner = document.getElementById('fefo-reminder-banner');
             const reminderText = document.getElementById('reminder-text');
@@ -1294,7 +1326,7 @@
             if(expiredCount === 0 && nearCount === 0) {
                 statusMessage = `🟢 Semua <strong>${state.FEFO.length} batch FEFO</strong> terpantau aman dan belum melewati batas waktu.`;
             } else {
-                statusMessage += `Segera periksa modul Karantina FEFO!`;
+                statusMessage += `Klik banner untuk lihat rincian!`;
             }
 
             reminderText.innerHTML = statusMessage;
@@ -2446,6 +2478,144 @@
             }
             chartInstance.data.datasets[0].data = [inSum, outSum, dmgSum, opSum];
             chartInstance.update();
+        }
+
+        // Fungsi Reset All FEFO dengan Konfirmasi 2x Klik demi Safety
+        function confirmResetAllFefo() {
+            const firstCheck = confirm("⚠️ PERINGATAN KERAS!\n\nAnda akan MENGHAPUS SEMUA DATA BATCH FEFO dari sistem gudang. Tindakan ini tidak dapat dibatalkan jika tidak dicadangkan. Lanjutkan?");
+            if (!firstCheck) return;
+
+            const secondCheck = confirm("🚨 KONFIRMASI KEDUA (SAFETY LOCK):\n\nApakah Akang Naufal benar-benar yakin ingin mengosongkan seluruh data Karantina & FEFO di SISTOCK 2.0?\n\nTekan OK untuk mengeksekusi reset total.");
+            if (!secondCheck) {
+                showToast("Reset FEFO dibatalkan oleh operator.", "error");
+                return;
+            }
+
+            state.FEFO = [];
+            
+            if(!state.logs) state.logs = [];
+            state.logs.push({
+                id: 'log-' + Date.now(),
+                timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+                productName: 'SISTEM FEFO',
+                type: 'RESET',
+                qty: 0,
+                notes: 'Reset / Clear All seluruh data batch FEFO oleh operator.'
+            });
+
+            saveStateToCloud();
+            showToast("🧹 Seluruh data batch FEFO berhasil di-reset!", "error");
+        }
+
+        // Fungsi ketika banner reminder FEFO diklik untuk menampilkan rincian batch
+        function openFefoDetailModalFromBanner(e) {
+            const modal = document.getElementById('modal-fefo-detail');
+            const contentContainer = document.getElementById('fefo-detail-content');
+            if(!modal || !contentContainer) return;
+
+            const now = new Date();
+            const todayYear = now.getFullYear();
+            const todayMonth = now.getMonth();
+            const todayDate = now.getDate();
+            const todayTimestamp = new Date(todayYear, todayMonth, todayDate).getTime();
+
+            let expiredList = [];
+            let nearList = [];
+            let safeList = [];
+
+            if(state.FEFO) {
+                state.FEFO.forEach(item => {
+                    if(!item.timestamp || parseInt(item.qty) <= 0) return;
+                    const parts = item.timestamp.split('/');
+                    if(parts.length === 3) {
+                        const day = parseInt(parts[0], 10);
+                        const month = parseInt(parts[1], 10) - 1;
+                        const year = parseInt(parts[2], 10);
+                        
+                        const expTimestamp = new Date(year, month, day).getTime();
+                        const diffTime = expTimestamp - todayTimestamp;
+                        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+                        if(diffDays < 0) {
+                            expiredList.push({...item, diffDays});
+                        } else if(diffDays <= 30) {
+                            nearList.push({...item, diffDays});
+                        } else {
+                            safeList.push({...item, diffDays});
+                        }
+                    }
+                });
+            }
+
+            let htmlContent = `
+                <div class="space-y-4">
+                    <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                        <p class="font-bold text-slate-700">📊 Ringkasan Status Batch FEFO Gudang:</p>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Berdasarkan tanggal hari ini (Zona Waktu Bandung WIB)</p>
+                    </div>
+            `;
+
+            // Bagian Kedaluwarsa
+            htmlContent += `<div class="space-y-2"><h4 class="font-extrabold text-rose-600 uppercase text-[11px] flex items-center gap-1.5">🔴 Batch Kedaluwarsa (${expiredList.length})</h4>`;
+            if(expiredList.length === 0) {
+                htmlContent += `<p class="text-slate-400 italic text-[11px] bg-slate-50 p-2.5 rounded-xl">Tidak ada batch yang kedaluwarsa.</p>`;
+            } else {
+                htmlContent += `<div class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar pr-1">`;
+                expiredList.forEach(ex => {
+                    htmlContent += `
+                        <div class="bg-rose-50 border border-rose-200 p-2.5 rounded-xl flex justify-between items-center">
+                            <div>
+                                <p class="font-bold text-slate-900">${ex.productName} <span class="font-mono text-[10px] text-rose-600">(${ex.sku})</span></p>
+                                <p class="text-[10px] text-slate-600 font-medium">Qty: <strong>${ex.qty} PCS</strong> | Expired: <strong class="text-rose-700">${ex.timestamp}</strong> (${Math.abs(ex.diffDays)} hari lalu)</p>
+                            </div>
+                            <span class="px-2 py-0.5 bg-rose-600 text-white font-bold text-[9px] rounded-md">KADALUWARSA</span>
+                        </div>
+                    `;
+                });
+                htmlContent += `</div>`;
+            }
+            htmlContent += `</div>`;
+
+            // Bagian Mendekati Expired (≤30 hari)
+            htmlContent += `<div class="space-y-2"><h4 class="font-extrabold text-amber-600 uppercase text-[11px] flex items-center gap-1.5">🟡 Mendekati Kadaluwarsa / ≤30 Hari (${nearList.length})</h4>`;
+            if(nearList.length === 0) {
+                htmlContent += `<p class="text-slate-400 italic text-[11px] bg-slate-50 p-2.5 rounded-xl">Tidak ada batch yang mendesak dalam 30 hari ke depan.</p>`;
+            } else {
+                htmlContent += `<div class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar pr-1">`;
+                nearList.forEach(nr => {
+                    htmlContent += `
+                        <div class="bg-amber-50 border border-amber-200 p-2.5 rounded-xl flex justify-between items-center">
+                            <div>
+                                <p class="font-bold text-slate-900">${nr.productName} <span class="font-mono text-[10px] text-amber-600">(${nr.sku})</span></p>
+                                <p class="text-[10px] text-slate-600 font-medium">Qty: <strong>${nr.qty} PCS</strong> | Expired: <strong class="text-amber-700">${nr.timestamp}</strong> (Sisa ${nr.diffDays} hari)</p>
+                            </div>
+                            <span class="px-2 py-0.5 bg-amber-500 text-white font-bold text-[9px] rounded-md">SEGERA KELUARKAN</span>
+                        </div>
+                    `;
+                });
+                htmlContent += `</div>`;
+            }
+            htmlContent += `</div>`;
+
+            // Bagian Aman
+            htmlContent += `
+                <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <p class="font-bold text-emerald-900">🟢 Batch Aman (> 30 Hari)</p>
+                        <p class="text-[10px] text-emerald-700">Terdapat <strong>${safeList.length} batch</strong> dalam kondisi aman dan stabil.</p>
+                    </div>
+                </div>
+            `;
+
+            htmlContent += `</div>`;
+            contentContainer.innerHTML = htmlContent;
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeFefoDetailModal() {
+            const modal = document.getElementById('modal-fefo-detail');
+            if(modal) modal.classList.add('hidden');
         }
     </script>
 </body>
