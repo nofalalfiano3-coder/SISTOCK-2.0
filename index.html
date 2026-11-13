@@ -5,18 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SISTOCK 2.0 - SMKN 3 BANDUNG</title>
     <!-- Favicon / Logo Tab -->
-    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#f97316">
+    <meta name="description" content="SISTOCK 2.0 - Sistem manajemen gudang SMKN 3 Bandung">
+    <link rel="icon" href="https://drive.google.com/thumbnail?id=1lGtQkjeeo4sNFx7_M4QBRo1cpZd2ODim&sz=w128">
+    <link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1lGtQkjeeo4sNFx7_M4QBRo1cpZd2ODim&sz=w180">
     <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@0.460.0"></script>
     <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7"></script>
     <!-- HTML5 QR Code Scanner CDN -->
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8" type="text/javascript"></script>
     <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <!-- Google Font: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -79,7 +83,7 @@
             <form id="form-login" onsubmit="handleAuthLogin(event)" class="space-y-4 text-xs">
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">Username</label>
-                    <input type="text" id="login-username" required placeholder="Masukkan Username..." class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white transition">
+                    <input type="text" id="login-username" required placeholder="Username atau Email..." class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white transition">
                 </div>
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">Password</label>
@@ -230,7 +234,7 @@
             </div>
 
             <!-- Main Content Area -->
-            <main class="flex-1 overflow-y-auto p-3.5 sm:p-6 mb-6 custom-scrollbar space-y-5">
+            <main class="flex-1 min-w-0 overflow-y-auto overflow-x-hidden p-3.5 sm:p-6 mb-6 custom-scrollbar space-y-5">
                 
                 <!-- BANNER NOTIFIKASI SANDBOX MODE -->
                 <div id="sandbox-alert-banner" class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white p-4 rounded-3xl shadow-lg border border-sky-400 hidden flex items-center justify-between gap-3">
@@ -393,10 +397,10 @@
                             <div>
                                 <label class="font-bold text-slate-700 block mb-1">Pilih Produk atau Scan Barcode</label>
                                 <div class="flex gap-2">
-                                    <select id="in-product-id" onchange="onInboundProductChange()" required class="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-brand-500 font-semibold text-slate-800">
+                                    <select id="in-product-id" onchange="onInboundProductChange()" required class="flex-1 min-w-0 w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-brand-500 font-semibold text-slate-800 text-ellipsis">
                                         <option value="">-- Pilih Barang Gudang --</option>
                                     </select>
-                                    <button type="button" onclick="openDedicatedScanner('inbound')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3 rounded-xl font-bold flex items-center gap-1.5 shadow-md shadow-emerald-600/20 btn-press">
+                                    <button type="button" onclick="openDedicatedScanner('inbound')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3 rounded-xl font-bold flex items-center gap-1.5 flex-shrink-0 whitespace-nowrap shadow-md shadow-emerald-600/20 btn-press">
                                         <i data-lucide="scan" class="w-4 h-4"></i> Scan
                                     </button>
                                 </div>
@@ -451,10 +455,10 @@
                             <div>
                                 <label class="font-bold text-slate-700 block mb-1">Pilih Produk atau Scan Barcode</label>
                                 <div class="flex gap-2">
-                                    <select id="out-product-id" onchange="onOutboundProductChange()" required class="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-brand-500 font-semibold text-slate-800">
+                                    <select id="out-product-id" onchange="onOutboundProductChange()" required class="flex-1 min-w-0 w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-brand-500 font-semibold text-slate-800 text-ellipsis">
                                         <option value="">-- Pilih Barang Gudang --</option>
                                     </select>
-                                    <button type="button" onclick="openDedicatedScanner('outbound')" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-3 rounded-xl font-bold flex items-center gap-1.5 shadow-md shadow-rose-600/20 btn-press">
+                                    <button type="button" onclick="openDedicatedScanner('outbound')" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-3 rounded-xl font-bold flex items-center gap-1.5 flex-shrink-0 whitespace-nowrap shadow-md shadow-rose-600/20 btn-press">
                                         <i data-lucide="scan" class="w-4 h-4"></i> Scan
                                     </button>
                                 </div>
@@ -465,6 +469,9 @@
                                 <p class="text-xs text-rose-900 font-semibold">Nama: <span id="out-info-name" class="font-bold">-</span></p>
                                 <p class="text-xs text-rose-900 font-semibold">Lokasi Rak: <span id="out-info-rack" class="font-bold text-brand-600">-</span></p>
                                 <p class="text-xs text-rose-900 font-semibold">Stok Tersedia: <span id="out-info-stock" class="font-bold text-emerald-600">-</span></p>
+                            </div>
+                            <div id="out-lock-msg" class="hidden bg-rose-100 border border-rose-300 text-rose-800 p-3 rounded-xl text-xs font-bold">
+                                ⛔ Stok barang ini KOSONG (0). Barang tidak bisa dikeluarkan sampai ada barang masuk.
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -481,7 +488,7 @@
                                 <label class="font-bold text-slate-700 block mb-1">Keterangan / Keperluan</label>
                                 <input type="text" id="out-notes" placeholder="Keperluan distribusi..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-brand-500 font-semibold">
                             </div>
-                            <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-rose-600/20 flex items-center justify-center gap-2 btn-press">
+                            <button type="submit" id="out-submit-btn" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-rose-600/20 flex items-center justify-center gap-2 btn-press">
                                 <i data-lucide="send" class="w-4 h-4"></i> Proses Barang Keluar & Potong Stok
                             </button>
                         </form>
@@ -505,10 +512,10 @@
                             <div>
                                 <label class="font-bold text-slate-700 block mb-1">Pilih Produk atau Scan Barcode</label>
                                 <div class="flex gap-2">
-                                    <select id="opname-product-id" required class="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-brand-500 font-semibold text-slate-800">
+                                    <select id="opname-product-id" required class="flex-1 min-w-0 w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-brand-500 font-semibold text-slate-800 text-ellipsis">
                                         <option value="">-- Pilih Barang Gudang --</option>
                                     </select>
-                                    <button type="button" onclick="openDedicatedScanner('opname')" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-3 rounded-xl font-bold flex items-center gap-1.5 shadow-md shadow-brand-500/20 btn-press">
+                                    <button type="button" onclick="openDedicatedScanner('opname')" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-3 rounded-xl font-bold flex items-center gap-1.5 flex-shrink-0 whitespace-nowrap shadow-md shadow-brand-500/20 btn-press">
                                         <i data-lucide="scan" class="w-4 h-4"></i> Scan
                                     </button>
                                 </div>
@@ -585,14 +592,17 @@
 
                 <!-- SECTION: FEFO (NODE "FEFO") -->
                 <section id="section-damaged" class="space-y-4 hidden animate-tab-enter">
-                    <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
                         <div>
                             <h3 class="font-extrabold text-xs text-slate-900 uppercase tracking-wider text-amber-600 flex items-center gap-1.5">
                                 <i data-lucide="alert-octagon" class="w-4 h-4"></i> Karantina Barang FEFO & Jadwal Kedaluwarsa
                             </h3>
                             <p class="text-[10px] text-slate-400 font-medium">Monitoring batch tanggal kadaluwarsa (First Expired, First Out) -> Node Firebase: <strong>FEFO</strong></p>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button onclick="printFefoLogs()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 btn-press">
+                                <i data-lucide="printer" class="w-4 h-4 text-amber-600"></i> Print FEFO
+                            </button>
                             <button onclick="confirmResetAllFefo()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 btn-press">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i> Reset All FEFO
                             </button>
@@ -936,17 +946,18 @@
         </div>
     </div>
 
-    <!-- MODAL: FEFO BATCH (NODE "FEFO") -->
+    <!-- MODAL: FEFO BATCH (NODE "FEFO") - TAMBAH & EDIT -->
     <div id="modal-damaged" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter max-h-[92vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-extrabold text-xs uppercase tracking-wider text-amber-600">Catat Batch FEFO Baru</h3>
+                <h3 id="fefo-modal-title" class="font-extrabold text-xs uppercase tracking-wider text-amber-600">Catat Batch FEFO Baru</h3>
                 <button onclick="closeDamagedModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <form id="form-damaged" onsubmit="saveDamagedGood(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="dmg-edit-id">
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">Pilih Produk</label>
-                    <select id="dmg-product-id" required class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none"></select>
+                    <select id="dmg-product-id" required class="w-full min-w-0 border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none"></select>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
@@ -955,7 +966,7 @@
                     </div>
                     <div>
                         <label class="font-bold text-slate-700 block mb-1">Status FEFO</label>
-                        <select id="dmg-status" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none">
+                        <select id="dmg-status" class="w-full min-w-0 border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none">
                             <option value="segera dikeluarkan">🟡 Segera Dikeluarkan</option>
                             <option value="kadaluwarsa">🔴 Kadaluwarsa (Expired)</option>
                             <option value="masih aman">🟢 Masih Aman</option>
@@ -963,8 +974,8 @@
                     </div>
                 </div>
                 <div>
-                    <label class="font-bold text-slate-700 block mb-1">Tanggal Kadaluwarsa (DD/MM/YYYY)</label>
-                    <input type="text" id="dmg-timestamp" placeholder="Contoh: 26/11/2026" required class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none">
+                    <label class="font-bold text-slate-700 block mb-1">Tanggal Kadaluwarsa (pilih dari kalender)</label>
+                    <input type="date" id="dmg-timestamp" required onclick="try{this.showPicker()}catch(e){}" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500">
                 </div>
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">Catatan FEFO</label>
@@ -972,9 +983,70 @@
                 </div>
                 <div class="pt-2 flex justify-end gap-2">
                     <button type="button" onclick="closeDamagedModal()" class="px-4 py-2 border rounded-xl font-bold text-slate-600 btn-press">Batal</button>
-                    <button type="submit" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold btn-press">Simpan FEFO</button>
+                    <button type="submit" id="fefo-submit-btn" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold btn-press">Simpan FEFO</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ISIAN SEBELUM CETAK DOKUMEN -->
+    <div id="modal-print-setup" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter max-h-[92vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="ps-title" class="font-extrabold text-xs sm:text-sm uppercase tracking-wider text-slate-900 flex items-center gap-2">Cetak Dokumen</h3>
+                <button onclick="closePrintSetup()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label id="ps-kode-label" class="font-bold text-slate-700 block mb-1">Kode Dokumen</label>
+                        <input type="text" id="ps-kode" placeholder="Contoh: IN/2026/001" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">Tanggal Dokumen</label>
+                        <input type="date" id="ps-tanggal" onclick="try{this.showPicker()}catch(e){}" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500">
+                    </div>
+                </div>
+                <div id="ps-ba-block" class="hidden space-y-3 bg-amber-50/60 border border-amber-200 p-3.5 rounded-2xl">
+                    <p class="font-extrabold text-amber-700 uppercase text-[10px] tracking-wider">Isi Berita Acara</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="font-bold text-slate-700 block mb-1">Tanggal Temuan</label>
+                            <input type="date" id="ps-ba-tgl" onclick="try{this.showPicker()}catch(e){}" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500 bg-white">
+                        </div>
+                        <div>
+                            <label class="font-bold text-slate-700 block mb-1">Subjek Masalah</label>
+                            <input type="text" id="ps-ba-subjek" placeholder="Contoh: kerusakan barang ..." class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500 bg-white">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">Rincian (isi)</label>
+                        <textarea id="ps-ba-isi" rows="6" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500 bg-white"></textarea>
+                    </div>
+                </div>
+
+                <div class="space-y-3 bg-slate-50 border border-slate-200 p-3.5 rounded-2xl">
+                    <p class="font-extrabold text-slate-500 uppercase text-[10px] tracking-wider">Penandatangan</p>
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">Nama Manager Gudang</label>
+                        <input type="text" id="ps-manager" placeholder="Ketik nama..." class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500 bg-white">
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">Nama Guru Pendamping / Pengawas</label>
+                        <input type="text" id="ps-guru" placeholder="Ketik nama..." class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500 bg-white">
+                    </div>
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">Nama Admin Gudang</label>
+                        <input type="text" id="ps-admin" placeholder="Ketik nama..." class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500 bg-white">
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 border-t pt-3">
+                <button onclick="closePrintSetup()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl btn-press">Batal</button>
+                <button onclick="confirmPrintSetup()" class="px-5 py-2 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-xl shadow flex items-center gap-1.5 btn-press">
+                    🖨️ Cetak Dokumen
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1042,7 +1114,7 @@
 
     <!-- MODAL: SCANNER MULTI-FUNGSI -->
     <div id="modal-scanner" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
-        <div class="bg-white rounded-3xl max-w-sm sm:max-w-md w-full p-4 sm:p-6 space-y-4 shadow-2xl animate-tab-enter flex flex-col items-center">
+        <div class="bg-white rounded-3xl max-w-sm sm:max-w-md w-full p-4 sm:p-6 space-y-4 shadow-2xl animate-tab-enter flex flex-col items-center max-h-[92vh] overflow-y-auto">
             <div class="flex justify-between items-center w-full border-b pb-2">
                 <h3 class="font-extrabold text-xs uppercase tracking-wider text-slate-900 flex items-center gap-2">
                     <i data-lucide="scan" class="w-4 h-4 text-brand-500"></i> Pemindai Barcode Kamera
@@ -1050,7 +1122,7 @@
                 <button onclick="closeScannerModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <div class="w-full space-y-3 flex flex-col items-center">
-                <div id="reader" class="w-full max-w-[300px] h-[220px] rounded-2xl bg-slate-100 border border-slate-200 overflow-hidden"></div>
+                <div id="reader" class="w-full max-w-[300px] min-h-[220px] rounded-2xl bg-slate-100 border border-slate-200 overflow-hidden"></div>
                 <p id="scan-result-text" class="text-xs text-center text-slate-500 font-bold">Arahkan kamera ke barcode produk...</p>
             </div>
             <div class="w-full flex justify-end pt-2">
@@ -1080,18 +1152,44 @@
 
     <script>
         const firebaseConfig = {
-            databaseURL: "https://new-sistock-2026-default-rtdb.asia-southeast1.firebasedatabase.app/"
+            apiKey: "AIzaSyAjgDn0wzg0K9EyQYA9VIl9f_0Hz6VWJSE",
+            authDomain: "new-sistock-2026.firebaseapp.com",
+            databaseURL: "https://new-sistock-2026-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "new-sistock-2026",
+            storageBucket: "new-sistock-2026.firebasestorage.app",
+            messagingSenderId: "488751640034",
+            appId: "1:488751640034:web:7183234d5534ce93b89dbb"
         };
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
+        const auth = firebase.auth();
+        // Sesi login hanya berlaku selama tab/browser terbuka (aman untuk komputer bersama)
+        auth.setPersistence(firebase.auth.Auth.Persistence.SESSION).catch(() => {});
 
-        // 2 AKUN LOGIN
-        const ACCOUNTS = {
-            "MLGSMKN3BDG": "LOGISTIK2627",
-            "BELAJAR": "123456"
+        // Login memakai Firebase Authentication (Email/Password).
+        // Username yang diketik diubah menjadi email: username@sistock.app
+        const AUTH_EMAIL_DOMAIN = '@sistock.app';
+        const UID_GUDANG = 'G8FjFdVp0kUdFEsbDpZfGhjscth2';   // akun gudang -> node "state"
+        const UID_BELAJAR = 'i5n6nQRxXEVcYxtnpbBWZBacdqF3';  // akun belajar -> node "sandbox_state"
+        const LOGIN_ALIASES = {
+            'MLGSMKN3BDG': 'manlogsmkn3bandung@gmail.com',
+            'GUDANG': 'manlogsmkn3bandung@gmail.com',
+            'BELAJAR': 'belajarlogistik@sistock.app'
         };
+        // Boleh mengetik email lengkap, atau username singkat (BELAJAR / MLGSMKN3BDG)
+        function usernameToEmail(u) {
+            const t = String(u || '').trim();
+            if (t.indexOf('@') !== -1) return t.toLowerCase();
+            return LOGIN_ALIASES[t.toUpperCase()] || (t.toLowerCase() + AUTH_EMAIL_DOMAIN);
+        }
+        function emailToUsername(email) { return String(email || '').split('@')[0].toUpperCase(); }
+        function sessionLabelForUser(user) {
+            if (user.uid === UID_BELAJAR) return 'BELAJAR';
+            if (user.uid === UID_GUDANG) return 'MLGSMKN3BDG';
+            return emailToUsername(user.email);
+        }
 
         // DATABASE INVENTARIS AWAL
         const INITIAL_SPREADSHEET_DATA = {
@@ -1241,27 +1339,36 @@
             const uInput = document.getElementById('login-username');
             const pInput = document.getElementById('login-password');
             const errMsg = document.getElementById('login-error-msg');
+            const btn = e.target.querySelector('button[type="submit"]');
             if(!uInput || !pInput) return;
 
             const u = uInput.value.trim();
-            const p = pInput.value.trim();
+            const p = pInput.value;
+            if(errMsg) errMsg.classList.add('hidden');
+            if(btn) { btn.disabled = true; btn.classList.add('opacity-60'); }
 
-            if (ACCOUNTS[u] && ACCOUNTS[u] === p) {
-                sessionStorage.setItem("sistock_auth", "true");
-                sessionStorage.setItem("sistock_username", u);
-                if(errMsg) errMsg.classList.add('hidden');
-                checkSessionAuth();
-                showToast(`Login berhasil! Masuk sebagai ${u}.`);
-            } else {
-                if(errMsg) errMsg.classList.remove('hidden');
-            }
+            auth.signInWithEmailAndPassword(usernameToEmail(u), p)
+                .then(() => {
+                    pInput.value = '';
+                    showToast(`Login berhasil! Masuk sebagai ${u.toUpperCase()}.`);
+                })
+                .catch((err) => {
+                    let msg = '⚠️ Username atau Password salah!';
+                    if (err && err.code === 'auth/network-request-failed') msg = '⚠️ Koneksi internet bermasalah. Coba lagi.';
+                    else if (err && err.code === 'auth/too-many-requests') msg = '⚠️ Terlalu banyak percobaan. Tunggu beberapa menit.';
+                    else if (err && err.code === 'auth/operation-not-allowed') msg = '⚠️ Login Email/Password belum diaktifkan di Firebase.';
+                    if(errMsg) { errMsg.textContent = msg; errMsg.classList.remove('hidden'); }
+                })
+                .finally(() => {
+                    if(btn) { btn.disabled = false; btn.classList.remove('opacity-60'); }
+                });
         }
 
         function handleLogout() {
-            sessionStorage.removeItem("sistock_auth");
-            sessionStorage.removeItem("sistock_username");
-            checkSessionAuth();
-            showToast("Berhasil keluar dari portal.", "error");
+            if (window.__sistockRef) { window.__sistockRef.off(); window.__sistockRef = null; }
+            auth.signOut().then(() => {
+                showToast("Berhasil keluar dari portal.", "error");
+            });
         }
 
         function initRealtimeClockAndReminders() {
@@ -1271,9 +1378,9 @@
                 const timeString = now.toLocaleString('id-ID', options);
                 const clockEl = document.getElementById('realtime-clock');
                 if(clockEl) clockEl.innerText = `Bandung (WIB): ${timeString}`;
-
-                checkFefoExpiringReminders(now);
             }, 1000);
+            checkFefoExpiringReminders(new Date());
+            setInterval(() => checkFefoExpiringReminders(new Date()), 60000);
         }
 
         function checkFefoExpiringReminders(currentTime) {
@@ -1341,7 +1448,9 @@
 
         function initFirebaseSync() {
             const dbNode = getActiveFirebaseNode();
-            db.ref(dbNode).on('value', (snapshot) => {
+            if (window.__sistockRef) window.__sistockRef.off();
+            window.__sistockRef = db.ref(dbNode);
+            window.__sistockRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data && data.products && data.products.length > 0) {
                     state = {
@@ -1362,6 +1471,9 @@
                     saveStateToCloud();
                 }
                 refreshUI();
+            }, (err) => {
+                console.error("Akses database ditolak / gagal:", err);
+                showToast("Tidak bisa membaca database. Pastikan akun punya izin & internet aktif.", "error");
             });
         }
 
@@ -1381,10 +1493,9 @@
                 logs: state.logs
             };
 
-            db.ref(dbNode).set(payload).then(() => {
-                refreshUI();
-            }).catch((error) => {
+            db.ref(dbNode).set(payload).catch((error) => {
                 console.error("Gagal sync ke Firebase:", error);
+                showToast("Gagal menyimpan ke cloud. Periksa koneksi internet.", "error");
             });
         }
 
@@ -1425,7 +1536,17 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            checkSessionAuth();
+            // Status login mengikuti Firebase Authentication (bukan lagi password di kode)
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    sessionStorage.setItem("sistock_auth", "true");
+                    sessionStorage.setItem("sistock_username", sessionLabelForUser(user));
+                } else {
+                    sessionStorage.removeItem("sistock_auth");
+                    sessionStorage.removeItem("sistock_username");
+                }
+                checkSessionAuth();
+            });
             initChart();
             initRealtimeClockAndReminders();
             lucide.createIcons();
@@ -1465,6 +1586,7 @@
         }
 
         function refreshUI() {
+            checkFefoExpiringReminders(new Date());
             renderDashboardStats();
             renderProducts();
             renderDamagedGoods();
@@ -1498,8 +1620,8 @@
                     topProductsContainer.innerHTML += `
                         <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100/80">
                             <div class="truncate">
-                                <p class="text-xs font-bold text-slate-800 truncate">${p.name}</p>
-                                <p class="text-[10px] text-slate-400 font-semibold">Stok: ${p.stock} ${p.category || 'PCS'} | Rak: ${p.location || '-'}</p>
+                                <p class="text-xs font-bold text-slate-800 truncate">${escapeHtml(p.name)}</p>
+                                <p class="text-[10px] text-slate-400 font-semibold">Stok: ${p.stock} ${escapeHtml(p.category || 'PCS')} | Rak: ${escapeHtml(p.location || '-')}</p>
                             </div>
                             <span class="text-xs font-extrabold text-brand-600">Rp ${itemVal.toLocaleString('id-ID')}</span>
                         </div>
@@ -1516,11 +1638,11 @@
                     const badgeColor = log.type === 'IN' ? 'bg-emerald-100 text-emerald-700' : log.type === 'OUT' ? 'bg-rose-100 text-rose-700' : log.type === 'RUSAK' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700';
                     logsTbody.innerHTML += `
                         <tr class="hover:bg-slate-50/80 transition">
-                            <td class="p-3 text-slate-400 font-medium">${log.timestamp}</td>
-                            <td class="p-3 font-bold text-slate-800">${log.productName}</td>
+                            <td class="p-3 text-slate-400 font-medium">${escapeHtml(log.timestamp)}</td>
+                            <td class="p-3 font-bold text-slate-800">${escapeHtml(log.productName)}</td>
                             <td class="p-3"><span class="px-2.5 py-1 text-[10px] rounded-md font-extrabold ${badgeColor}">${log.type}</span></td>
                             <td class="p-3 font-extrabold text-slate-700">${log.qty}</td>
-                            <td class="p-3 text-slate-500 font-medium">${log.notes}</td>
+                            <td class="p-3 text-slate-500 font-medium">${escapeHtml(log.notes)}</td>
                         </tr>
                     `;
                 });
@@ -1565,10 +1687,10 @@
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 ${rowBg} transition">
-                        <td class="p-3.5 font-mono font-bold text-brand-600">${p.sku}</td>
-                        <td class="p-3.5 font-bold text-slate-800">${p.name}</td>
-                        <td class="p-3.5 text-slate-500 font-medium">${p.category || '-'}</td>
-                        <td class="p-3.5 font-bold text-slate-700">${p.location || 'Gudang Utama'}</td>
+                        <td class="p-3.5 font-mono font-bold text-brand-600">${escapeHtml(p.sku)}</td>
+                        <td class="p-3.5 font-bold text-slate-800">${escapeHtml(p.name)}</td>
+                        <td class="p-3.5 text-slate-500 font-medium">${escapeHtml(p.category || '-')}</td>
+                        <td class="p-3.5 font-bold text-slate-700">${escapeHtml(p.location || 'Gudang Utama')}</td>
                         <td class="p-3.5 font-semibold text-slate-600">Rp ${price.toLocaleString('id-ID')}</td>
                         <td class="p-3.5 font-extrabold text-emerald-700">Rp ${totalAssetVal.toLocaleString('id-ID')}</td>
                         <td class="p-3.5 text-center text-slate-600 font-semibold">${rop}</td>
@@ -1609,13 +1731,14 @@
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
-                        <td class="p-3.5 font-bold text-brand-600">${d.timestamp}</td>
-                        <td class="p-3.5 font-bold text-slate-800">${d.productName} <span class="font-mono text-xs text-slate-400">(${d.sku})</span></td>
+                        <td class="p-3.5 font-bold text-brand-600">${escapeHtml(d.timestamp)}</td>
+                        <td class="p-3.5 font-bold text-slate-800">${escapeHtml(d.productName)} <span class="font-mono text-xs text-slate-400">(${escapeHtml(d.sku)})</span></td>
                         <td class="p-3.5 font-black text-slate-800">${d.qty}</td>
                         <td class="p-3.5 text-slate-500 font-medium">PCS</td>
-                        <td class="p-3.5"><span class="${badgeStyle} px-2.5 py-1 rounded-full text-[10px]">${badgeText}</span> <span class="text-slate-500 ml-1 text-xs font-medium">(${d.notes || '-'})</span></td>
-                        <td class="p-3.5 text-right">
-                            <button onclick="deleteDamaged('${d.id}')" class="p-1.5 text-slate-400 hover:text-rose-500 btn-press"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        <td class="p-3.5"><span class="${badgeStyle} px-2.5 py-1 rounded-full text-[10px]">${badgeText}</span> <span class="text-slate-500 ml-1 text-xs font-medium">(${escapeHtml(d.notes || '-')})</span></td>
+                        <td class="p-3.5 text-right whitespace-nowrap">
+                            <button onclick="editFefo('${d.id}')" title="Edit batch / ubah status" class="p-1.5 text-slate-400 hover:text-brand-500 btn-press"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                            <button onclick="deleteDamaged('${d.id}')" title="Hapus" class="p-1.5 text-slate-400 hover:text-rose-500 btn-press"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </td>
                     </tr>
                 `;
@@ -1636,13 +1759,14 @@
             state.damagedgoods.forEach(r => {
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
-                        <td class="p-3.5 text-slate-400 font-medium">${r.timestamp}</td>
-                        <td class="p-3.5 font-bold text-slate-800">${r.productName} <span class="font-mono text-xs text-rose-600">(${r.sku})</span></td>
+                        <td class="p-3.5 text-slate-400 font-medium">${escapeHtml(r.timestamp)}</td>
+                        <td class="p-3.5 font-bold text-slate-800">${escapeHtml(r.productName)} <span class="font-mono text-xs text-rose-600">(${escapeHtml(r.sku)})</span></td>
                         <td class="p-3.5 font-black text-rose-600">-${r.qty} PCS</td>
-                        <td class="p-3.5 text-slate-700 font-semibold">${r.pelapor}</td>
-                        <td class="p-3.5 text-slate-600 font-medium">${r.notes}</td>
-                        <td class="p-3.5 text-right">
-                            <button onclick="deleteBarangRusak('${r.id}')" class="p-1.5 text-slate-400 hover:text-rose-500 btn-press"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        <td class="p-3.5 text-slate-700 font-semibold">${escapeHtml(r.pelapor)}</td>
+                        <td class="p-3.5 text-slate-600 font-medium">${escapeHtml(r.notes)}</td>
+                        <td class="p-3.5 text-right whitespace-nowrap">
+                            <button onclick="openBeritaAcara('${r.id}')" title="Cetak Berita Acara" class="p-1.5 text-slate-400 hover:text-brand-500 btn-press"><i data-lucide="file-text" class="w-4 h-4"></i></button>
+                            <button onclick="deleteBarangRusak('${r.id}')" title="Hapus" class="p-1.5 text-slate-400 hover:text-rose-500 btn-press"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </td>
                     </tr>
                 `;
@@ -1663,10 +1787,10 @@
             state.suppliers.forEach(s => {
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
-                        <td class="p-3.5 font-mono font-bold text-slate-400">${s.code || '-'}</td>
-                        <td class="p-3.5 font-bold text-slate-800">${s.name || '-'}</td>
-                        <td class="p-3.5 text-slate-600 font-medium">${s.contact || '-'}</td>
-                        <td class="p-3.5 text-brand-600 font-bold">${s.phone || '-'}</td>
+                        <td class="p-3.5 font-mono font-bold text-slate-400">${escapeHtml(s.code || '-')}</td>
+                        <td class="p-3.5 font-bold text-slate-800">${escapeHtml(s.name || '-')}</td>
+                        <td class="p-3.5 text-slate-600 font-medium">${escapeHtml(s.contact || '-')}</td>
+                        <td class="p-3.5 text-brand-600 font-bold">${escapeHtml(s.phone || '-')}</td>
                         <td class="p-3.5 text-right">
                             <button onclick="deleteSupplier('${s.id}')" class="p-1.5 text-slate-400 hover:text-rose-500 btn-press"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </td>
@@ -1684,10 +1808,13 @@
                 const currentVal = el.value;
                 el.innerHTML = '<option value="">-- Pilih Barang Gudang --</option>';
                 state.products.forEach(p => {
-                    el.innerHTML += `<option value="${p.id}">${p.name} (SKU: ${p.sku}) - Rak: ${p.location || 'Utama'}</option>`;
+                    const empty = (parseInt(p.stock) || 0) <= 0;
+                    const tag = (id === 'out-product-id' && empty) ? ' — ⛔ HABIS' : '';
+                    el.innerHTML += `<option value="${p.id}">${escapeHtml(p.name)} (SKU: ${escapeHtml(p.sku)}) - Rak: ${escapeHtml(p.location || 'Utama')}${tag}</option>`;
                 });
                 if(currentVal) el.value = currentVal;
             });
+            if(document.getElementById('out-product-id') && document.getElementById('out-product-id').value) onOutboundProductChange();
         }
 
         function onInboundProductChange() {
@@ -1708,16 +1835,32 @@
         function onOutboundProductChange() {
             const prodId = document.getElementById('out-product-id').value;
             const infoBox = document.getElementById('outbound-autofill-info');
+            const lockMsg = document.getElementById('out-lock-msg');
+            const btn = document.getElementById('out-submit-btn');
+            const qtyEl = document.getElementById('out-qty');
+            const setLock = (locked) => {
+                if(lockMsg) lockMsg.classList.toggle('hidden', !locked);
+                if(btn) {
+                    btn.disabled = locked;
+                    btn.classList.toggle('opacity-50', locked);
+                    btn.classList.toggle('cursor-not-allowed', locked);
+                }
+                if(qtyEl) qtyEl.disabled = locked;
+            };
             if(!prodId) {
                 if(infoBox) infoBox.classList.add('hidden');
+                setLock(false);
                 return;
             }
             const prod = state.products.find(p => p.id === prodId);
             if(prod) {
+                const stock = parseInt(prod.stock) || 0;
                 document.getElementById('out-info-name').innerText = prod.name;
                 document.getElementById('out-info-rack').innerText = prod.location || 'Gudang Utama';
-                document.getElementById('out-info-stock').innerText = `${prod.stock} ${prod.category || 'PCS'}`;
+                document.getElementById('out-info-stock').innerText = `${stock} ${prod.category || 'PCS'}`;
                 if(infoBox) infoBox.classList.remove('hidden');
+                if(qtyEl) qtyEl.max = stock;
+                setLock(stock <= 0);
             }
         }
 
@@ -1758,8 +1901,12 @@
 
             const prod = state.products.find(p => p.id === prodId);
             if(prod) {
+                if((parseInt(prod.stock) || 0) <= 0) {
+                    showToast(`⛔ Stok ${prod.name} KOSONG, barang tidak bisa dikeluarkan!`, 'error');
+                    return;
+                }
                 if(prod.stock < qty) {
-                    showToast('Stok tidak mencukupi!', 'error');
+                    showToast(`Stok tidak mencukupi! Tersedia: ${prod.stock}`, 'error');
                     return;
                 }
                 prod.stock -= qty;
@@ -1777,6 +1924,7 @@
                 showToast(`Stok ${prod.name} keluar -${qty} unit!`);
                 document.getElementById('form-outbound').reset();
                 document.getElementById('outbound-autofill-info').classList.add('hidden');
+                onOutboundProductChange();
                 switchTab('dashboard');
             }
         }
@@ -1866,15 +2014,37 @@
 
         function saveDamagedGood(e) {
             e.preventDefault();
+            const editId = document.getElementById('dmg-edit-id').value;
             const prodId = document.getElementById('dmg-product-id').value;
             const qty = parseInt(document.getElementById('dmg-qty').value);
             const status = document.getElementById('dmg-status').value;
-            const timestamp = document.getElementById('dmg-timestamp').value;
+            const iso = document.getElementById('dmg-timestamp').value;
             const notes = document.getElementById('dmg-notes').value || 'FEFO Batch';
+
+            if(!iso) { showToast('Pilih tanggal kadaluwarsa dari kalender.', 'error'); return; }
+            const timestamp = isoToDMY(iso);
+            if(!state.FEFO) state.FEFO = [];
+
+            if(editId) {
+                const idx = state.FEFO.findIndex(d => d.id === editId);
+                if(idx < 0) { showToast('Batch FEFO tidak ditemukan.', 'error'); return; }
+                const old = state.FEFO[idx];
+                let productName = old.productName;
+                let sku = old.sku;
+                if(prodId && prodId !== '__legacy__') {
+                    const chosen = state.products.find(p => p.id === prodId);
+                    if(chosen) { productName = chosen.name; sku = chosen.sku; }
+                }
+                state.FEFO[idx] = Object.assign({}, old, { productName, sku, qty, status, timestamp, notes });
+                saveStateToCloud();
+                showToast('Batch FEFO berhasil diperbarui!');
+                closeDamagedModal();
+                switchTab('damaged');
+                return;
+            }
 
             const prod = state.products.find(p => p.id === prodId);
             if(prod) {
-                if(!state.FEFO) state.FEFO = [];
                 const uniqueKey = 'fefo-' + Date.now();
                 state.FEFO.push({
                     id: uniqueKey,
@@ -1890,6 +2060,33 @@
                 closeDamagedModal();
                 switchTab('damaged');
             }
+        }
+
+        function editFefo(id) {
+            const d = (state.FEFO || []).find(x => x.id === id);
+            if(!d) return;
+            document.getElementById('form-damaged').reset();
+            const sel = document.getElementById('dmg-product-id');
+            Array.from(sel.querySelectorAll('option[value="__legacy__"]')).forEach(o => o.remove());
+            const match = state.products.find(p => p.sku === d.sku) ||
+                          state.products.find(p => p.name.toLowerCase() === String(d.productName || '').toLowerCase());
+            if(match) {
+                sel.value = match.id;
+            } else {
+                const o = document.createElement('option');
+                o.value = '__legacy__';
+                o.textContent = `${d.productName} (SKU: ${d.sku || '-'})`;
+                sel.appendChild(o);
+                sel.value = '__legacy__';
+            }
+            document.getElementById('dmg-edit-id').value = d.id;
+            document.getElementById('dmg-qty').value = d.qty;
+            document.getElementById('dmg-status').value = d.status || 'masih aman';
+            document.getElementById('dmg-timestamp').value = dmyToISO(d.timestamp);
+            document.getElementById('dmg-notes').value = d.notes || '';
+            document.getElementById('fefo-modal-title').innerText = 'Edit Batch FEFO';
+            document.getElementById('fefo-submit-btn').innerText = 'Simpan Perubahan';
+            document.getElementById('modal-damaged').classList.remove('hidden');
         }
 
         function deleteDamaged(id) {
@@ -2010,11 +2207,11 @@
                 const logId = log.id || ('log-' + Math.random());
                 recapTbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
-                        <td class="p-3 text-slate-400 font-medium">${log.timestamp}</td>
-                        <td class="p-3 font-bold text-slate-800">${log.productName}</td>
+                        <td class="p-3 text-slate-400 font-medium">${escapeHtml(log.timestamp)}</td>
+                        <td class="p-3 font-bold text-slate-800">${escapeHtml(log.productName)}</td>
                         <td class="p-3"><span class="px-2.5 py-1 text-[10px] rounded-md font-extrabold bg-slate-100 text-slate-700">${log.type}</span></td>
                         <td class="p-3 font-black text-slate-900">${log.qty}</td>
-                        <td class="p-3 text-slate-500 font-medium">${log.notes}</td>
+                        <td class="p-3 text-slate-500 font-medium">${escapeHtml(log.notes)}</td>
                         <td class="p-3 text-right">
                             <button onclick="deleteLogItem('${logId}')" class="p-1 text-slate-400 hover:text-rose-500 btn-press"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </td>
@@ -2028,150 +2225,452 @@
             lucide.createIcons();
         }
 
-        function printInboundLogs() {
-            const inboundLogs = state.logs ? state.logs.filter(l => l.type === 'IN') : [];
-            let rowsHTML = '';
-            if(inboundLogs.length === 0) {
-                rowsHTML = `<tr><td colspan="4" style="text-align:center; padding: 15px; color:#888;">Belum ada data barang masuk.</td></tr>`;
-            } else {
-                inboundLogs.forEach((l, idx) => {
-                    rowsHTML += `
-                        <tr style="border-bottom: 1px solid #ddd;">
-                            <td style="padding: 8px; text-align:center;">${idx + 1}</td>
-                            <td style="padding: 8px;">${l.timestamp}</td>
-                            <td style="padding: 8px; font-weight:bold;">${l.productName}</td>
-                            <td style="padding: 8px; text-align:center; font-weight:bold;">${l.qty}</td>
-                            <td style="padding: 8px;">${l.notes}</td>
-                        </tr>
-                    `;
-                });
-            }
+                // ============================================================
+        // DOKUMEN & CETAK PROFESIONAL (KOP SURAT, KODE DOKUMEN, TTD)
+        // ============================================================
+        const KOP_ALAMAT = 'Jl. Solontongan No.10, Kel. Turangga, Kec. Lengkong, Kota Bandung, Jawa Barat 40264';
+        const LOGO_DELTATIGA_ID = '16hNMoc7yHI2lc5-qk_01_ieP4YJVzAo9';
+        const LOGO_LOGISTICS_ID = '1Y0-5lr_GqoUxq_rq5Ww4g73qS0sskYOV';
+        const logoUrl = (id) => `https://drive.google.com/thumbnail?id=${id}&sz=w400`;
+        const logoAlt = (id) => `https://lh3.googleusercontent.com/d/${id}=w400`;
 
-            const printWin = window.open('', '_blank', 'width=800,height=600');
-            if(!printWin) return;
-            printWin.document.write(`
-                <html>
-                <head><title>Rekap Barang Masuk - SISTOCK 2.0</title></head>
-                <body style="font-family: sans-serif; padding: 20px; color: #111;">
-                    <h2 style="margin-bottom: 2px; text-transform: uppercase;">Rekapitulasi Barang Masuk (Inbound)</h2>
-                    <p style="font-size: 12px; color: #555; margin-top:0;">SISTOCK 2.0 — SMKN 3 BANDUNG</p>
-                    <hr style="border: 1px solid #222; margin: 15px 0;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
-                        <thead>
-                            <tr style="background: #f4f4f4; border-bottom: 2px solid #222;">
-                                <th style="padding: 8px; text-align:center; width: 40px;">NO</th>
-                                <th style="padding: 8px;">WAKTU</th>
-                                <th style="padding: 8px;">NAMA BARANG</th>
-                                <th style="padding: 8px; text-align:center; width: 60px;">QTY</th>
-                                <th style="padding: 8px;">KETERANGAN / SUPPLIER</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rowsHTML}</tbody>
-                    </table>
-                </body>
-                </html>
-            `);
-            printWin.document.close();
-            setTimeout(() => printWin.print(), 300);
+        const DOC_TYPES = {
+            in:   { title: 'REKAPITULASI BARANG MASUK (INBOUND)', prefix: 'IN' },
+            out:  { title: 'REKAPITULASI BARANG KELUAR (OUTBOUND)', prefix: 'OUT' },
+            all:  { title: 'LAPORAN REKAPITULASI LOGISTIK', prefix: 'REK' },
+            fefo: { title: 'LAPORAN MONITORING BATCH FEFO', prefix: 'FEFO' },
+            ba:   { title: 'BERITA ACARA', prefix: 'BA' },
+            do:   { title: 'SURAT JALAN (DELIVERY ORDER)', prefix: 'DO' }
+        };
+
+        function val(id) { const el = document.getElementById(id); return el ? el.value : ''; }
+        function docEsc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+        function pad2(n) { return String(n).padStart(2, '0'); }
+        function todayISO() { return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date()); }
+        function isoToDMY(iso) { if (!iso) return ''; const p = String(iso).split('-'); return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : iso; }
+        function dmyToISO(dmy) {
+            const m = String(dmy || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            return m ? `${m[3]}-${pad2(m[2])}-${pad2(m[1])}` : '';
+        }
+        function extractDateISO(ts) {
+            const m = String(ts || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
+            if (!m) return todayISO();
+            let y = m[3]; if (y.length === 2) y = '20' + y;
+            return `${y}-${pad2(m[2])}-${pad2(m[1])}`;
+        }
+        function expiryTime(dmy) {
+            const m = String(dmy || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            return m ? new Date(+m[3], +m[2] - 1, +m[1]).getTime() : Infinity;
+        }
+        function fefoDaysLabel(dmy) {
+            const t = expiryTime(dmy);
+            if (t === Infinity) return '-';
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+            const d = Math.round((t - today) / 86400000);
+            return d < 0 ? `Lewat ${Math.abs(d)} hari` : d === 0 ? 'Hari ini' : `${d} hari`;
+        }
+        function titleCase(s) { return String(s || '-').replace(/\b\w/g, c => c.toUpperCase()); }
+
+        function loadDocPrefs() { try { return JSON.parse(localStorage.getItem('sistock_doc_prefs') || '{}'); } catch (e) { return {}; } }
+        function saveDocPrefs(p) { try { localStorage.setItem('sistock_doc_prefs', JSON.stringify(p)); } catch (e) {} }
+
+        // ---------- Dialog isian sebelum cetak ----------
+        let pendingDoc = null;
+
+        function openPrintSetup(type, ctx) {
+            pendingDoc = { type: type, ctx: ctx || {} };
+            ctx = ctx || {};
+            const prefs = loadDocPrefs();
+            const t = DOC_TYPES[type];
+            const year = todayISO().slice(0, 4);
+            document.getElementById('ps-title').innerText = 'Cetak: ' + t.title;
+            document.getElementById('ps-kode-label').innerText = type === 'ba' ? 'Nomor Berita Acara' : 'Kode Dokumen';
+            const defCode = type === 'do' ? `DO${currentDoNumber}` : `${t.prefix}/${year}/001`;
+            document.getElementById('ps-kode').value = (type !== 'do' && prefs.codes && prefs.codes[type]) ? prefs.codes[type] : defCode;
+            document.getElementById('ps-tanggal').value = ctx.date || todayISO();
+            document.getElementById('ps-manager').value = prefs.manager || '';
+            document.getElementById('ps-guru').value = prefs.guru || '';
+            document.getElementById('ps-admin').value = prefs.admin || '';
+
+            const baBlock = document.getElementById('ps-ba-block');
+            if (type === 'ba') {
+                baBlock.classList.remove('hidden');
+                document.getElementById('ps-ba-tgl').value = (ctx.ba && ctx.ba.tgl) || todayISO();
+                document.getElementById('ps-ba-subjek').value = (ctx.ba && ctx.ba.subjek) || '';
+                document.getElementById('ps-ba-isi').value = (ctx.ba && ctx.ba.isi) || '';
+            } else {
+                baBlock.classList.add('hidden');
+            }
+            document.getElementById('modal-print-setup').classList.remove('hidden');
+            lucide.createIcons();
         }
 
-        function printOutboundLogs() {
-            const outboundLogs = state.logs ? state.logs.filter(l => l.type === 'OUT') : [];
-            let rowsHTML = '';
-            if(outboundLogs.length === 0) {
-                rowsHTML = `<tr><td colspan="4" style="text-align:center; padding: 15px; color:#888;">Belum ada data barang keluar.</td></tr>`;
-            } else {
-                outboundLogs.forEach((l, idx) => {
-                    rowsHTML += `
-                        <tr style="border-bottom: 1px solid #ddd;">
-                            <td style="padding: 8px; text-align:center;">${idx + 1}</td>
-                            <td style="padding: 8px;">${l.timestamp}</td>
-                            <td style="padding: 8px; font-weight:bold;">${l.productName}</td>
-                            <td style="padding: 8px; text-align:center; font-weight:bold;">${l.qty}</td>
-                            <td style="padding: 8px;">${l.notes}</td>
-                        </tr>
-                    `;
-                });
-            }
-
-            const printWin = window.open('', '_blank', 'width=800,height=600');
-            if(!printWin) return;
-            printWin.document.write(`
-                <html>
-                <head><title>Rekap Barang Keluar - SISTOCK 2.0</title></head>
-                <body style="font-family: sans-serif; padding: 20px; color: #111;">
-                    <h2 style="margin-bottom: 2px; text-transform: uppercase;">Rekapitulasi Barang Keluar (Outbound)</h2>
-                    <p style="font-size: 12px; color: #555; margin-top:0;">SISTOCK 2.0 — SMKN 3 BANDUNG</p>
-                    <hr style="border: 1px solid #222; margin: 15px 0;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
-                        <thead>
-                            <tr style="background: #f4f4f4; border-bottom: 2px solid #222;">
-                                <th style="padding: 8px; text-align:center; width: 40px;">NO</th>
-                                <th style="padding: 8px;">WAKTU</th>
-                                <th style="padding: 8px;">NAMA BARANG</th>
-                                <th style="padding: 8px; text-align:center; width: 60px;">QTY</th>
-                                <th style="padding: 8px;">KETERANGAN / TUJUAN</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rowsHTML}</tbody>
-                    </table>
-                </body>
-                </html>
-            `);
-            printWin.document.close();
-            setTimeout(() => printWin.print(), 300);
+        function closePrintSetup() {
+            document.getElementById('modal-print-setup').classList.add('hidden');
         }
 
-        function printRecapLogs() {
-            let rowsHTML = '';
-            if(!state.logs || state.logs.length === 0) {
-                rowsHTML = `<tr><td colspan="5" style="text-align:center; padding: 15px; color:#888;">Belum ada data rekapitulasi.</td></tr>`;
-            } else {
-                state.logs.forEach((l, idx) => {
-                    rowsHTML += `
-                        <tr style="border-bottom: 1px solid #ddd;">
-                            <td style="padding: 8px; text-align:center;">${idx + 1}</td>
-                            <td style="padding: 8px;">${l.timestamp}</td>
-                            <td style="padding: 8px; font-weight:bold;">${l.productName}</td>
-                            <td style="padding: 8px; text-align:center;"><span style="padding: 2px 6px; background:#eee; border-radius:4px; font-weight:bold;">${l.type}</span></td>
-                            <td style="padding: 8px; text-align:center; font-weight:bold;">${l.qty}</td>
-                            <td style="padding: 8px;">${l.notes}</td>
-                        </tr>
-                    `;
-                });
+        function confirmPrintSetup() {
+            if (!pendingDoc) return;
+            const type = pendingDoc.type;
+            const meta = {
+                kode: val('ps-kode').trim(),
+                tanggal: val('ps-tanggal') || todayISO(),
+                manager: val('ps-manager').trim(),
+                guru: val('ps-guru').trim(),
+                admin: val('ps-admin').trim()
+            };
+            if (!meta.kode) { showToast('Kode dokumen wajib diisi.', 'error'); return; }
+
+            if (type === 'ba') {
+                meta.ba = {
+                    tgl: val('ps-ba-tgl') || todayISO(),
+                    subjek: val('ps-ba-subjek').trim(),
+                    isi: val('ps-ba-isi').trim()
+                };
+                if (!meta.ba.subjek || !meta.ba.isi) { showToast('Subjek masalah dan rincian wajib diisi.', 'error'); return; }
             }
 
-            const printWin = window.open('', '_blank', 'width=800,height=600');
-            if(!printWin) return;
-            printWin.document.write(`
-                <html>
-                <head><title>Rekapitulasi Tren Logistik - SISTOCK 2.0</title></head>
-                <body style="font-family: sans-serif; padding: 20px; color: #111;">
-                    <h2 style="margin-bottom: 2px; text-transform: uppercase;">Laporan Rekapitulasi Tren Logistik</h2>
-                    <p style="font-size: 12px; color: #555; margin-top:0;">SISTOCK 2.0 — SMKN 3 BANDUNG</p>
-                    <hr style="border: 1px solid #222; margin: 15px 0;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
-                        <thead>
-                            <tr style="background: #f4f4f4; border-bottom: 2px solid #222;">
-                                <th style="padding: 8px; text-align:center; width: 40px;">NO</th>
-                                <th style="padding: 8px;">WAKTU</th>
-                                <th style="padding: 8px;">NAMA BARANG</th>
-                                <th style="padding: 8px; text-align:center; width: 70px;">TIPE</th>
-                                <th style="padding: 8px; text-align:center; width: 60px;">QTY</th>
-                                <th style="padding: 8px;">KETERANGAN</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rowsHTML}</tbody>
-                    </table>
-                    <div style="margin-top: 40px; text-align: right; font-size: 12px;">
-                        <p style="margin-bottom: 60px;">Mengetahui, Manajer Logistik</p>
-                        <b>( _________________ )</b>
-                    </div>
-                </body>
-                </html>
-            `);
-            printWin.document.close();
-            setTimeout(() => printWin.print(), 300);
+            const prefs = loadDocPrefs();
+            prefs.manager = meta.manager; prefs.guru = meta.guru; prefs.admin = meta.admin;
+            prefs.codes = prefs.codes || {};
+            if (type !== 'do') prefs.codes[type] = meta.kode;
+            saveDocPrefs(prefs);
+
+            let html;
+            if (type === 'do') {
+                const res = collectDoItems();
+                if (!res.rows.length) { showToast('Pilih minimal satu barang untuk Surat Jalan.', 'error'); return; }
+                if (res.err) { showToast(res.err, 'error'); return; }
+                meta.customer = val('doCustomer') || '-';
+                html = buildDoHTML(meta, res.rows);
+            } else {
+                html = buildDocHTML(type, meta);
+            }
+
+            closePrintSetup();
+            openPrintWindow(html);
+
+            if (type === 'do') {
+                currentDoNumber++;
+                const pv = document.getElementById('previewDoNumber');
+                if (pv) pv.innerText = `DO${currentDoNumber}`;
+            }
+        }
+
+        // ---------- Pembangun dokumen (HTML cetak) ----------
+        function docCss() {
+            return `
+                @page { size: A4; margin: 0; }
+                html, body { margin: 0; padding: 0; }
+                body { padding: 0 16mm; }
+                table.page { width: 100%; border-collapse: collapse; }
+                table.page > thead > tr > td, table.page > tfoot > tr > td { padding: 0; border: 0; }
+                .sp-top { height: 14mm; }
+                .sp-bot { height: 16mm; }
+                * { box-sizing: border-box; }
+                body { font-family: 'Times New Roman', Times, serif; font-size: 11.5pt; color: #000; line-height: 1.4; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                .kop { border-bottom: 3px double #000; padding-bottom: 8px; margin-bottom: 14px; }
+                .kop table { width: 100%; border-collapse: collapse; }
+                .kop-logo { width: 90px; text-align: center; vertical-align: middle; }
+                .kop-logo img { max-width: 80px; max-height: 80px; object-fit: contain; }
+                .kop-text { text-align: center; vertical-align: middle; }
+                .k1 { font-size: 17pt; font-weight: bold; letter-spacing: 0.5px; }
+                .k2 { font-size: 12pt; font-weight: bold; margin-top: 2px; }
+                .k3 { font-size: 9.5pt; margin-top: 3px; }
+                .doc-title { text-align: center; font-size: 13.5pt; font-weight: bold; text-decoration: underline; text-transform: uppercase; margin: 6px 0 8px; }
+                table.meta { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 10.5pt; }
+                table.meta td { padding: 2px 4px; vertical-align: top; }
+                table.meta td.ml { width: 110px; }
+                p.intro { margin: 6px 0 10px; text-align: justify; }
+                .sec { font-weight: bold; font-size: 11.5pt; margin: 16px 0 6px; page-break-after: avoid; }
+                table.data { width: 100%; border-collapse: collapse; font-size: 10pt; }
+                table.data th, table.data td { border: 1px solid #000; padding: 4px 6px; vertical-align: top; }
+                table.data th { background: #e6e6e6; text-align: center; font-weight: bold; }
+                table.data thead { display: table-header-group; }
+                table.data tr { page-break-inside: avoid; }
+                table.data td.empty { text-align: center; font-style: italic; color: #555; padding: 10px; }
+                .sub { font-size: 8.5pt; color: #444; }
+                .total { margin: 6px 0 0; font-size: 10pt; text-align: right; }
+                .ba-p { text-align: justify; margin: 10px 0; }
+                .ba-isi { margin: 8px 0 12px 22px; text-align: justify; }
+                .sig-wrap { margin-top: 26px; page-break-inside: avoid; }
+                .sig-date { text-align: right; margin-bottom: 4px; }
+                .sig-know { text-align: center; margin-bottom: 4px; }
+                table.sig { width: 100%; border-collapse: collapse; }
+                table.sig td { text-align: center; vertical-align: top; padding: 0 6px; font-size: 11pt; }
+                .sig-role { font-weight: bold; }
+                .sig-space { height: 75px; }
+                .sig-name { font-weight: bold; text-decoration: underline; }
+                .sig-name.blank { font-weight: normal; text-decoration: none; }
+                .foot { margin-top: 14px; font-size: 8pt; color: #555; border-top: 1px solid #999; padding-top: 4px; }
+            `;
+        }
+
+        function docKop(meta) {
+            const img = (id) => `<img src="${logoUrl(id)}" data-alt="${logoAlt(id)}" referrerpolicy="no-referrer" alt="" onerror="if(!this.dataset.t){this.dataset.t=1;this.src=this.dataset.alt;}else{this.style.visibility='hidden';}">`;
+            return `
+                <div class="kop"><table><tr>
+                    <td class="kop-logo">${img(LOGO_DELTATIGA_ID)}</td>
+                    <td class="kop-text">
+                        <div class="k1">SMK NEGERI 3 BANDUNG</div>
+                        <div class="k2">LOGISTICS WAREHOUSE — SISTOCK 2.0</div>
+                        <div class="k3">${docEsc(KOP_ALAMAT)}</div>
+                    </td>
+                    <td class="kop-logo">${img(LOGO_LOGISTICS_ID)}</td>
+                </tr></table></div>`;
+        }
+
+        function docShell(docTitle, meta, bodyHTML, kodeLabel) {
+            const printedAt = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+            return `<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>${docEsc(docTitle)} - ${docEsc(meta.kode)}</title><style>${docCss()}</style></head><body>
+                <table class="page"><thead><tr><td><div class="sp-top"></div></td></tr></thead><tfoot><tr><td><div class="sp-bot"></div></td></tr></tfoot><tbody><tr><td>
+                ${docKop(meta)}
+                <div class="doc-title">${docEsc(docTitle)}</div>
+                <table class="meta"><tr>
+                    <td class="ml">${docEsc(kodeLabel || 'Kode Dokumen')}</td><td>: <b>${docEsc(meta.kode)}</b></td>
+                    <td class="ml">Tanggal</td><td>: ${isoToDMY(meta.tanggal)}</td>
+                </tr></table>
+                ${bodyHTML}
+                <div class="foot">Dokumen dihasilkan oleh SISTOCK 2.0 — SMKN 3 Bandung · Dicetak: ${docEsc(printedAt)} WIB</div>
+                </td></tr></tbody></table>
+            </body></html>`;
+        }
+
+        function docSignatures(meta, cols, withKnow) {
+            const w = (100 / cols.length).toFixed(2);
+            const cells = cols.map(c => `
+                <td style="width:${w}%">
+                    <div class="sig-role">${docEsc(c.role)}</div>
+                    <div class="sig-space"></div>
+                    ${c.name ? `<div class="sig-name">${docEsc(c.name)}</div>` : `<div class="sig-name blank">( ............................ )</div>`}
+                </td>`).join('');
+            return `<div class="sig-wrap">
+                <div class="sig-date">Bandung, ${isoToDMY(meta.tanggal)}</div>
+                ${withKnow ? '<div class="sig-know">Mengetahui,</div>' : ''}
+                <table class="sig"><tr>${cells}</tr></table>
+            </div>`;
+        }
+
+        function sigCols3(meta) {
+            return [
+                { role: 'Manager Gudang', name: meta.manager },
+                { role: 'Guru Pengawas', name: meta.guru },
+                { role: 'Admin Gudang', name: meta.admin }
+            ];
+        }
+
+        function docTable(cols, rows, emptyMsg) {
+            const th = cols.map(c => `<th style="${c.w ? 'width:' + c.w + ';' : ''}">${c.t}</th>`).join('');
+            let body;
+            if (!rows.length) {
+                body = `<tr><td colspan="${cols.length}" class="empty">${emptyMsg || 'Tidak ada data.'}</td></tr>`;
+            } else {
+                body = rows.map(r => `<tr>${r.map((c, i) => `<td style="text-align:${cols[i].a || 'left'}">${c}</td>`).join('')}</tr>`).join('');
+            }
+            return `<table class="data"><thead><tr>${th}</tr></thead><tbody>${body}</tbody></table>`;
+        }
+
+        function sumQty(arr) { return arr.reduce((a, l) => a + (parseInt(l.qty) || 0), 0); }
+
+        function logRows(arr) {
+            return arr.map((l, i) => [
+                String(i + 1),
+                docEsc(l.timestamp),
+                `<b>${docEsc(l.productName)}</b>` + (l.sku ? `<br><span class="sub">SKU: ${docEsc(l.sku)}</span>` : ''),
+                docEsc(l.qty),
+                docEsc(l.notes)
+            ]);
+        }
+
+        function logCols(lastTitle) {
+            return [
+                { t: 'NO', w: '6%', a: 'center' }, { t: 'WAKTU', w: '17%' }, { t: 'NAMA BARANG' },
+                { t: 'QTY', w: '8%', a: 'center' }, { t: lastTitle }
+            ];
+        }
+
+        function fefoRows(arr) {
+            return arr.map((d, i) => [
+                String(i + 1),
+                `<b>${docEsc(d.timestamp)}</b>`,
+                `<b>${docEsc(d.productName)}</b><br><span class="sub">SKU: ${docEsc(d.sku || '-')}</span>`,
+                docEsc(d.qty),
+                docEsc(fefoDaysLabel(d.timestamp)),
+                docEsc(titleCase(d.status)),
+                docEsc(d.notes || '-')
+            ]);
+        }
+        const FEFO_COLS = [
+            { t: 'NO', w: '5%', a: 'center' }, { t: 'TGL EXPIRED', w: '12%', a: 'center' }, { t: 'NAMA BARANG' },
+            { t: 'QTY', w: '7%', a: 'center' }, { t: 'SISA WAKTU', w: '12%', a: 'center' }, { t: 'STATUS', w: '15%' }, { t: 'CATATAN', w: '14%' }
+        ];
+
+        function buildDocHTML(type, meta) {
+            const logs = state.logs || [];
+            const T = DOC_TYPES[type].title;
+            const sig = docSignatures(meta, sigCols3(meta), true);
+            let body = '';
+
+            if (type === 'in' || type === 'out') {
+                const arr = logs.filter(l => l.type === (type === 'in' ? 'IN' : 'OUT'));
+                body = `
+                    <p class="intro">Rekapitulasi seluruh transaksi barang ${type === 'in' ? 'masuk' : 'keluar'} yang tercatat pada sistem SISTOCK 2.0 sampai dengan tanggal dokumen ini dibuat.</p>
+                    ${docTable(logCols(type === 'in' ? 'KETERANGAN / SUPPLIER' : 'KETERANGAN / TUJUAN'), logRows(arr), 'Belum ada data.')}
+                    <p class="total">Total: <b>${sumQty(arr)}</b> unit dari <b>${arr.length}</b> transaksi</p>
+                    ${sig}`;
+            } else if (type === 'fefo') {
+                const arr = [...(state.FEFO || [])].sort((a, b) => expiryTime(a.timestamp) - expiryTime(b.timestamp));
+                body = `
+                    <p class="intro">Daftar batch FEFO (First Expired, First Out) diurutkan dari tanggal kedaluwarsa terdekat.</p>
+                    ${docTable(FEFO_COLS, fefoRows(arr), 'Belum ada data FEFO.')}
+                    <p class="total">Total: <b>${sumQty(arr)}</b> unit dari <b>${arr.length}</b> batch</p>
+                    ${sig}`;
+            } else if (type === 'all') {
+                const ins = logs.filter(l => l.type === 'IN');
+                const outs = logs.filter(l => l.type === 'OUT');
+                const sos = logs.filter(l => l.type === 'OPNAME');
+                const dmg = state.damagedgoods || [];
+                const fefo = [...(state.FEFO || [])].sort((a, b) => expiryTime(a.timestamp) - expiryTime(b.timestamp));
+
+                const summary = docTable(
+                    [{ t: 'KATEGORI' }, { t: 'JUMLAH CATATAN', w: '22%', a: 'center' }, { t: 'TOTAL UNIT', w: '22%', a: 'center' }],
+                    [
+                        ['Barang Masuk (IN)', String(ins.length), String(sumQty(ins))],
+                        ['Barang Keluar (OUT)', String(outs.length), String(sumQty(outs))],
+                        ['Stock Opname (SO)', String(sos.length), '-'],
+                        ['Barang Rusak (DMG)', String(dmg.length), String(sumQty(dmg))],
+                        ['Batch FEFO', String(fefo.length), String(sumQty(fefo))]
+                    ]
+                );
+
+                const soRows = sos.map((l, i) => [String(i + 1), docEsc(l.timestamp), `<b>${docEsc(l.productName)}</b>`, docEsc(l.qty), docEsc(l.notes)]);
+                const dmgRows = dmg.map((r, i) => [
+                    String(i + 1), docEsc(r.timestamp),
+                    `<b>${docEsc(r.productName)}</b><br><span class="sub">SKU: ${docEsc(r.sku || '-')}</span>`,
+                    docEsc(r.qty), docEsc(r.pelapor), docEsc(r.notes)
+                ]);
+
+                body = `
+                    <p class="intro">Laporan rekapitulasi seluruh mutasi dan kondisi barang pada gudang, dikelompokkan per kategori.</p>
+                    <div class="sec">RINGKASAN</div>
+                    ${summary}
+
+                    <div class="sec">A. BARANG MASUK (IN)</div>
+                    ${docTable(logCols('KETERANGAN / SUPPLIER'), logRows(ins), 'Belum ada data barang masuk.')}
+                    <p class="total">Subtotal: <b>${sumQty(ins)}</b> unit</p>
+
+                    <div class="sec">B. BARANG KELUAR (OUT)</div>
+                    ${docTable(logCols('KETERANGAN / TUJUAN'), logRows(outs), 'Belum ada data barang keluar.')}
+                    <p class="total">Subtotal: <b>${sumQty(outs)}</b> unit</p>
+
+                    <div class="sec">C. STOCK OPNAME (SO)</div>
+                    ${docTable(
+                        [{ t: 'NO', w: '6%', a: 'center' }, { t: 'WAKTU', w: '17%' }, { t: 'NAMA BARANG' }, { t: 'HASIL FISIK', w: '12%', a: 'center' }, { t: 'KETERANGAN / SELISIH' }],
+                        soRows, 'Belum ada data stock opname.')}
+
+                    <div class="sec">D. BARANG RUSAK (DMG)</div>
+                    ${docTable(
+                        [{ t: 'NO', w: '6%', a: 'center' }, { t: 'WAKTU', w: '17%' }, { t: 'NAMA BARANG' }, { t: 'QTY', w: '8%', a: 'center' }, { t: 'PELAPOR', w: '14%' }, { t: 'KETERANGAN KERUSAKAN' }],
+                        dmgRows, 'Belum ada data barang rusak.')}
+                    <p class="total">Subtotal: <b>${sumQty(dmg)}</b> unit</p>
+
+                    <div class="sec">E. BATCH FEFO</div>
+                    ${docTable(FEFO_COLS, fefoRows(fefo), 'Belum ada data FEFO.')}
+                    <p class="total">Subtotal: <b>${sumQty(fefo)}</b> unit dari <b>${fefo.length}</b> batch</p>
+                    ${sig}`;
+            } else if (type === 'ba') {
+                const b = meta.ba;
+                const isiHtml = docEsc(b.isi).replace(/\n/g, '<br>');
+                body = `
+                    <p class="ba-p">Pada <b>${isoToDMY(b.tgl)}</b>, telah dilaporkan sebuah temuan <b>${docEsc(b.subjek)}</b>. Dengan rincian sebagai berikut:</p>
+                    <div class="ba-isi">${isiHtml}</div>
+                    <p class="ba-p">Demikian berita acara ini dibuat dengan sebenarnya untuk dapat evaluasi dan perbaikan pelayanan di masa yang akan datang.</p>
+                    ${sig}`;
+                return docShell(T, meta, body, 'Nomor');
+            }
+            return docShell(T, meta, body);
+        }
+
+        function buildDoHTML(meta, rows) {
+            const trs = rows.map((r, i) => [
+                String(i + 1),
+                `<b>${docEsc(r.name)}</b>`,
+                docEsc(r.sku),
+                docEsc(r.rack),
+                docEsc(r.qty),
+                docEsc(r.unit)
+            ]);
+            const body = `
+                <table class="meta" style="margin-bottom:8px;"><tr>
+                    <td class="ml">Penerima</td><td colspan="3">: <b>${docEsc(meta.customer)}</b></td>
+                </tr></table>
+                ${docTable(
+                    [{ t: 'NO', w: '6%', a: 'center' }, { t: 'NAMA BARANG' }, { t: 'SKU / BARCODE', w: '20%' }, { t: 'RAK', w: '10%', a: 'center' }, { t: 'QTY', w: '9%', a: 'center' }, { t: 'SATUAN', w: '11%', a: 'center' }],
+                    trs)}
+                <p class="intro" style="margin-top:10px;">Barang tersebut di atas telah diperiksa dan diserahkan dalam keadaan baik dan jumlah yang sesuai.</p>
+                ${docSignatures(meta, [
+                    { role: 'Penerima', name: meta.customer && meta.customer !== '-' ? meta.customer : '' },
+                    { role: 'Admin Gudang', name: meta.admin },
+                    { role: 'Guru Pengawas', name: meta.guru },
+                    { role: 'Manager Gudang', name: meta.manager }
+                ], false)}`;
+            return docShell(DOC_TYPES.do.title, meta, body, 'No. DO');
+        }
+
+        function openPrintWindow(html) {
+            const w = window.open('', '_blank');
+            if (!w) { showToast('Pop-up diblokir browser. Izinkan pop-up untuk mencetak.', 'error'); return; }
+            w.document.open();
+            w.document.write(html);
+            w.document.close();
+            const start = Date.now();
+            const timer = setInterval(() => {
+                let ready = false;
+                try { ready = w.document.readyState === 'complete' && Array.from(w.document.images).every(i => i.complete); } catch (e) { ready = true; }
+                if (ready || Date.now() - start > 5000) {
+                    clearInterval(timer);
+                    try { w.focus(); w.print(); } catch (e) {}
+                }
+            }, 250);
+        }
+
+        // ---------- Tombol cetak ----------
+        function printInboundLogs() { openPrintSetup('in'); }
+        function printOutboundLogs() { openPrintSetup('out'); }
+        function printRecapLogs() { openPrintSetup('all'); }
+        function printFefoLogs() { openPrintSetup('fefo'); }
+
+        function openBeritaAcara(id) {
+            const r = (state.damagedgoods || []).find(x => x.id === id);
+            if (!r) return;
+            const prod = state.products.find(p => p.sku === r.sku);
+            const unit = (prod && prod.category) ? prod.category : 'unit';
+            const isi = [
+                `1. Nama Barang : ${r.productName} (SKU: ${r.sku || '-'})`,
+                `2. Jumlah Rusak : ${r.qty} ${unit}`,
+                `3. Pelapor : ${r.pelapor || '-'}`,
+                `4. Keterangan Kerusakan : ${r.notes || '-'}`,
+                `5. Tindakan : Stok gudang dikurangi sebesar ${r.qty} ${unit}.`
+            ].join('\n');
+            openPrintSetup('ba', { ba: { tgl: extractDateISO(r.timestamp), subjek: `kerusakan barang ${r.productName}`, isi: isi } });
+        }
+
+        function collectDoItems() {
+            const rows = [];
+            let err = '';
+            document.querySelectorAll('.do-checkbox:checked').forEach(cb => {
+                const id = cb.getAttribute('data-id');
+                const qtyEl = document.getElementById(`doQty_${id}`);
+                const qty = qtyEl ? (parseInt(qtyEl.value) || 0) : 0;
+                const prod = state.products.find(p => p.id === id);
+                const stock = prod ? (parseInt(prod.stock) || 0) : 0;
+                const name = cb.getAttribute('data-name');
+                if (stock <= 0) err = `Stok ${name} kosong, tidak bisa dikirim.`;
+                else if (qty < 1 || qty > stock) err = `Jumlah ${name} harus antara 1 dan ${stock}.`;
+                rows.push({ name: name, sku: cb.getAttribute('data-sku'), rack: cb.getAttribute('data-rack'), unit: cb.getAttribute('data-unit'), qty: qty });
+            });
+            return { rows: rows, err: err };
         }
 
         let currentDoNumber = 123412;
@@ -2198,10 +2697,10 @@
                 container.innerHTML += `
                     <div class="flex items-center justify-between gap-2 border-b border-slate-200/80 pb-2 pt-1">
                         <label class="flex items-center gap-2 cursor-pointer truncate flex-1">
-                            <input type="checkbox" class="do-checkbox rounded border-slate-300 text-brand-500 focus:ring-brand-500" data-id="${item.id}" data-name="${item.name}" data-sku="${item.sku || '-'}" data-rack="${item.location || 'Utama'}" data-unit="${item.category || 'PCS'}" onchange="updateDeliveryPreview()">
-                            <span class="font-bold truncate text-slate-700">${item.name} <span class="text-slate-400 font-medium text-[10px]">(${item.category}, Rak: ${item.location || 'Utama'}, Stok: ${item.stock})</span></span>
+                            <input type="checkbox" ${(parseInt(item.stock) || 0) <= 0 ? 'disabled' : ''} class="do-checkbox rounded border-slate-300 text-brand-500 focus:ring-brand-500" data-id="${item.id}" data-name="${escapeHtml(item.name)}" data-sku="${escapeHtml(item.sku || '-')}" data-rack="${escapeHtml(item.location || 'Utama')}" data-unit="${escapeHtml(item.category || 'PCS')}" onchange="updateDeliveryPreview()">
+                            <span class="font-bold truncate text-slate-700">${escapeHtml(item.name)} <span class="text-slate-400 font-medium text-[10px]">(${item.category}, Rak: ${item.location || 'Utama'}, Stok: ${item.stock})</span>${(parseInt(item.stock) || 0) <= 0 ? ' <span class="text-rose-600 font-extrabold text-[10px]">⛔ HABIS</span>' : ''}</span>
                         </label>
-                        <input type="number" min="1" max="${item.stock || 999}" value="1" id="doQty_${item.id}" class="w-16 border rounded-lg p-1 text-center bg-white text-xs font-bold" onchange="updateDeliveryPreview()" onkeyup="updateDeliveryPreview()">
+                        <input type="number" min="1" max="${item.stock || 999}" value="1" id="doQty_${item.id}" ${(parseInt(item.stock) || 0) <= 0 ? 'disabled' : ''} class="w-16 border rounded-lg p-1 text-center bg-white text-xs font-bold" onchange="updateDeliveryPreview()" onkeyup="updateDeliveryPreview()">
                     </div>
                 `;
             });
@@ -2242,26 +2741,21 @@
                 tbody.innerHTML += `
                     <tr class="border-b border-slate-200">
                         <td class="py-3 px-2">
-                            <p class="font-extrabold text-slate-900">${name}</p>
-                            <p class="text-[10px] text-slate-500 font-medium">SKU: ${sku} | Rak: ${rack}</p>
+                            <p class="font-extrabold text-slate-900">${escapeHtml(name)}</p>
+                            <p class="text-[10px] text-slate-500 font-medium">SKU: ${escapeHtml(sku)} | Rak: ${escapeHtml(rack)}</p>
                         </td>
                         <td class="py-3 px-2 text-center font-black text-slate-900">${qtyVal}</td>
-                        <td class="py-3 px-2 text-right font-semibold text-slate-700">${unit}</td>
+                        <td class="py-3 px-2 text-right font-semibold text-slate-700">${escapeHtml(unit)}</td>
                     </tr>
                 `;
             });
         }
 
         function printDeliveryOrder() {
-            const printContent = document.getElementById('printArea').innerHTML;
-            const printWindow = window.open('', '_blank', 'width=800,height=600');
-            if (!printWindow) return;
-            printWindow.document.write(`<html><head><title>Surat Jalan - SISTOCK 2.0</title><script src="https://cdn.tailwindcss.com"><\/script></head><body class="p-8">${printContent}</body></html>`);
-            printWindow.document.close();
-            setTimeout(() => {
-                printWindow.print();
-                currentDoNumber++;
-            }, 300);
+            const res = collectDoItems();
+            if(!res.rows.length) { showToast('Pilih minimal satu barang untuk Surat Jalan.', 'error'); return; }
+            if(res.err) { showToast(res.err, 'error'); return; }
+            openPrintSetup('do', { date: val('doDate') || todayISO() });
         }
 
         function openDedicatedScanner(target) {
@@ -2286,6 +2780,10 @@
                             switchTab('outbound');
                             document.getElementById('out-product-id').value = matchedProd.id;
                             onOutboundProductChange();
+                            if((parseInt(matchedProd.stock) || 0) <= 0) {
+                                showToast(`⛔ ${matchedProd.name} stok KOSONG, tidak bisa dikeluarkan!`, 'error');
+                                return;
+                            }
                             document.getElementById('out-qty').focus();
                         } else if(activeScanTarget === 'opname') {
                             switchTab('opname');
@@ -2298,7 +2796,7 @@
                     }
                 },
                 () => {}
-            ).catch(() => {});
+            ).catch((err) => scannerStartError(err));
         }
 
         function openScannerModal(mode = 'search') {
@@ -2320,7 +2818,13 @@
                     }
                 },
                 () => {}
-            ).catch(() => {});
+            ).catch((err) => scannerStartError(err));
+        }
+
+        function scannerStartError(err) {
+            const t = document.getElementById('scan-result-text');
+            if(t) t.innerText = '⚠️ Kamera tidak bisa dibuka. Izinkan akses kamera di browser (situs harus HTTPS).';
+            console.error('Scanner error:', err);
         }
 
         function closeScannerModal() {
@@ -2333,7 +2837,15 @@
 
         function openProductModal() { document.getElementById('form-product').reset(); document.getElementById('prod-id').value = ''; document.getElementById('modal-product').classList.remove('hidden'); }
         function closeProductModal() { document.getElementById('modal-product').classList.add('hidden'); }
-        function openDamagedModal() { document.getElementById('form-damaged').reset(); document.getElementById('modal-damaged').classList.remove('hidden'); }
+        function openDamagedModal() {
+            document.getElementById('form-damaged').reset();
+            const sel = document.getElementById('dmg-product-id');
+            if(sel) Array.from(sel.querySelectorAll('option[value="__legacy__"]')).forEach(o => o.remove());
+            document.getElementById('dmg-edit-id').value = '';
+            document.getElementById('fefo-modal-title').innerText = 'Catat Batch FEFO Baru';
+            document.getElementById('fefo-submit-btn').innerText = 'Simpan FEFO';
+            document.getElementById('modal-damaged').classList.remove('hidden');
+        }
         function closeDamagedModal() { document.getElementById('modal-damaged').classList.add('hidden'); }
         function openBarangRusakModal() { document.getElementById('form-barang-rusak').reset(); document.getElementById('modal-barang-rusak').classList.remove('hidden'); }
         function closeBarangRusakModal() { document.getElementById('modal-barang-rusak').classList.add('hidden'); }
@@ -2433,7 +2945,7 @@
             if(matched.length > 0) {
                 let resultHTML = "🔍 <strong>Hasil Penelusuran Database Inventaris:</strong><br>";
                 matched.slice(0, 3).forEach(p => {
-                    resultHTML += `• <strong>${p.name}</strong><br>  SKU: ${p.sku} | Stok: ${p.stock} ${p.category || 'PCS'}<br>  Harga: Rp ${parseInt(p.price).toLocaleString('id-ID')} | Rak: ${p.location || 'Utama'}<br>`;
+                    resultHTML += `• <strong>${escapeHtml(p.name)}</strong><br>  SKU: ${escapeHtml(p.sku)} | Stok: ${p.stock} ${escapeHtml(p.category || 'PCS')}<br>  Harga: Rp ${parseInt(p.price).toLocaleString('id-ID')} | Rak: ${escapeHtml(p.location || 'Utama')}<br>`;
                 });
                 return resultHTML;
             }
@@ -2442,7 +2954,7 @@
         }
 
         function escapeHtml(str) {
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            return String(str == null ? '' : str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
         }
 
         function initChart() {
@@ -2565,8 +3077,8 @@
                     htmlContent += `
                         <div class="bg-rose-50 border border-rose-200 p-2.5 rounded-xl flex justify-between items-center">
                             <div>
-                                <p class="font-bold text-slate-900">${ex.productName} <span class="font-mono text-[10px] text-rose-600">(${ex.sku})</span></p>
-                                <p class="text-[10px] text-slate-600 font-medium">Qty: <strong>${ex.qty} PCS</strong> | Expired: <strong class="text-rose-700">${ex.timestamp}</strong> (${Math.abs(ex.diffDays)} hari lalu)</p>
+                                <p class="font-bold text-slate-900">${escapeHtml(ex.productName)} <span class="font-mono text-[10px] text-rose-600">(${escapeHtml(ex.sku)})</span></p>
+                                <p class="text-[10px] text-slate-600 font-medium">Qty: <strong>${ex.qty} PCS</strong> | Expired: <strong class="text-rose-700">${escapeHtml(ex.timestamp)}</strong> (${Math.abs(ex.diffDays)} hari lalu)</p>
                             </div>
                             <span class="px-2 py-0.5 bg-rose-600 text-white font-bold text-[9px] rounded-md">KADALUWARSA</span>
                         </div>
@@ -2586,8 +3098,8 @@
                     htmlContent += `
                         <div class="bg-amber-50 border border-amber-200 p-2.5 rounded-xl flex justify-between items-center">
                             <div>
-                                <p class="font-bold text-slate-900">${nr.productName} <span class="font-mono text-[10px] text-amber-600">(${nr.sku})</span></p>
-                                <p class="text-[10px] text-slate-600 font-medium">Qty: <strong>${nr.qty} PCS</strong> | Expired: <strong class="text-amber-700">${nr.timestamp}</strong> (Sisa ${nr.diffDays} hari)</p>
+                                <p class="font-bold text-slate-900">${escapeHtml(nr.productName)} <span class="font-mono text-[10px] text-amber-600">(${escapeHtml(nr.sku)})</span></p>
+                                <p class="text-[10px] text-slate-600 font-medium">Qty: <strong>${nr.qty} PCS</strong> | Expired: <strong class="text-amber-700">${escapeHtml(nr.timestamp)}</strong> (Sisa ${nr.diffDays} hari)</p>
                             </div>
                             <span class="px-2 py-0.5 bg-amber-500 text-white font-bold text-[9px] rounded-md">SEGERA KELUARKAN</span>
                         </div>
