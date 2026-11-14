@@ -15,6 +15,7 @@
     <script src="https://unpkg.com/lucide@0.460.0"></script>
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- HTML5 QR Code Scanner CDN -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8" type="text/javascript"></script>
     <!-- Firebase SDK (Compat) -->
@@ -548,7 +549,27 @@
                             <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-slate-400"></i>
                             <input type="text" id="search-product" onkeyup="renderProducts()" placeholder="Cari Barcode SKU atau Nama Barang..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-brand-500">
                         </div>
-                        <div class="flex gap-2">
+                        <div class="grid grid-cols-2 gap-2 sm:flex">
+                            <select id="prod-filter" onchange="renderProducts()" title="Filter status stok" class="min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:border-brand-500">
+                                <option value="all">Semua</option>
+                                <option value="habis">🔴 Habis</option>
+                                <option value="rop">🟡 ROP Warning</option>
+                                <option value="aman">🟢 Aman</option>
+                                <option value="perlu">⚠️ Perlu restock (Habis + ROP)</option>
+                            </select>
+                            <select id="prod-sort" onchange="renderProducts()" title="Urutkan" class="min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:border-brand-500">
+                                <option value="input">Urutan input</option>
+                                <option value="name_asc">Abjad A-Z</option>
+                                <option value="name_desc">Abjad Z-A</option>
+                                <option value="stock_asc">Stok tersedikit</option>
+                                <option value="stock_desc">Stok terbanyak</option>
+                                <option value="status">Status (Habis dulu)</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="openExportModal()" title="Download data stok ke Excel" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-emerald-200 btn-press">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Export Excel
+                            </button>
                             <button onclick="openScannerModal('search')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-200 btn-press">
                                 <i data-lucide="scan" class="w-4 h-4 text-brand-500"></i> Scan
                             </button>
@@ -600,6 +621,12 @@
                             <p class="text-[10px] text-slate-400 font-medium">Monitoring batch tanggal kadaluwarsa (First Expired, First Out) -> Node Firebase: <strong>FEFO</strong></p>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
+                            <select id="fefo-sort" onchange="renderDamagedGoods()" title="Urutkan batch" class="min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:border-amber-500">
+                                <option value="exp_asc">Exp terdekat dulu</option>
+                                <option value="exp_desc">Exp terjauh dulu</option>
+                                <option value="name">Abjad A-Z</option>
+                                <option value="qty_desc">Qty terbanyak</option>
+                            </select>
                             <button onclick="printFefoLogs()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 btn-press">
                                 <i data-lucide="printer" class="w-4 h-4 text-amber-600"></i> Print FEFO
                             </button>
@@ -678,6 +705,31 @@
                         <button onclick="printRecapLogs()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 btn-press">
                             <i data-lucide="printer" class="w-4 h-4 text-brand-600"></i> Print Rekapitulasi
                         </button>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
+                        <div id="rc-period-mount"></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="font-bold text-slate-700 block mb-1 text-[11px]">Jenis Transaksi</label>
+                                <select id="rc-type" onchange="renderRecapData()" class="w-full min-w-0 border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500 bg-white text-xs">
+                                    <option value="all">Semua jenis</option>
+                                    <option value="IN">Barang Masuk (IN)</option>
+                                    <option value="OUT">Barang Keluar (OUT)</option>
+                                    <option value="OPNAME">Stock Opname (SO)</option>
+                                    <option value="RUSAK">Barang Rusak (DMG)</option>
+                                    <option value="KOREKSI">Koreksi Stok (Edit Barang)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="font-bold text-slate-700 block mb-1 text-[11px]">Urutan Tanggal</label>
+                                <select id="rc-sort" onchange="renderRecapData()" class="w-full min-w-0 border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500 bg-white text-xs">
+                                    <option value="desc">Terbaru dulu</option>
+                                    <option value="asc">Terlama dulu</option>
+                                </select>
+                            </div>
+                        </div>
+                        <p id="rc-count" class="text-[11px] text-slate-500 font-semibold"></p>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -883,12 +935,24 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-2xl text-xs border border-slate-200">
                 <div>
-                    <label class="block font-bold text-slate-700 mb-1">Penerima (Tujuan / Client)</label>
-                    <input type="text" id="doCustomer" oninput="updateDeliveryPreview()" placeholder="Budi Santoso / Unit Logistik" value="Budi Santoso" class="w-full border rounded-xl p-2.5 text-xs outline-none bg-white font-semibold focus:border-brand-500">
+                    <label class="block font-bold text-slate-700 mb-1">Kode Dokumen / No. DO</label>
+                    <input type="text" id="doKode" oninput="updateDeliveryPreview()" placeholder="Contoh: DO/2026/11/001" class="w-full border rounded-xl p-2.5 text-xs outline-none bg-white font-semibold focus:border-brand-500">
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 mb-1">Tanggal Delivery</label>
-                    <input type="date" id="doDate" onchange="updateDeliveryPreview()" class="w-full border rounded-xl p-2.5 text-xs outline-none bg-white font-semibold focus:border-brand-500">
+                    <input type="date" id="doDate" onchange="updateDeliveryPreview()" onclick="try{this.showPicker()}catch(e){}" class="w-full border rounded-xl p-2.5 text-xs outline-none bg-white font-semibold focus:border-brand-500">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Penerima (Tujuan / Client)</label>
+                    <input type="text" id="doCustomer" oninput="updateDeliveryPreview()" placeholder="Nama penerima / unit tujuan" class="w-full border rounded-xl p-2.5 text-xs outline-none bg-white font-semibold focus:border-brand-500">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Nama Admin Gudang</label>
+                    <input type="text" id="doAdmin" oninput="updateDeliveryPreview()" placeholder="Ketik nama admin gudang" class="w-full border rounded-xl p-2.5 text-xs outline-none bg-white font-semibold focus:border-brand-500">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block font-bold text-slate-700 mb-1">Catatan <span class="text-slate-400 font-medium">(opsional)</span></label>
+                    <input type="text" id="doNote" oninput="updateDeliveryPreview()" placeholder="Contoh: Untuk praktikum kelas XI Logistik" class="w-full border rounded-xl p-2.5 text-xs outline-none bg-white font-semibold focus:border-brand-500">
                 </div>
             </div>
 
@@ -897,44 +961,42 @@
                 <div id="doItemSelector" class="space-y-2 max-h-40 overflow-y-auto border p-3 rounded-2xl text-xs bg-slate-50 custom-scrollbar"></div>
             </div>
 
-            <div id="printArea" class="border p-6 rounded-2xl bg-white space-y-5 text-slate-900 font-sans">
-                <div class="flex justify-between items-start border-b-2 border-slate-900 pb-4">
-                    <div>
-                        <h2 class="text-xl font-black tracking-wider uppercase text-slate-900">DELIVERY ORDER</h2>
-                        <p class="text-[10px] font-bold text-brand-600 uppercase tracking-widest mt-0.5">SISTOCK 2.0 — SMKN 3 BANDUNG</p>
+            <div id="printArea" class="border p-4 sm:p-5 rounded-2xl bg-white space-y-4 text-slate-900" style="font-family:'Times New Roman',Times,serif;">
+                <div class="flex items-center gap-3 pb-3" style="border-bottom:3px double #000;">
+                    <img src="https://drive.google.com/thumbnail?id=16hNMoc7yHI2lc5-qk_01_ieP4YJVzAo9&sz=w400" data-alt="https://lh3.googleusercontent.com/d/16hNMoc7yHI2lc5-qk_01_ieP4YJVzAo9=w400" referrerpolicy="no-referrer" alt="" class="w-12 h-12 sm:w-14 sm:h-14 object-contain flex-shrink-0" onerror="if(!this.dataset.t){this.dataset.t=1;this.src=this.dataset.alt;}else{this.style.visibility='hidden';}">
+                    <div class="flex-1 text-center min-w-0">
+                        <p class="text-sm sm:text-lg font-bold tracking-wide">SMK NEGERI 3 BANDUNG</p>
+                        <p class="text-[11px] sm:text-sm font-bold">LOGISTICS WAREHOUSE — SISTOCK 2.0</p>
+                        <p class="text-[9px] sm:text-xs">Jl. Solontongan No.10, Kel. Turangga, Kec. Lengkong, Kota Bandung, Jawa Barat 40264</p>
                     </div>
-                    <div class="text-right text-xs">
-                        <p id="previewDoNumber" class="font-mono font-bold text-slate-800 text-sm">DO123412</p>
-                        <p id="previewDate" class="text-slate-600 font-medium">-</p>
-                    </div>
+                    <img src="https://drive.google.com/thumbnail?id=1Y0-5lr_GqoUxq_rq5Ww4g73qS0sskYOV&sz=w400" data-alt="https://lh3.googleusercontent.com/d/1Y0-5lr_GqoUxq_rq5Ww4g73qS0sskYOV=w400" referrerpolicy="no-referrer" alt="" class="w-12 h-12 sm:w-14 sm:h-14 object-contain flex-shrink-0" onerror="if(!this.dataset.t){this.dataset.t=1;this.src=this.dataset.alt;}else{this.style.visibility='hidden';}">
                 </div>
 
-                <div class="text-xs space-y-1">
-                    <p class="font-extrabold uppercase tracking-wider text-slate-400 text-[10px]">PENERIMA:</p>
-                    <p id="previewCustomer" class="font-bold text-slate-800 text-sm">-</p>
+                <p class="text-center font-bold underline uppercase text-sm sm:text-base">Surat Jalan (Delivery Order)</p>
+
+                <div class="grid grid-cols-2 text-xs gap-y-1">
+                    <div>No. DO : <b id="previewDoNumber">DO123412</b></div>
+                    <div class="text-right">Tanggal : <b id="previewDate">-</b></div>
+                    <div class="col-span-2">Penerima : <b id="previewCustomer">-</b></div>
+                    <div class="col-span-2 hidden" id="previewNoteWrap">Catatan : <b id="previewNote"></b></div>
                 </div>
 
-                <table class="w-full text-left text-xs border-collapse">
+                <table class="w-full text-left text-xs border-collapse border border-slate-800">
                     <thead>
-                        <tr class="border-b-2 border-slate-800 text-slate-700 font-extrabold uppercase text-[10px]">
-                            <th class="py-2.5 px-2">DESCRIPTION (BARANG / SKU / RAK)</th>
-                            <th class="py-2.5 px-2 w-20 text-center">QUANTITY</th>
-                            <th class="py-2.5 px-2 w-20 text-right">UNITS</th>
+                        <tr class="bg-slate-200 text-slate-900 font-bold uppercase text-[10px]">
+                            <th class="py-2 px-2 border border-slate-800">NAMA BARANG / SKU / RAK</th>
+                            <th class="py-2 px-2 w-16 text-center border border-slate-800">QTY</th>
+                            <th class="py-2 px-2 w-20 text-center border border-slate-800">SATUAN</th>
                         </tr>
                     </thead>
-                    <tbody id="previewTableBody" class="divide-y divide-slate-200"></tbody>
+                    <tbody id="previewTableBody"></tbody>
                 </table>
 
-                <div class="grid grid-cols-2 gap-8 pt-16 text-xs text-center font-medium">
-                    <div>
-                        <p class="mb-14 text-slate-600 font-semibold">Petugas Logistik</p>
-                        <p class="font-bold border-t border-slate-400 pt-1 w-40 mx-auto">&nbsp;</p>
-                    </div>
-                    <div>
-                        <p class="mb-14 text-slate-600 font-semibold">Penerima</p>
-                        <p class="font-bold border-t border-slate-400 pt-1 w-40 mx-auto">&nbsp;</p>
-                    </div>
+                <div class="grid grid-cols-2 gap-4 pt-6 text-xs text-center">
+                    <div><p class="font-bold">Penerima</p><div class="h-14"></div><p>( ............ )</p></div>
+                    <div><p class="font-bold">Admin Gudang</p><div class="h-14"></div><p id="previewSigAdmin" class="font-bold underline">&nbsp;</p></div>
                 </div>
+                <p class="text-[10px] text-slate-400 text-center font-sans">Tampilan cetak memakai kop surat resmi dan ukuran A4.</p>
             </div>
 
             <div class="flex justify-end gap-2 border-t pt-3">
@@ -989,6 +1051,42 @@
         </div>
     </div>
 
+    <!-- MODAL: EXPORT EXCEL -->
+    <div id="modal-export" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter max-h-[92vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-extrabold text-xs sm:text-sm uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-600"></i> Export Data ke Excel (.xlsx)
+                </h3>
+                <button onclick="closeExportModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">Jenis Export</label>
+                    <select id="ex-mode" onchange="updateExportUI()" class="w-full min-w-0 border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500 bg-white">
+                        <option value="daily">Harian - pilih tanggal</option>
+                        <option value="full">Backup lengkap - semua data</option>
+                    </select>
+                </div>
+                <div id="ex-date-wrap">
+                    <label class="font-bold text-slate-700 block mb-1">Tanggal Data</label>
+                    <input type="date" id="ex-date" onchange="updateExportUI()" onclick="try{this.showPicker()}catch(e){}" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500 bg-white">
+                    <div class="flex gap-2 mt-2">
+                        <button type="button" onclick="setExportDate(0)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-700 btn-press">Hari ini</button>
+                        <button type="button" onclick="setExportDate(-1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-700 btn-press">Kemarin</button>
+                    </div>
+                </div>
+                <div id="ex-note" class="bg-sky-50 border border-sky-200 text-sky-800 p-3 rounded-xl font-semibold leading-relaxed"></div>
+            </div>
+            <div class="flex justify-end gap-2 border-t pt-3">
+                <button onclick="closeExportModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl btn-press">Batal</button>
+                <button onclick="runExportXlsx()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow flex items-center gap-1.5 btn-press">
+                    ⬇️ Download Excel
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: ISIAN SEBELUM CETAK DOKUMEN -->
     <div id="modal-print-setup" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-3 sm:p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter max-h-[92vh] overflow-y-auto">
@@ -1007,6 +1105,11 @@
                         <input type="date" id="ps-tanggal" onclick="try{this.showPicker()}catch(e){}" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500">
                     </div>
                 </div>
+                <div id="ps-period-block" class="hidden bg-sky-50/60 border border-sky-200 p-3.5 rounded-2xl">
+                    <p class="font-extrabold text-sky-700 uppercase text-[10px] tracking-wider mb-2">Periode Laporan</p>
+                    <div id="ps-period-mount"></div>
+                </div>
+
                 <div id="ps-ba-block" class="hidden space-y-3 bg-amber-50/60 border border-amber-200 p-3.5 rounded-2xl">
                     <p class="font-extrabold text-amber-700 uppercase text-[10px] tracking-wider">Isi Berita Acara</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1267,8 +1370,8 @@
         let isDashboardReminderDismissed = false;
 
         function getActiveFirebaseNode() {
-            const activeUser = sessionStorage.getItem("sistock_username");
-            if (activeUser === "BELAJAR") {
+            const u = auth.currentUser;
+            if (u && u.uid === UID_BELAJAR) {
                 return 'sistock_v2_pro/sandbox_state';
             }
             return 'sistock_v2_pro/state';
@@ -1296,6 +1399,63 @@
                 if(nodeLabel) nodeLabel.innerText = "Production Node (Live)";
             }
         }
+
+        function newId(prefix) { return prefix + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+        function numStock(p) { return parseInt(p && p.stock) || 0; }
+        function normSku(x) { return String(x == null ? '' : x).trim().replace(/^0+/, ''); }
+        function findProductBySku(code) {
+            const c = String(code || '').trim();
+            return state.products.find(p => String(p.sku).trim() === c) ||
+                   state.products.find(p => normSku(p.sku) !== '' && normSku(p.sku) === normSku(c));
+        }
+        function opnameInfo(l) {
+            const physical = parseInt(l.qty) || 0;
+            let diff = (typeof l.diff === 'number') ? l.diff : null;
+            if (diff === null) {
+                const m = String(l.notes || '').match(/Selisih:\s*([+-]?\d+)/);
+                if (m) diff = parseInt(m[1], 10);
+            }
+            const before = (typeof l.before === 'number') ? l.before : (diff !== null ? physical - diff : null);
+            return { physical: physical, diff: diff, before: before };
+        }
+        function fmtDiff(d) { return d === null ? '-' : (d > 0 ? '+' + d : String(d)); }
+        function qtyCellHtml(l) {
+            if (l.type === 'OPNAME' || l.type === 'KOREKSI') {
+                const i = opnameInfo(l);
+                return `${i.physical} <span class="text-[10px] font-bold text-blue-600">(selisih ${fmtDiff(i.diff)})</span>`;
+            }
+            return String(l.qty);
+        }
+
+        // Cap waktu transaksi (WIB): teks dd/mm/yyyy + tanggal ISO + jam + epoch, dipakai untuk sortir & periode
+        function nowStamp() {
+            const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jakarta', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
+            const g = (t) => (parts.find(x => x.type === t) || {}).value || '00';
+            return {
+                timestamp: `${g('day')}/${g('month')}/${g('year')}, ${g('hour')}.${g('minute')}.${g('second')}`,
+                date: `${g('year')}-${g('month')}-${g('day')}`,
+                time: `${g('hour')}:${g('minute')}`,
+                ts: Date.now()
+            };
+        }
+        function logDateISO(l) { return l.date || parseLogDate(l.timestamp) || ''; }
+        function logTime(l) {
+            if (l.time) return l.time;
+            const m = String(l.timestamp || '').match(/[,\s](\d{1,2})[.:](\d{2})/);
+            return m ? pad2(m[1]) + ':' + m[2] : '';
+        }
+        function logWhen(l) {
+            const d = logDateISO(l);
+            if (!d) return String(l.timestamp || '');
+            const t = logTime(l);
+            return isoToDMY(d) + (t ? ' ' + t : '');
+        }
+        function logSortKey(l) { return (logDateISO(l) || '0000-00-00') + ' ' + (logTime(l) || '00:00'); }
+        function sortByWhen(arr, dir) {
+            const d = dir || 1;
+            return [...arr].sort((a, b) => d * logSortKey(a).localeCompare(logSortKey(b)));
+        }
+        function cmpName(a, b) { return String(a.name).localeCompare(String(b.name), 'id', { sensitivity: 'base' }); }
 
         function showToast(msg, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -1446,21 +1606,43 @@
             showToast("Reminder dashboard disembunyikan. Data FEFO tetap aktif di menu Karantina & FEFO.");
         }
 
+        let localRev = 0;
+
+        function asList(v) {
+            if (!v) return [];
+            return (Array.isArray(v) ? v : Object.values(v)).filter(Boolean);
+        }
+
+        function applyRemoteData(data) {
+            localRev = parseInt(data.rev) || 0;
+            const fixDate = (l) => {
+                const o = Object.assign({}, l);
+                if (!o.date) { const d = parseLogDate(o.timestamp); if (d) o.date = d; }
+                return o;
+            };
+            const logs = asList(data.logs).map((l, i) => fixDate(l.id ? l : Object.assign({}, l, { id: 'log-legacy-' + i })));
+            state = {
+                suppliers: asList(data.suppliers),
+                products: asList(data.products),
+                FEFO: asList(data.FEFO),
+                damagedgoods: asList(data.damagedgoods).map(fixDate),
+                logs: logs
+            };
+        }
+
+        function resetLocalState() {
+            state = { suppliers: [], products: [], FEFO: [], damagedgoods: [], logs: [] };
+            localRev = 0;
+        }
+
         function initFirebaseSync() {
             const dbNode = getActiveFirebaseNode();
             if (window.__sistockRef) window.__sistockRef.off();
             window.__sistockRef = db.ref(dbNode);
             window.__sistockRef.on('value', (snapshot) => {
                 const data = snapshot.val();
-                if (data && data.products && data.products.length > 0) {
-                    state = {
-                        suppliers: data.suppliers || INITIAL_SPREADSHEET_DATA.suppliers,
-                        products: data.products || [],
-                        FEFO: data.FEFO ? Object.values(data.FEFO) : [],
-                        damagedgoods: data.damagedgoods ? Object.values(data.damagedgoods) : [],
-                        logs: data.logs ? Object.values(data.logs) : []
-                    };
-                } else {
+                if (data === null) {
+                    // Database benar-benar kosong -> isi data awal (hanya sekali)
                     state = {
                         suppliers: INITIAL_SPREADSHEET_DATA.suppliers,
                         products: INITIAL_SPREADSHEET_DATA.products,
@@ -1468,7 +1650,10 @@
                         damagedgoods: Object.values(INITIAL_SPREADSHEET_DATA.damagedgoods),
                         logs: INITIAL_SPREADSHEET_DATA.logs
                     };
+                    localRev = 0;
                     saveStateToCloud();
+                } else {
+                    applyRemoteData(data);
                 }
                 refreshUI();
             }, (err) => {
@@ -1477,11 +1662,12 @@
             });
         }
 
+        // Simpan dengan nomor revisi: kalau perangkat lain sudah mengubah data lebih dulu,
+        // simpanan ini dibatalkan (bukan menimpa) dan data terbaru dimuat.
         function saveStateToCloud() {
             const dbNode = getActiveFirebaseNode();
             const fefoObj = {};
             state.FEFO.forEach(item => { fefoObj[item.id] = item; });
-
             const damagedObj = {};
             state.damagedgoods.forEach(item => { damagedObj[item.id] = item; });
 
@@ -1493,9 +1679,24 @@
                 logs: state.logs
             };
 
-            db.ref(dbNode).set(payload).catch((error) => {
-                console.error("Gagal sync ke Firebase:", error);
-                showToast("Gagal menyimpan ke cloud. Periksa koneksi internet.", "error");
+            const expected = localRev;
+            localRev = expected + 1;
+            payload.rev = expected + 1;
+
+            db.ref(dbNode).transaction((cur) => {
+                if (cur === null) return payload;
+                if ((parseInt(cur.rev) || 0) !== expected) return;
+                return payload;
+            }, (error, committed, snap) => {
+                if (error) {
+                    console.error("Gagal sync ke Firebase:", error);
+                    showToast("Gagal menyimpan ke cloud. Periksa koneksi internet.", "error");
+                    return;
+                }
+                if (!committed) {
+                    showToast("⚠️ Data sudah diubah di perangkat lain. Data terbaru dimuat, mohon ulangi input terakhir.", "error");
+                    if (snap && snap.val()) { applyRemoteData(snap.val()); refreshUI(); }
+                }
             });
         }
 
@@ -1544,10 +1745,14 @@
                 } else {
                     sessionStorage.removeItem("sistock_auth");
                     sessionStorage.removeItem("sistock_username");
+                    if (window.__sistockRef) { window.__sistockRef.off(); window.__sistockRef = null; }
+                    resetLocalState();
+                    try { refreshUI(); } catch (e) {}
                 }
                 checkSessionAuth();
             });
             initChart();
+            initPeriodControls('rc', 'renderRecapData');
             initRealtimeClockAndReminders();
             lucide.createIcons();
         });
@@ -1587,6 +1792,8 @@
 
         function refreshUI() {
             checkFefoExpiringReminders(new Date());
+            const recapSec = document.getElementById('section-recap');
+            if (recapSec && !recapSec.classList.contains('hidden')) renderRecapData();
             renderDashboardStats();
             renderProducts();
             renderDamagedGoods();
@@ -1600,7 +1807,7 @@
         function renderDashboardStats() {
             document.getElementById('stat-total-products').innerText = state.products.length;
             
-            const totalVal = state.products.reduce((acc, item) => acc + ((parseInt(item.price) || 0) * (parseInt(item.stock) || 0)), 0);
+            const totalVal = state.products.reduce((acc, item) => acc + ((parseFloat(item.price) || 0) * (parseInt(item.stock) || 0)), 0);
             document.getElementById('stat-total-value').innerText = `Rp ${totalVal.toLocaleString('id-ID')}`;
 
             const ropAlertCount = state.products.filter(p => parseInt(p.stock) <= parseInt(p.rop)).length;
@@ -1614,9 +1821,9 @@
                 topProductsContainer.innerHTML = `<p class="text-slate-400 text-xs italic">Belum ada data barang...</p>`;
             } else {
                 topProductsContainer.innerHTML = '';
-                const sortedProducts = [...state.products].sort((a,b) => ((parseInt(b.price)||0) * (parseInt(b.stock)||0)) - ((parseInt(a.price)||0) * (parseInt(a.stock)||0))).slice(0, 4);
+                const sortedProducts = [...state.products].sort((a,b) => ((parseFloat(b.price)||0) * (parseInt(b.stock)||0)) - ((parseFloat(a.price)||0) * (parseInt(a.stock)||0))).slice(0, 4);
                 sortedProducts.forEach((p) => {
-                    const itemVal = (parseInt(p.price) || 0) * (parseInt(p.stock) || 0);
+                    const itemVal = (parseFloat(p.price) || 0) * (parseInt(p.stock) || 0);
                     topProductsContainer.innerHTML += `
                         <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100/80">
                             <div class="truncate">
@@ -1638,10 +1845,10 @@
                     const badgeColor = log.type === 'IN' ? 'bg-emerald-100 text-emerald-700' : log.type === 'OUT' ? 'bg-rose-100 text-rose-700' : log.type === 'RUSAK' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700';
                     logsTbody.innerHTML += `
                         <tr class="hover:bg-slate-50/80 transition">
-                            <td class="p-3 text-slate-400 font-medium">${escapeHtml(log.timestamp)}</td>
+                            <td class="p-3 text-slate-400 font-medium">${escapeHtml(logWhen(log))}</td>
                             <td class="p-3 font-bold text-slate-800">${escapeHtml(log.productName)}</td>
                             <td class="p-3"><span class="px-2.5 py-1 text-[10px] rounded-md font-extrabold ${badgeColor}">${log.type}</span></td>
-                            <td class="p-3 font-extrabold text-slate-700">${log.qty}</td>
+                            <td class="p-3 font-extrabold text-slate-700">${qtyCellHtml(log)}</td>
                             <td class="p-3 text-slate-500 font-medium">${escapeHtml(log.notes)}</td>
                         </tr>
                     `;
@@ -1656,19 +1863,39 @@
             if(!tbody) return;
             tbody.innerHTML = '';
 
-            const filtered = state.products.filter(p => 
-                p.name.toLowerCase().includes(search) || p.sku.toLowerCase().includes(search)
-            );
+            const stOf = (p) => { const st = numStock(p), rop = parseInt(p.rop) || 0; return st <= 0 ? 'habis' : (st <= rop ? 'rop' : 'aman'); };
+            const cnt = { habis: 0, rop: 0, aman: 0 };
+            state.products.forEach(p => { cnt[stOf(p)]++; });
+            const fSel = document.getElementById('prod-filter');
+            const filterVal = fSel ? fSel.value : 'all';
+            if (fSel) {
+                const labels = { all: `Semua (${state.products.length})`, habis: `🔴 Habis (${cnt.habis})`, rop: `🟡 ROP Warning (${cnt.rop})`, aman: `🟢 Aman (${cnt.aman})`, perlu: `⚠️ Perlu restock (${cnt.habis + cnt.rop})` };
+                Array.from(fSel.options).forEach(o => { if (labels[o.value]) o.text = labels[o.value]; });
+            }
+            const sortVal = (document.getElementById('prod-sort') || {}).value || 'input';
+            const rank = { habis: 0, rop: 1, aman: 2 };
+            const filtered = state.products.filter(p => {
+                const okSearch = String(p.name).toLowerCase().includes(search) || String(p.sku).toLowerCase().includes(search);
+                const st = stOf(p);
+                const okFilter = filterVal === 'all' || (filterVal === 'perlu' ? st !== 'aman' : st === filterVal);
+                return okSearch && okFilter;
+            });
+            if (sortVal === 'name_asc') filtered.sort(cmpName);
+            else if (sortVal === 'name_desc') filtered.sort((a, b) => cmpName(b, a));
+            else if (sortVal === 'stock_asc') filtered.sort((a, b) => numStock(a) - numStock(b) || cmpName(a, b));
+            else if (sortVal === 'stock_desc') filtered.sort((a, b) => numStock(b) - numStock(a) || cmpName(a, b));
+            else if (sortVal === 'status') filtered.sort((a, b) => rank[stOf(a)] - rank[stOf(b)] || numStock(a) - numStock(b) || cmpName(a, b));
 
             if(filtered.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="10" class="p-6 text-center text-slate-400 italic">Tidak ada barang ditemukan.</td></tr>`;
                 return;
             }
 
+            let htmlAcc = '';
             filtered.forEach(p => {
                 const stock = parseInt(p.stock) || 0;
                 const rop = parseInt(p.rop) || 0;
-                const price = parseInt(p.price) || 0;
+                const price = parseFloat(p.price) || 0;
                 const totalAssetVal = stock * price;
 
                 let statusBadge = '';
@@ -1685,7 +1912,7 @@
                     rowBg = '';
                 }
 
-                tbody.innerHTML += `
+                htmlAcc += `
                     <tr class="hover:bg-slate-50 ${rowBg} transition">
                         <td class="p-3.5 font-mono font-bold text-brand-600">${escapeHtml(p.sku)}</td>
                         <td class="p-3.5 font-bold text-slate-800">${escapeHtml(p.name)}</td>
@@ -1703,6 +1930,7 @@
                     </tr>
                 `;
             });
+            tbody.innerHTML = htmlAcc;
             lucide.createIcons();
         }
 
@@ -1716,7 +1944,14 @@
             }
 
             tbody.innerHTML = '';
-            state.FEFO.forEach(d => {
+            const fsv = (document.getElementById('fefo-sort') || {}).value || 'exp_asc';
+            const cmpT = (x, y) => { const a = expiryTime(x.timestamp), b = expiryTime(y.timestamp); return a === b ? 0 : (a < b ? -1 : 1); };
+            const fefoList = [...state.FEFO];
+            if (fsv === 'exp_asc') fefoList.sort(cmpT);
+            else if (fsv === 'exp_desc') fefoList.sort((x, y) => cmpT(y, x));
+            else if (fsv === 'name') fefoList.sort((x, y) => String(x.productName).localeCompare(String(y.productName), 'id', { sensitivity: 'base' }) || cmpT(x, y));
+            else if (fsv === 'qty_desc') fefoList.sort((x, y) => (parseInt(y.qty) || 0) - (parseInt(x.qty) || 0));
+            fefoList.forEach(d => {
                 const statusLower = (d.status || '').toLowerCase();
                 let badgeStyle = 'bg-emerald-100 text-emerald-800 font-bold';
                 let badgeText = '🟢 Masih Aman';
@@ -1759,7 +1994,7 @@
             state.damagedgoods.forEach(r => {
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
-                        <td class="p-3.5 text-slate-400 font-medium">${escapeHtml(r.timestamp)}</td>
+                        <td class="p-3.5 text-slate-400 font-medium">${escapeHtml(logWhen(r))}</td>
                         <td class="p-3.5 font-bold text-slate-800">${escapeHtml(r.productName)} <span class="font-mono text-xs text-rose-600">(${escapeHtml(r.sku)})</span></td>
                         <td class="p-3.5 font-black text-rose-600">-${r.qty} PCS</td>
                         <td class="p-3.5 text-slate-700 font-semibold">${escapeHtml(r.pelapor)}</td>
@@ -1807,7 +2042,7 @@
                 if(!el) return;
                 const currentVal = el.value;
                 el.innerHTML = '<option value="">-- Pilih Barang Gudang --</option>';
-                state.products.forEach(p => {
+                [...state.products].sort(cmpName).forEach(p => {
                     const empty = (parseInt(p.stock) || 0) <= 0;
                     const tag = (id === 'out-product-id' && empty) ? ' — ⛔ HABIS' : '';
                     el.innerHTML += `<option value="${p.id}">${escapeHtml(p.name)} (SKU: ${escapeHtml(p.sku)}) - Rak: ${escapeHtml(p.location || 'Utama')}${tag}</option>`;
@@ -1868,15 +2103,16 @@
             e.preventDefault();
             const prodId = document.getElementById('in-product-id').value;
             const qty = parseInt(document.getElementById('in-qty').value);
+            if(!(qty >= 1)) { showToast('Jumlah barang masuk harus minimal 1.', 'error'); return; }
             const supplier = document.getElementById('in-supplier').value || 'Vendor Utama';
             const notes = document.getElementById('in-notes').value || 'Inbound';
 
             const prod = state.products.find(p => p.id === prodId);
             if(prod) {
-                prod.stock += qty;
+                prod.stock = numStock(prod) + qty;
                 state.logs.push({
-                    id: 'log-' + Date.now(),
-                    timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+                    id: newId('log'),
+                    ...nowStamp(),
                     productName: prod.name,
                     sku: prod.sku,
                     rack: prod.location || 'Utama',
@@ -1896,6 +2132,7 @@
             e.preventDefault();
             const prodId = document.getElementById('out-product-id').value;
             const qty = parseInt(document.getElementById('out-qty').value);
+            if(!(qty >= 1)) { showToast('Jumlah barang keluar harus minimal 1.', 'error'); return; }
             const destination = document.getElementById('out-destination').value || 'Unit Logistik';
             const notes = document.getElementById('out-notes').value || 'Outbound';
 
@@ -1905,14 +2142,14 @@
                     showToast(`⛔ Stok ${prod.name} KOSONG, barang tidak bisa dikeluarkan!`, 'error');
                     return;
                 }
-                if(prod.stock < qty) {
-                    showToast(`Stok tidak mencukupi! Tersedia: ${prod.stock}`, 'error');
+                if(numStock(prod) < qty) {
+                    showToast(`Stok tidak mencukupi! Tersedia: ${numStock(prod)}`, 'error');
                     return;
                 }
-                prod.stock -= qty;
+                prod.stock = numStock(prod) - qty;
                 state.logs.push({
-                    id: 'log-' + Date.now(),
-                    timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+                    id: newId('log'),
+                    ...nowStamp(),
                     productName: prod.name,
                     sku: prod.sku,
                     rack: prod.location || 'Utama',
@@ -1933,19 +2170,24 @@
             e.preventDefault();
             const prodId = document.getElementById('opname-product-id').value;
             const physicalQty = parseInt(document.getElementById('opname-qty').value);
+            if(!(physicalQty >= 0)) { showToast('Hasil hitung fisik tidak valid (minimal 0).', 'error'); return; }
             const auditor = document.getElementById('opname-auditor').value || 'Checker Gudang';
             const notes = document.getElementById('opname-notes').value || 'Audit';
 
             const prod = state.products.find(p => p.id === prodId);
             if(prod) {
-                const diff = physicalQty - prod.stock;
+                const before = numStock(prod);
+                const diff = physicalQty - before;
                 prod.stock = physicalQty;
                 state.logs.push({
-                    id: 'log-' + Date.now(),
-                    timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+                    id: newId('log'),
+                    ...nowStamp(),
                     productName: prod.name,
+                    sku: prod.sku,
                     type: 'OPNAME',
                     qty: physicalQty,
+                    before: before,
+                    diff: diff,
                     notes: `Opname ${auditor} (Selisih: ${diff >= 0 ? '+' + diff : diff}) - ${notes}`
                 });
                 saveStateToCloud();
@@ -1958,11 +2200,16 @@
         function saveProduct(e) {
             e.preventDefault();
             const id = document.getElementById('prod-id').value;
-            const sku = document.getElementById('prod-sku').value;
+            const sku = document.getElementById('prod-sku').value.trim();
+            if(!sku) { showToast('SKU / Barcode wajib diisi.', 'error'); return; }
+            if(state.products.some(p => String(p.sku).trim() === sku && p.id !== id)) {
+                showToast(`SKU ${sku} sudah dipakai barang lain!`, 'error');
+                return;
+            }
             const newProd = {
-                id: id || 'prod-' + Date.now(),
+                id: id || newId('prod'),
                 sku: sku,
-                name: document.getElementById('prod-name').value,
+                name: document.getElementById('prod-name').value.trim(),
                 category: document.getElementById('prod-category').value,
                 location: document.getElementById('prod-location').value || 'Gudang Utama',
                 price: parseFloat(document.getElementById('prod-price').value) || 0,
@@ -1972,13 +2219,30 @@
 
             if(id) {
                 const idx = state.products.findIndex(p => p.id === id);
+                if(idx < 0) { showToast('Barang tidak ditemukan (mungkin sudah dihapus di perangkat lain).', 'error'); closeProductModal(); return; }
+                const oldStock = numStock(state.products[idx]);
                 state.products[idx] = newProd;
+                if (newProd.stock !== oldStock) {
+                    const dStock = newProd.stock - oldStock;
+                    state.logs.push({
+                        id: newId('log'),
+                        ...nowStamp(),
+                        productName: newProd.name,
+                        sku: newProd.sku,
+                        type: 'KOREKSI',
+                        qty: newProd.stock,
+                        before: oldStock,
+                        diff: dStock,
+                        notes: `Koreksi stok via Edit Barang (Selisih: ${dStock > 0 ? '+' : ''}${dStock})`
+                    });
+                }
             } else {
                 state.products.push(newProd);
                 state.logs.push({
-                    id: 'log-' + Date.now(),
-                    timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+                    id: newId('log'),
+                    ...nowStamp(),
                     productName: newProd.name,
+                    sku: newProd.sku,
                     type: 'IN',
                     qty: newProd.stock,
                     notes: `Barang Baru Ditambahkan - Rak: ${newProd.location}`
@@ -2017,6 +2281,7 @@
             const editId = document.getElementById('dmg-edit-id').value;
             const prodId = document.getElementById('dmg-product-id').value;
             const qty = parseInt(document.getElementById('dmg-qty').value);
+            if(!(qty >= 1)) { showToast('Jumlah (Qty) harus minimal 1.', 'error'); return; }
             const status = document.getElementById('dmg-status').value;
             const iso = document.getElementById('dmg-timestamp').value;
             const notes = document.getElementById('dmg-notes').value || 'FEFO Batch';
@@ -2045,7 +2310,7 @@
 
             const prod = state.products.find(p => p.id === prodId);
             if(prod) {
-                const uniqueKey = 'fefo-' + Date.now();
+                const uniqueKey = newId('fefo');
                 state.FEFO.push({
                     id: uniqueKey,
                     timestamp: timestamp,
@@ -2053,7 +2318,8 @@
                     sku: prod.sku,
                     qty: qty,
                     status: status,
-                    notes: notes
+                    notes: notes,
+                    createdDate: todayISO()
                 });
                 saveStateToCloud();
                 showToast('Batch FEFO berhasil dicatat ke Node FEFO Cloud!');
@@ -2101,22 +2367,23 @@
             e.preventDefault();
             const prodId = document.getElementById('rusak-product-id').value;
             const qty = parseInt(document.getElementById('rusak-qty').value);
+            if(!(qty >= 1)) { showToast('Jumlah barang rusak harus minimal 1.', 'error'); return; }
             const pelapor = document.getElementById('rusak-pelapor').value;
             const notes = document.getElementById('rusak-notes').value;
 
             const prod = state.products.find(p => p.id === prodId);
             if(prod) {
-                if(prod.stock < qty) {
+                if(numStock(prod) < qty) {
                     showToast('Stok tidak mencukupi untuk dilaporkan rusak!', 'error');
                     return;
                 }
-                prod.stock -= qty;
+                prod.stock = numStock(prod) - qty;
 
                 if(!state.damagedgoods) state.damagedgoods = [];
-                const uniqueKey = 'rusak-' + Date.now();
+                const uniqueKey = newId('rusak');
                 state.damagedgoods.push({
                     id: uniqueKey,
-                    timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+                    ...nowStamp(),
                     productName: prod.name,
                     sku: prod.sku,
                     qty: qty,
@@ -2125,9 +2392,10 @@
                 });
 
                 state.logs.push({
-                    id: 'log-' + Date.now(),
-                    timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+                    id: newId('log'),
+                    ...nowStamp(),
                     productName: prod.name,
+                    sku: prod.sku,
                     type: 'RUSAK',
                     qty: qty,
                     notes: `Barang Rusak Fisik dilaporkan oleh ${pelapor} - ${notes}`
@@ -2158,7 +2426,7 @@
             if(!state.suppliers) state.suppliers = [];
 
             state.suppliers.push({
-                id: 'sup-' + Date.now(),
+                id: newId('sup'),
                 code: 'USER-' + (state.suppliers.length + 1).toString().padStart(2, '0'),
                 name: nameEl.value,
                 contact: contactEl ? contactEl.value || '-' : '-',
@@ -2186,42 +2454,48 @@
         }
 
         function renderRecapData() {
-            let inTotal = 0, outTotal = 0, dmgTotal = 0;
             const recapTbody = document.getElementById('recap-tbody');
             if(!recapTbody) return;
-            recapTbody.innerHTML = '';
+            const per = getPeriod('rc') || computePeriod('all');
+            const typeF = val('rc-type') || 'all';
+            const dir = val('rc-sort') === 'asc' ? 1 : -1;
 
-            if(!state.logs || state.logs.length === 0) {
-                recapTbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400 italic">Belum ada data rekapitulasi.</td></tr>`;
-                document.getElementById('recap-in-total').innerText = `0 Unit`;
-                document.getElementById('recap-out-total').innerText = `0 Unit`;
-                document.getElementById('recap-dmg-total').innerText = `0 Unit`;
-                return;
-            }
-
-            state.logs.forEach(log => {
-                if(log.type === 'IN') inTotal += log.qty;
-                else if(log.type === 'OUT') outTotal += log.qty;
-                else if(log.type === 'RUSAK') dmgTotal += log.qty;
-
-                const logId = log.id || ('log-' + Math.random());
-                recapTbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="p-3 text-slate-400 font-medium">${escapeHtml(log.timestamp)}</td>
-                        <td class="p-3 font-bold text-slate-800">${escapeHtml(log.productName)}</td>
-                        <td class="p-3"><span class="px-2.5 py-1 text-[10px] rounded-md font-extrabold bg-slate-100 text-slate-700">${log.type}</span></td>
-                        <td class="p-3 font-black text-slate-900">${log.qty}</td>
-                        <td class="p-3 text-slate-500 font-medium">${escapeHtml(log.notes)}</td>
-                        <td class="p-3 text-right">
-                            <button onclick="deleteLogItem('${logId}')" class="p-1 text-slate-400 hover:text-rose-500 btn-press"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                        </td>
-                    </tr>
-                `;
+            const inPeriod = filterByPeriod(state.logs || [], per);
+            let inTotal = 0, outTotal = 0, dmgTotal = 0;
+            inPeriod.forEach(l => {
+                const q = parseInt(l.qty) || 0;
+                if(l.type === 'IN') inTotal += q;
+                else if(l.type === 'OUT') outTotal += q;
+                else if(l.type === 'RUSAK') dmgTotal += q;
             });
+            const shown = sortByWhen(inPeriod.filter(l => typeF === 'all' || l.type === typeF), dir);
 
             document.getElementById('recap-in-total').innerText = `${inTotal} Unit`;
             document.getElementById('recap-out-total').innerText = `${outTotal} Unit`;
             document.getElementById('recap-dmg-total').innerText = `${dmgTotal} Unit`;
+            const cnt = document.getElementById('rc-count');
+            if(cnt) cnt.innerText = `Menampilkan ${shown.length} transaksi | ${per.label}`;
+
+            if(shown.length === 0) {
+                recapTbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400 italic">Tidak ada transaksi pada periode / jenis ini.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            shown.forEach(log => {
+                html += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3 text-slate-400 font-medium whitespace-nowrap">${escapeHtml(logWhen(log))}</td>
+                        <td class="p-3 font-bold text-slate-800">${escapeHtml(log.productName)}</td>
+                        <td class="p-3"><span class="px-2.5 py-1 text-[10px] rounded-md font-extrabold bg-slate-100 text-slate-700">${escapeHtml(log.type)}</span></td>
+                        <td class="p-3 font-black text-slate-900">${qtyCellHtml(log)}</td>
+                        <td class="p-3 text-slate-500 font-medium">${escapeHtml(log.notes)}</td>
+                        <td class="p-3 text-right">
+                            <button onclick="deleteLogItem('${log.id}')" class="p-1 text-slate-400 hover:text-rose-500 btn-press"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </td>
+                    </tr>`;
+            });
+            recapTbody.innerHTML = html;
             lucide.createIcons();
         }
 
@@ -2270,6 +2544,143 @@
             const d = Math.round((t - today) / 86400000);
             return d < 0 ? `Lewat ${Math.abs(d)} hari` : d === 0 ? 'Hari ini' : `${d} hari`;
         }
+        const BULAN_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+        function isoLocal(d) { return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; }
+
+        // Tanggal transaksi dari teks timestamp (dd/mm/yyyy ... ; format lama mm/dd/yy untuk data awal)
+        function parseLogDate(ts) {
+            const m = String(ts || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
+            if (!m) return '';
+            let a = parseInt(m[1], 10), b = parseInt(m[2], 10), y = m[3];
+            let day = a, month = b;
+            if (y.length === 2) { y = '20' + y; day = b; month = a; }
+            if (month < 1 || month > 12 || day < 1 || day > 31) return '';
+            return `${y}-${pad2(month)}-${pad2(day)}`;
+        }
+
+        function isoWeekOf(date) {
+            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            return { year: d.getUTCFullYear(), week: Math.ceil((((d - yearStart) / 86400000) + 1) / 7) };
+        }
+        function isoWeeksInYear(y) { return isoWeekOf(new Date(y, 11, 28)).week; }
+        function weekRange(y, w) {
+            const jan4 = new Date(y, 0, 4);
+            const dow = (jan4.getDay() + 6) % 7;
+            const mon = new Date(y, 0, 4 - dow + (w - 1) * 7);
+            const sun = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 6);
+            return { from: isoLocal(mon), to: isoLocal(sun) };
+        }
+
+        // kind: all | week | month | year ; sub: nomor minggu (1-53) atau bulan (1-12)
+        function computePeriod(kind, year, sub) {
+            if (kind === 'all') return { kind: 'all', from: '', to: '', label: 'Seluruh periode' };
+            const y = parseInt(year, 10);
+            if (!(y >= 2000 && y <= 2100)) return null;
+            if (kind === 'year') return { kind: 'year', from: `${y}-01-01`, to: `${y}-12-31`, label: `Tahun ${y}` };
+            if (kind === 'month') {
+                const m = parseInt(sub, 10);
+                if (!(m >= 1 && m <= 12)) return null;
+                const last = new Date(y, m, 0).getDate();
+                return { kind: 'month', from: `${y}-${pad2(m)}-01`, to: `${y}-${pad2(m)}-${pad2(last)}`, label: `${BULAN_ID[m - 1]} ${y}` };
+            }
+            if (kind === 'week') {
+                const w = parseInt(sub, 10);
+                if (!(w >= 1 && w <= isoWeeksInYear(y))) return null;
+                const r = weekRange(y, w);
+                return { kind: 'week', from: r.from, to: r.to, label: `Minggu ke-${w} ${y} (${isoToDMY(r.from)} s/d ${isoToDMY(r.to)})` };
+            }
+            return null;
+        }
+
+        function periodControlsHTML(prefix, cb) {
+            const c = 'w-full min-w-0 border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500 bg-white text-xs';
+            const lb = 'font-bold text-slate-700 block mb-1 text-[11px]';
+            const mo = BULAN_ID.map((n, i) => `<option value="${i + 1}">${n}</option>`).join('');
+            return `<div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div><label class="${lb}">Periode</label>
+                    <select id="${prefix}-kind" class="${c}" onchange="periodUiChange('${prefix}','${cb}')">
+                        <option value="all">Semua data</option>
+                        <option value="week">Mingguan</option>
+                        <option value="month">Bulanan</option>
+                        <option value="year">Tahunan</option>
+                    </select></div>
+                <div id="${prefix}-year-wrap" class="hidden"><label class="${lb}">Tahun</label>
+                    <input type="number" id="${prefix}-year" min="2000" max="2100" class="${c}" oninput="periodUiChange('${prefix}','${cb}')"></div>
+                <div id="${prefix}-week-wrap" class="hidden col-span-2"><label class="${lb}">Minggu ke-</label>
+                    <select id="${prefix}-week" class="${c}" onchange="periodUiChange('${prefix}','${cb}')"></select></div>
+                <div id="${prefix}-month-wrap" class="hidden"><label class="${lb}">Bulan</label>
+                    <select id="${prefix}-month" class="${c}" onchange="periodUiChange('${prefix}','${cb}')">${mo}</select></div>
+            </div>
+            <p id="${prefix}-preview" class="text-[11px] font-bold text-sky-700 mt-2"></p>`;
+        }
+
+        function buildWeekOptions(prefix, keepWeek) {
+            const sel = document.getElementById(prefix + '-week');
+            if (!sel) return;
+            const y = parseInt(val(prefix + '-year'), 10);
+            if (!(y >= 2000 && y <= 2100)) { sel.innerHTML = ''; return; }
+            const n = isoWeeksInYear(y);
+            const prev = parseInt(keepWeek || sel.value, 10);
+            let h = '';
+            for (let w = 1; w <= n; w++) {
+                const r = weekRange(y, w);
+                h += `<option value="${w}">Minggu ${w} (${r.from.slice(8)}/${r.from.slice(5, 7)} - ${r.to.slice(8)}/${r.to.slice(5, 7)})</option>`;
+            }
+            sel.innerHTML = h;
+            if (prev >= 1 && prev <= n) sel.value = String(prev);
+        }
+
+        function getPeriod(prefix) {
+            const kind = val(prefix + '-kind') || 'all';
+            return computePeriod(kind, val(prefix + '-year'), kind === 'week' ? val(prefix + '-week') : val(prefix + '-month'));
+        }
+
+        function periodUiChange(prefix, cb) {
+            const kind = val(prefix + '-kind') || 'all';
+            const show = (id, on) => { const el = document.getElementById(prefix + id); if (el) el.classList.toggle('hidden', !on); };
+            show('-year-wrap', kind !== 'all');
+            show('-week-wrap', kind === 'week');
+            show('-month-wrap', kind === 'month');
+            if (kind === 'week') buildWeekOptions(prefix);
+            const per = getPeriod(prefix);
+            const pv = document.getElementById(prefix + '-preview');
+            if (pv) pv.innerText = per ? ('Periode: ' + per.label) : '⚠️ Lengkapi pilihan periode dengan benar.';
+            if (cb && typeof window[cb] === 'function') window[cb]();
+        }
+
+        function initPeriodControls(prefix, cb) {
+            const mount = document.getElementById(prefix + '-period-mount');
+            if (!mount) return;
+            mount.innerHTML = periodControlsHTML(prefix, cb || '');
+            const today = todayISO();
+            const y = parseInt(today.slice(0, 4), 10);
+            document.getElementById(prefix + '-year').value = y;
+            document.getElementById(prefix + '-month').value = String(parseInt(today.slice(5, 7), 10));
+            const cur = isoWeekOf(new Date(today + 'T00:00:00'));
+            const wk = cur.year === y ? cur.week : (cur.year > y ? 1 : isoWeeksInYear(y));
+            buildWeekOptions(prefix, wk);
+            periodUiChange(prefix, '');
+        }
+
+        function copyPeriodUI(from, to) {
+            if (!document.getElementById(from + '-kind') || !document.getElementById(to + '-kind')) return;
+            document.getElementById(to + '-kind').value = val(from + '-kind');
+            document.getElementById(to + '-year').value = val(from + '-year');
+            document.getElementById(to + '-month').value = val(from + '-month');
+            buildWeekOptions(to, val(from + '-week'));
+            periodUiChange(to, '');
+        }
+
+        function filterByPeriod(arr, per) {
+            if (!per || per.kind === 'all') return arr;
+            return arr.filter(x => { const d = logDateISO(x); return d && d >= per.from && d <= per.to; });
+        }
+        function periodPhrase(per) { return (!per || per.kind === 'all') ? 'sampai dengan tanggal dokumen ini dibuat' : `pada periode <b>${docEsc(per.label)}</b>`; }
+        function emptyMsg(per, what) { return (!per || per.kind === 'all') ? `Belum ada data ${what}.` : `Tidak ada data ${what} pada periode ini.`; }
+
         function titleCase(s) { return String(s || '-').replace(/\b\w/g, c => c.toUpperCase()); }
 
         function loadDocPrefs() { try { return JSON.parse(localStorage.getItem('sistock_doc_prefs') || '{}'); } catch (e) { return {}; } }
@@ -2302,6 +2713,14 @@
             } else {
                 baBlock.classList.add('hidden');
             }
+            const perBlock = document.getElementById('ps-period-block');
+            if (type === 'in' || type === 'out' || type === 'all') {
+                perBlock.classList.remove('hidden');
+                initPeriodControls('ps', '');
+                copyPeriodUI('rc', 'ps');
+            } else {
+                perBlock.classList.add('hidden');
+            }
             document.getElementById('modal-print-setup').classList.remove('hidden');
             lucide.createIcons();
         }
@@ -2321,6 +2740,11 @@
                 admin: val('ps-admin').trim()
             };
             if (!meta.kode) { showToast('Kode dokumen wajib diisi.', 'error'); return; }
+            if (type === 'in' || type === 'out' || type === 'all') {
+                const per = getPeriod('ps');
+                if (!per) { showToast('Lengkapi pilihan periode laporan dulu.', 'error'); return; }
+                meta.period = per;
+            }
 
             if (type === 'ba') {
                 meta.ba = {
@@ -2430,7 +2854,7 @@
                 <table class="meta"><tr>
                     <td class="ml">${docEsc(kodeLabel || 'Kode Dokumen')}</td><td>: <b>${docEsc(meta.kode)}</b></td>
                     <td class="ml">Tanggal</td><td>: ${isoToDMY(meta.tanggal)}</td>
-                </tr></table>
+                </tr>${meta.period ? `<tr><td class="ml">Periode</td><td colspan="3">: <b>${docEsc(meta.period.label)}</b></td></tr>` : ''}</table>
                 ${bodyHTML}
                 <div class="foot">Dokumen dihasilkan oleh SISTOCK 2.0 — SMKN 3 Bandung · Dicetak: ${docEsc(printedAt)} WIB</div>
                 </td></tr></tbody></table>
@@ -2472,11 +2896,16 @@
         }
 
         function sumQty(arr) { return arr.reduce((a, l) => a + (parseInt(l.qty) || 0), 0); }
+        function soSummary(arr) {
+            let phys = 0, diff = 0, known = 0;
+            arr.forEach(l => { const i = opnameInfo(l); phys += i.physical; if (i.diff !== null) { diff += i.diff; known++; } });
+            return { phys: phys, diff: diff, known: known };
+        }
 
         function logRows(arr) {
             return arr.map((l, i) => [
                 String(i + 1),
-                docEsc(l.timestamp),
+                docEsc(logWhen(l)),
                 `<b>${docEsc(l.productName)}</b>` + (l.sku ? `<br><span class="sub">SKU: ${docEsc(l.sku)}</span>` : ''),
                 docEsc(l.qty),
                 docEsc(l.notes)
@@ -2507,7 +2936,8 @@
         ];
 
         function buildDocHTML(type, meta) {
-            const logs = state.logs || [];
+            const per = meta.period;
+            const logs = sortByWhen(filterByPeriod(state.logs || [], per));
             const T = DOC_TYPES[type].title;
             const sig = docSignatures(meta, sigCols3(meta), true);
             let body = '';
@@ -2515,8 +2945,8 @@
             if (type === 'in' || type === 'out') {
                 const arr = logs.filter(l => l.type === (type === 'in' ? 'IN' : 'OUT'));
                 body = `
-                    <p class="intro">Rekapitulasi seluruh transaksi barang ${type === 'in' ? 'masuk' : 'keluar'} yang tercatat pada sistem SISTOCK 2.0 sampai dengan tanggal dokumen ini dibuat.</p>
-                    ${docTable(logCols(type === 'in' ? 'KETERANGAN / SUPPLIER' : 'KETERANGAN / TUJUAN'), logRows(arr), 'Belum ada data.')}
+                    <p class="intro">Rekapitulasi seluruh transaksi barang ${type === 'in' ? 'masuk' : 'keluar'} yang tercatat pada sistem SISTOCK 2.0 ${periodPhrase(per)}.</p>
+                    ${docTable(logCols(type === 'in' ? 'KETERANGAN / SUPPLIER' : 'KETERANGAN / TUJUAN'), logRows(arr), emptyMsg(per, type === 'in' ? 'barang masuk' : 'barang keluar'))}
                     <p class="total">Total: <b>${sumQty(arr)}</b> unit dari <b>${arr.length}</b> transaksi</p>
                     ${sig}`;
             } else if (type === 'fefo') {
@@ -2530,7 +2960,7 @@
                 const ins = logs.filter(l => l.type === 'IN');
                 const outs = logs.filter(l => l.type === 'OUT');
                 const sos = logs.filter(l => l.type === 'OPNAME');
-                const dmg = state.damagedgoods || [];
+                const dmg = sortByWhen(filterByPeriod(state.damagedgoods || [], per));
                 const fefo = [...(state.FEFO || [])].sort((a, b) => expiryTime(a.timestamp) - expiryTime(b.timestamp));
 
                 const summary = docTable(
@@ -2538,44 +2968,55 @@
                     [
                         ['Barang Masuk (IN)', String(ins.length), String(sumQty(ins))],
                         ['Barang Keluar (OUT)', String(outs.length), String(sumQty(outs))],
-                        ['Stock Opname (SO)', String(sos.length), '-'],
+                        ['Stock Opname (SO) - total hasil hitung fisik', String(sos.length), String(soSummary(sos).phys)],
                         ['Barang Rusak (DMG)', String(dmg.length), String(sumQty(dmg))],
                         ['Batch FEFO', String(fefo.length), String(sumQty(fefo))]
                     ]
                 );
 
-                const soRows = sos.map((l, i) => [String(i + 1), docEsc(l.timestamp), `<b>${docEsc(l.productName)}</b>`, docEsc(l.qty), docEsc(l.notes)]);
+                const soRows = sos.map((l, i) => {
+                    const o = opnameInfo(l);
+                    return [
+                        String(i + 1), docEsc(logWhen(l)), `<b>${docEsc(l.productName)}</b>`,
+                        o.before === null ? '-' : String(o.before),
+                        `<b>${o.physical}</b>`,
+                        docEsc(fmtDiff(o.diff)),
+                        docEsc(String(l.notes || '').replace(/\s*\(Selisih:[^)]*\)/, ''))
+                    ];
+                });
+                const soSum = soSummary(sos);
                 const dmgRows = dmg.map((r, i) => [
-                    String(i + 1), docEsc(r.timestamp),
+                    String(i + 1), docEsc(logWhen(r)),
                     `<b>${docEsc(r.productName)}</b><br><span class="sub">SKU: ${docEsc(r.sku || '-')}</span>`,
                     docEsc(r.qty), docEsc(r.pelapor), docEsc(r.notes)
                 ]);
 
                 body = `
-                    <p class="intro">Laporan rekapitulasi seluruh mutasi dan kondisi barang pada gudang, dikelompokkan per kategori.</p>
+                    <p class="intro">Laporan rekapitulasi seluruh mutasi dan kondisi barang pada gudang, dikelompokkan per kategori.${per && per.kind !== 'all' ? ' Periode laporan: <b>' + docEsc(per.label) + '</b>.' : ''}</p>
                     <div class="sec">RINGKASAN</div>
                     ${summary}
 
                     <div class="sec">A. BARANG MASUK (IN)</div>
-                    ${docTable(logCols('KETERANGAN / SUPPLIER'), logRows(ins), 'Belum ada data barang masuk.')}
+                    ${docTable(logCols('KETERANGAN / SUPPLIER'), logRows(ins), emptyMsg(per, 'barang masuk'))}
                     <p class="total">Subtotal: <b>${sumQty(ins)}</b> unit</p>
 
                     <div class="sec">B. BARANG KELUAR (OUT)</div>
-                    ${docTable(logCols('KETERANGAN / TUJUAN'), logRows(outs), 'Belum ada data barang keluar.')}
+                    ${docTable(logCols('KETERANGAN / TUJUAN'), logRows(outs), emptyMsg(per, 'barang keluar'))}
                     <p class="total">Subtotal: <b>${sumQty(outs)}</b> unit</p>
 
                     <div class="sec">C. STOCK OPNAME (SO)</div>
                     ${docTable(
-                        [{ t: 'NO', w: '6%', a: 'center' }, { t: 'WAKTU', w: '17%' }, { t: 'NAMA BARANG' }, { t: 'HASIL FISIK', w: '12%', a: 'center' }, { t: 'KETERANGAN / SELISIH' }],
-                        soRows, 'Belum ada data stock opname.')}
+                        [{ t: 'NO', w: '5%', a: 'center' }, { t: 'WAKTU', w: '15%' }, { t: 'NAMA BARANG' }, { t: 'STOK SISTEM', w: '10%', a: 'center' }, { t: 'HASIL FISIK', w: '10%', a: 'center' }, { t: 'SELISIH', w: '9%', a: 'center' }, { t: 'KETERANGAN', w: '20%' }],
+                        soRows, emptyMsg(per, 'stock opname'))}
+                    <p class="total">Total hasil fisik: <b>${soSum.phys}</b> unit | Total selisih: <b>${fmtDiff(soSum.known ? soSum.diff : null)}</b> unit dari <b>${sos.length}</b> pencatatan</p>
 
                     <div class="sec">D. BARANG RUSAK (DMG)</div>
                     ${docTable(
                         [{ t: 'NO', w: '6%', a: 'center' }, { t: 'WAKTU', w: '17%' }, { t: 'NAMA BARANG' }, { t: 'QTY', w: '8%', a: 'center' }, { t: 'PELAPOR', w: '14%' }, { t: 'KETERANGAN KERUSAKAN' }],
-                        dmgRows, 'Belum ada data barang rusak.')}
+                        dmgRows, emptyMsg(per, 'barang rusak'))}
                     <p class="total">Subtotal: <b>${sumQty(dmg)}</b> unit</p>
 
-                    <div class="sec">E. BATCH FEFO</div>
+                    <div class="sec">E. BATCH FEFO${per && per.kind !== 'all' ? ' (kondisi saat dokumen dicetak, tidak dibatasi periode)' : ''}</div>
                     ${docTable(FEFO_COLS, fefoRows(fefo), 'Belum ada data FEFO.')}
                     <p class="total">Subtotal: <b>${sumQty(fefo)}</b> unit dari <b>${fefo.length}</b> batch</p>
                     ${sig}`;
@@ -2593,6 +3034,7 @@
         }
 
         function buildDoHTML(meta, rows) {
+            const totalQty = rows.reduce((a, r) => a + (parseInt(r.qty) || 0), 0);
             const trs = rows.map((r, i) => [
                 String(i + 1),
                 `<b>${docEsc(r.name)}</b>`,
@@ -2602,18 +3044,19 @@
                 docEsc(r.unit)
             ]);
             const body = `
-                <table class="meta" style="margin-bottom:8px;"><tr>
-                    <td class="ml">Penerima</td><td colspan="3">: <b>${docEsc(meta.customer)}</b></td>
-                </tr></table>
+                <table class="meta" style="margin-bottom:10px;">
+                    <tr><td class="ml">Penerima / Tujuan</td><td>: <b>${docEsc(meta.customer)}</b></td></tr>
+                    ${meta.note ? `<tr><td class="ml">Catatan</td><td>: ${docEsc(meta.note)}</td></tr>` : ''}
+                </table>
+                <p class="intro">Bersama surat jalan ini, kami serahkan barang-barang berikut:</p>
                 ${docTable(
                     [{ t: 'NO', w: '6%', a: 'center' }, { t: 'NAMA BARANG' }, { t: 'SKU / BARCODE', w: '20%' }, { t: 'RAK', w: '10%', a: 'center' }, { t: 'QTY', w: '9%', a: 'center' }, { t: 'SATUAN', w: '11%', a: 'center' }],
                     trs)}
-                <p class="intro" style="margin-top:10px;">Barang tersebut di atas telah diperiksa dan diserahkan dalam keadaan baik dan jumlah yang sesuai.</p>
+                <p class="total">Total: <b>${rows.length}</b> jenis barang, <b>${totalQty}</b> unit</p>
+                <p class="intro" style="margin-top:12px;">Barang tersebut di atas telah diperiksa dan diterima dalam keadaan baik dan jumlah yang sesuai.</p>
                 ${docSignatures(meta, [
-                    { role: 'Penerima', name: meta.customer && meta.customer !== '-' ? meta.customer : '' },
-                    { role: 'Admin Gudang', name: meta.admin },
-                    { role: 'Guru Pengawas', name: meta.guru },
-                    { role: 'Manager Gudang', name: meta.manager }
+                    { role: 'Penerima', name: '' },
+                    { role: 'Admin Gudang', name: meta.admin }
                 ], false)}`;
             return docShell(DOC_TYPES.do.title, meta, body, 'No. DO');
         }
@@ -2633,6 +3076,195 @@
                     try { w.focus(); w.print(); } catch (e) {}
                 }
             }, 250);
+        }
+
+        // ============================================================
+        // EXPORT EXCEL (XLSX): harian (pilih tanggal) atau backup lengkap
+        // ============================================================
+        function logDelta(l) {
+            const q = parseInt(l.qty) || 0;
+            if (l.type === 'IN') return q;
+            if (l.type === 'OUT' || l.type === 'RUSAK') return -q;
+            if (l.type === 'OPNAME' || l.type === 'KOREKSI') return opnameInfo(l).diff || 0;
+            return 0;
+        }
+        function findProductForLog(l) {
+            if (l.sku) {
+                const p = state.products.find(x => String(x.sku).trim() === String(l.sku).trim());
+                if (p) return p;
+            }
+            const n = String(l.productName || '').trim().toLowerCase();
+            return state.products.find(x => String(x.name).trim().toLowerCase() === n) || null;
+        }
+        // Stok pada akhir tanggal tertentu = stok sekarang dikurangi mutasi setelah tanggal itu
+        function stockSnapshot(isoDate) {
+            const map = {};
+            state.products.forEach(p => { map[p.id] = numStock(p); });
+            let undated = 0;
+            if (isoDate < todayISO()) {
+                (state.logs || []).forEach(l => {
+                    const d = logDateISO(l);
+                    if (!d) { undated++; return; }
+                    if (d > isoDate) {
+                        const p = findProductForLog(l);
+                        if (p) map[p.id] -= logDelta(l);
+                    }
+                });
+            }
+            let clamped = 0;
+            Object.keys(map).forEach(k => { if (map[k] < 0) { map[k] = 0; clamped++; } });
+            return { map: map, undated: undated, clamped: clamped };
+        }
+
+        function exStatus(stock, rop) { return stock <= 0 ? 'HABIS' : (stock <= rop ? 'ROP WARNING' : 'AMAN'); }
+        function logTypeLabel(t) {
+            return ({ IN: 'MASUK (IN)', OUT: 'KELUAR (OUT)', OPNAME: 'STOCK OPNAME (SO)', RUSAK: 'BARANG RUSAK (DMG)', KOREKSI: 'KOREKSI STOK' })[t] || t;
+        }
+
+        function buildExportSheets(mode, day) {
+            const full = mode === 'full';
+            const today = todayISO();
+            const snapDay = full ? today : day;
+            const snap = stockSnapshot(snapDay);
+            const sheets = [];
+
+            // 1. Stok & ROP
+            const prods = [...state.products].sort(cmpName);
+            let sumStock = 0, sumValue = 0;
+            const stokRows = prods.map((p, i) => {
+                const st = snap.map[p.id] || 0;
+                const rop = parseInt(p.rop) || 0;
+                const price = parseFloat(p.price) || 0;
+                sumStock += st; sumValue += st * price;
+                return [i + 1, String(p.sku), p.name, p.category || '', p.location || '', st, rop, exStatus(st, rop), price, st * price];
+            });
+            stokRows.push(['', '', 'TOTAL', '', '', sumStock, '', '', '', sumValue]);
+            sheets.push({
+                name: 'Stok & ROP',
+                aoa: [['NO', 'SKU / BARCODE', 'NAMA BARANG', 'KATEGORI / SATUAN', 'RAK / LOKASI', 'STOK', 'ROP', 'STATUS', 'HARGA SATUAN (Rp)', 'NILAI STOK (Rp)']].concat(stokRows),
+                cols: [6, 20, 36, 18, 18, 9, 9, 14, 18, 18]
+            });
+
+            // 2. Transaksi
+            const logs = sortByWhen((state.logs || []).filter(l => full || logDateISO(l) === day));
+            const logRowsX = logs.map(l => {
+                const isSO = l.type === 'OPNAME' || l.type === 'KOREKSI';
+                const inf = opnameInfo(l);
+                return [isoToDMY(logDateISO(l)) || String(l.timestamp || ''), logTime(l), logTypeLabel(l.type), l.productName || '', String(l.sku || ''), parseInt(l.qty) || 0, isSO && inf.diff !== null ? inf.diff : '', l.notes || ''];
+            });
+            sheets.push({
+                name: full ? 'Semua Transaksi' : ('Transaksi ' + isoToDMY(day).replace(/\//g, '-')),
+                aoa: [['TANGGAL', 'JAM', 'JENIS', 'NAMA BARANG', 'SKU', 'QTY (SO = HASIL FISIK)', 'SELISIH', 'KETERANGAN']].concat(logRowsX),
+                cols: [12, 8, 22, 34, 18, 14, 10, 50]
+            });
+
+            // 3. Barang rusak
+            const dmg = sortByWhen((state.damagedgoods || []).filter(r => full || logDateISO(r) === day));
+            sheets.push({
+                name: 'Barang Rusak',
+                aoa: [['TANGGAL', 'JAM', 'NAMA BARANG', 'SKU', 'QTY', 'PELAPOR', 'KETERANGAN']].concat(
+                    dmg.map(r => [isoToDMY(logDateISO(r)) || String(r.timestamp || ''), logTime(r), r.productName || '', String(r.sku || ''), parseInt(r.qty) || 0, r.pelapor || '', r.notes || ''])),
+                cols: [12, 8, 34, 18, 8, 18, 50]
+            });
+
+            // 4. FEFO (kondisi saat export)
+            const fefo = [...(state.FEFO || [])].sort((a, b) => { const x = expiryTime(a.timestamp), y = expiryTime(b.timestamp); return x === y ? 0 : (x < y ? -1 : 1); });
+            sheets.push({
+                name: 'FEFO',
+                aoa: [['NO', 'TGL EXPIRED', 'NAMA BARANG', 'SKU', 'QTY', 'SISA WAKTU', 'STATUS', 'CATATAN', 'TGL DIINPUT']].concat(
+                    fefo.map((d, i) => [i + 1, d.timestamp || '', d.productName || '', String(d.sku || ''), parseInt(d.qty) || 0, fefoDaysLabel(d.timestamp), titleCase(d.status), d.notes || '', d.createdDate ? isoToDMY(d.createdDate) : ''])),
+                cols: [6, 14, 34, 18, 8, 16, 22, 30, 14]
+            });
+
+            // 5. Supplier (backup lengkap)
+            if (full) {
+                const sup = state.suppliers || [];
+                const keys = [];
+                sup.forEach(o => Object.keys(o).forEach(k => { if (keys.indexOf(k) === -1) keys.push(k); }));
+                sheets.push({
+                    name: 'Supplier',
+                    aoa: [keys.map(k => k.toUpperCase())].concat(sup.map(o => keys.map(k => (o[k] == null ? '' : (typeof o[k] === 'object' ? JSON.stringify(o[k]) : o[k]))))),
+                    cols: keys.map(() => 24)
+                });
+            }
+
+            // 6. Info
+            const notes = [];
+            if (full) notes.push('Backup lengkap: stok = kondisi saat file dibuat, transaksi = seluruh riwayat.');
+            else if (day < today) notes.push('Stok dihitung ulang dari riwayat transaksi sampai akhir tanggal tersebut. Stok yang diubah lewat Edit Barang sebelum fitur Koreksi aktif tidak tercatat di riwayat, jadi bisa sedikit berbeda.');
+            else notes.push('Stok = kondisi saat file dibuat.');
+            if (snap.undated) notes.push(`${snap.undated} catatan lama tanpa tanggal tidak ikut dihitung.`);
+            if (snap.clamped) notes.push(`${snap.clamped} barang dihitung negatif lalu ditampilkan 0 karena riwayat tidak lengkap.`);
+            notes.push('Sheet FEFO menampilkan batch saat file dibuat (tidak dibatasi tanggal).');
+            sheets.push({
+                name: 'Info',
+                aoa: [
+                    ['SISTOCK 2.0 - EXPORT DATA'],
+                    ['Instansi', 'SMK Negeri 3 Bandung'],
+                    ['Jenis export', full ? 'Backup lengkap' : 'Harian'],
+                    ['Tanggal data', isoToDMY(snapDay)],
+                    ['Dibuat pada', nowStamp().timestamp + ' WIB'],
+                    ['Akun', sessionStorage.getItem('sistock_username') || '-'],
+                    ['Jumlah barang', prods.length],
+                    ['Jumlah transaksi pada file', logRowsX.length]
+                ].concat(notes.map((n, i) => [i === 0 ? 'Catatan' : '', n])),
+                cols: [26, 100]
+            });
+            return sheets;
+        }
+
+        function openExportModal() {
+            document.getElementById('ex-mode').value = 'daily';
+            const d = document.getElementById('ex-date');
+            d.max = todayISO();
+            d.value = todayISO();
+            updateExportUI();
+            document.getElementById('modal-export').classList.remove('hidden');
+            lucide.createIcons();
+        }
+        function closeExportModal() { document.getElementById('modal-export').classList.add('hidden'); }
+        function setExportDate(offset) {
+            const base = new Date(todayISO() + 'T00:00:00');
+            base.setDate(base.getDate() + offset);
+            document.getElementById('ex-date').value = isoLocal(base);
+            updateExportUI();
+        }
+        function updateExportUI() {
+            const mode = val('ex-mode') || 'daily';
+            document.getElementById('ex-date-wrap').classList.toggle('hidden', mode === 'full');
+            const note = document.getElementById('ex-note');
+            if (mode === 'full') {
+                note.innerText = 'Berisi: Stok & ROP saat ini, seluruh transaksi, barang rusak, FEFO, dan supplier. Cocok untuk backup berkala.';
+                return;
+            }
+            const day = val('ex-date') || todayISO();
+            if (day > todayISO()) { note.innerText = '⚠️ Tanggal tidak boleh di masa depan.'; return; }
+            note.innerText = day < todayISO()
+                ? `Stok dihitung ulang sampai akhir ${isoToDMY(day)} dari riwayat transaksi. Sheet transaksi hanya berisi tanggal tersebut.`
+                : 'Stok = kondisi saat ini. Sheet transaksi berisi transaksi hari ini.';
+        }
+
+        function runExportXlsx() {
+            if (typeof XLSX === 'undefined') { showToast('Library Excel belum termuat. Cek internet lalu muat ulang halaman.', 'error'); return; }
+            const mode = val('ex-mode') || 'daily';
+            const today = todayISO();
+            const day = val('ex-date') || today;
+            if (mode === 'daily' && day > today) { showToast('Tanggal tidak boleh di masa depan.', 'error'); return; }
+            try {
+                const wb = XLSX.utils.book_new();
+                buildExportSheets(mode, day).forEach(sh => {
+                    const ws = XLSX.utils.aoa_to_sheet(sh.aoa);
+                    ws['!cols'] = sh.cols.map(w => ({ wch: w }));
+                    XLSX.utils.book_append_sheet(wb, ws, sh.name.slice(0, 31));
+                });
+                const fname = mode === 'full' ? `SISTOCK_Backup_Lengkap_${today}.xlsx` : `SISTOCK_Stok_${day}.xlsx`;
+                XLSX.writeFile(wb, fname);
+                closeExportModal();
+                showToast(`File ${fname} berhasil dibuat.`);
+            } catch (err) {
+                console.error('Export Excel gagal:', err);
+                showToast('Gagal membuat file Excel.', 'error');
+            }
         }
 
         // ---------- Tombol cetak ----------
@@ -2677,9 +3309,11 @@
 
         function openDeliveryModal() {
             const dateInput = document.getElementById('doDate');
-            if(dateInput && !dateInput.value) dateInput.valueAsDate = new Date();
-            
-            document.getElementById('previewDoNumber').innerText = `DO${currentDoNumber}`;
+            if(dateInput && !dateInput.value) dateInput.value = todayISO();
+            const kodeEl = document.getElementById('doKode');
+            if(kodeEl && !kodeEl.value.trim()) kodeEl.value = `DO${currentDoNumber}`;
+            const adminEl = document.getElementById('doAdmin');
+            if(adminEl && !adminEl.value.trim()) adminEl.value = loadDocPrefs().admin || '';
             
             renderDoSelector();
             updateDeliveryPreview();
@@ -2710,11 +3344,19 @@
             const customerEl = document.getElementById('doCustomer');
             const dateEl = document.getElementById('doDate');
             document.getElementById('previewCustomer').innerText = customerEl ? customerEl.value || '-' : '-';
+            const sigA = document.getElementById('previewSigAdmin');
+            if (sigA) sigA.innerText = val('doAdmin').trim() || '( ............ )';
+            const numEl = document.getElementById('previewDoNumber');
+            if (numEl) numEl.innerText = val('doKode').trim() || '-';
+            const noteWrap = document.getElementById('previewNoteWrap');
+            if (noteWrap) {
+                const nt = val('doNote').trim();
+                noteWrap.classList.toggle('hidden', !nt);
+                document.getElementById('previewNote').innerText = nt;
+            }
             
             if(dateEl && dateEl.value) {
-                const d = new Date(dateEl.value);
-                const options = { day: 'numeric', month: 'long', year: 'numeric' };
-                document.getElementById('previewDate').innerText = d.toLocaleDateString('id-ID', options);
+                document.getElementById('previewDate').innerText = isoToDMY(dateEl.value);
             } else {
                 document.getElementById('previewDate').innerText = '-';
             }
@@ -2739,13 +3381,13 @@
                 const qtyVal = document.getElementById(`doQty_${id}`).value;
 
                 tbody.innerHTML += `
-                    <tr class="border-b border-slate-200">
-                        <td class="py-3 px-2">
+                    <tr>
+                        <td class="py-2 px-2 border border-slate-800">
                             <p class="font-extrabold text-slate-900">${escapeHtml(name)}</p>
                             <p class="text-[10px] text-slate-500 font-medium">SKU: ${escapeHtml(sku)} | Rak: ${escapeHtml(rack)}</p>
                         </td>
-                        <td class="py-3 px-2 text-center font-black text-slate-900">${qtyVal}</td>
-                        <td class="py-3 px-2 text-right font-semibold text-slate-700">${escapeHtml(unit)}</td>
+                        <td class="py-2 px-2 text-center font-black text-slate-900 border border-slate-800">${escapeHtml(qtyVal)}</td>
+                        <td class="py-2 px-2 text-center font-semibold text-slate-700 border border-slate-800">${escapeHtml(unit)}</td>
                     </tr>
                 `;
             });
@@ -2755,10 +3397,36 @@
             const res = collectDoItems();
             if(!res.rows.length) { showToast('Pilih minimal satu barang untuk Surat Jalan.', 'error'); return; }
             if(res.err) { showToast(res.err, 'error'); return; }
-            openPrintSetup('do', { date: val('doDate') || todayISO() });
+            const kode = val('doKode').trim();
+            if(!kode) { showToast('Kode dokumen wajib diisi.', 'error'); return; }
+            const customer = val('doCustomer').trim();
+            if(!customer) { showToast('Nama penerima wajib diisi.', 'error'); return; }
+
+            const meta = {
+                kode: kode,
+                tanggal: val('doDate') || todayISO(),
+                customer: customer,
+                admin: val('doAdmin').trim(),
+                note: val('doNote').trim()
+            };
+            const prefs = loadDocPrefs();
+            prefs.admin = meta.admin;
+            saveDocPrefs(prefs);
+
+            openPrintWindow(buildDoHTML(meta, res.rows));
+
+            // nomor DO otomatis naik hanya jika memakai nomor bawaan
+            if (kode === `DO${currentDoNumber}`) {
+                currentDoNumber++;
+                document.getElementById('doKode').value = `DO${currentDoNumber}`;
+                updateDeliveryPreview();
+            }
         }
 
+        let scanHandled = false;
         function openDedicatedScanner(target) {
+            if (html5QrCode && html5QrCode.isScanning) return;
+            scanHandled = false;
             activeScanTarget = target;
             document.getElementById('modal-scanner').classList.remove('hidden');
             if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
@@ -2767,9 +3435,11 @@
                 { facingMode: "environment" },
                 { fps: 10, qrbox: { width: 220, height: 140 } },
                 (decodedText) => {
+                    if (scanHandled) return;
+                    scanHandled = true;
                     document.getElementById('scan-result-text').innerText = `Terdeteksi: ${decodedText}`;
                     closeScannerModal();
-                    const matchedProd = state.products.find(p => p.sku === decodedText);
+                    const matchedProd = findProductBySku(decodedText);
                     if(matchedProd) {
                         if(activeScanTarget === 'inbound') {
                             switchTab('inbound');
@@ -2800,6 +3470,8 @@
         }
 
         function openScannerModal(mode = 'search') {
+            if (html5QrCode && html5QrCode.isScanning) return;
+            scanHandled = false;
             activeScanTarget = mode;
             document.getElementById('modal-scanner').classList.remove('hidden');
             if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
@@ -2808,6 +3480,8 @@
                 { facingMode: "environment" },
                 { fps: 10, qrbox: { width: 220, height: 140 } },
                 (decodedText) => {
+                    if (scanHandled) return;
+                    scanHandled = true;
                     closeScannerModal();
                     if(mode === 'input') {
                         document.getElementById('prod-sku').value = decodedText;
@@ -2937,15 +3611,15 @@
             }
 
             if(q.includes('nilai aset') || q.includes('aset')) {
-                const totalVal = state.products.reduce((acc, item) => acc + ((parseInt(item.price) || 0) * (parseInt(item.stock) || 0)), 0);
+                const totalVal = state.products.reduce((acc, item) => acc + ((parseFloat(item.price) || 0) * (parseInt(item.stock) || 0)), 0);
                 return `💰 <strong>VALUASI TOTAL ASET GUDANG:</strong><br>Total nilai seluruh inventaris aktif saat ini adalah <strong>Rp ${totalVal.toLocaleString('id-ID')}</strong>.`;
             }
 
-            const matched = state.products.filter(p => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q));
+            const matched = state.products.filter(p => String(p.name).toLowerCase().includes(q) || String(p.sku).toLowerCase().includes(q));
             if(matched.length > 0) {
                 let resultHTML = "🔍 <strong>Hasil Penelusuran Database Inventaris:</strong><br>";
                 matched.slice(0, 3).forEach(p => {
-                    resultHTML += `• <strong>${escapeHtml(p.name)}</strong><br>  SKU: ${escapeHtml(p.sku)} | Stok: ${p.stock} ${escapeHtml(p.category || 'PCS')}<br>  Harga: Rp ${parseInt(p.price).toLocaleString('id-ID')} | Rak: ${escapeHtml(p.location || 'Utama')}<br>`;
+                    resultHTML += `• <strong>${escapeHtml(p.name)}</strong><br>  SKU: ${escapeHtml(p.sku)} | Stok: ${p.stock} ${escapeHtml(p.category || 'PCS')}<br>  Harga: Rp ${(parseFloat(p.price) || 0).toLocaleString('id-ID')} | Rak: ${escapeHtml(p.location || 'Utama')}<br>`;
                 });
                 return resultHTML;
             }
@@ -2960,20 +3634,21 @@
         function initChart() {
             const ctx = document.getElementById('stockMovementChart').getContext('2d');
             chartInstance = new Chart(ctx, {
-                type: 'line',
+                type: 'bar',
                 data: {
-                    labels: ['Inbound', 'Outbound', 'Rusak', 'Opname'],
+                    labels: ['Inbound', 'Outbound', 'Rusak', 'Selisih Opname'],
                     datasets: [{
                         label: 'Mutasi Unit',
                         data: [0, 0, 0, 0],
-                        borderColor: '#f97316',
-                        backgroundColor: 'rgba(249, 115, 22, 0.08)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4
+                        backgroundColor: ['#10b981', '#f43f5e', '#a855f7', '#3b82f6'],
+                        borderRadius: 8
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                }
             });
         }
 
@@ -2982,10 +3657,10 @@
             let inSum = 0, outSum = 0, dmgSum = 0, opSum = 0;
             if(state.logs) {
                 state.logs.forEach(l => {
-                    if(l.type === 'IN') inSum += l.qty;
-                    if(l.type === 'OUT') outSum += l.qty;
-                    if(l.type === 'RUSAK') dmgSum += l.qty;
-                    if(l.type === 'OPNAME') opSum += l.qty;
+                    if(l.type === 'IN') inSum += (parseInt(l.qty) || 0);
+                    if(l.type === 'OUT') outSum += (parseInt(l.qty) || 0);
+                    if(l.type === 'RUSAK') dmgSum += (parseInt(l.qty) || 0);
+                    if(l.type === 'OPNAME') opSum += Math.abs(opnameInfo(l).diff || 0);
                 });
             }
             chartInstance.data.datasets[0].data = [inSum, outSum, dmgSum, opSum];
@@ -3007,8 +3682,8 @@
             
             if(!state.logs) state.logs = [];
             state.logs.push({
-                id: 'log-' + Date.now(),
-                timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+                id: newId('log'),
+                ...nowStamp(),
                 productName: 'SISTEM FEFO',
                 type: 'RESET',
                 qty: 0,
