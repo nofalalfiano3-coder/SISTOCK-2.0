@@ -570,6 +570,9 @@
                             <button onclick="openExportModal()" title="Download data stok ke Excel" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-emerald-200 btn-press">
                                 <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Export Excel
                             </button>
+                            <button onclick="openBulkModal()" title="Ubah banyak stok sekaligus dari Excel / paste" class="bg-amber-50 hover:bg-amber-100 text-amber-700 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-amber-200 btn-press">
+                                <i data-lucide="layers" class="w-4 h-4"></i> Update Massal
+                            </button>
                             <button onclick="openScannerModal('search')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-200 btn-press">
                                 <i data-lucide="scan" class="w-4 h-4 text-brand-500"></i> Scan
                             </button>
@@ -622,6 +625,7 @@
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
                             <select id="fefo-sort" onchange="renderDamagedGoods()" title="Urutkan batch" class="min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:border-amber-500">
+                                <option value="urgent">Paling mendesak dulu</option>
                                 <option value="exp_asc">Exp terdekat dulu</option>
                                 <option value="exp_desc">Exp terjauh dulu</option>
                                 <option value="name">Abjad A-Z</option>
@@ -1010,7 +1014,7 @@
 
     <!-- MODAL: FEFO BATCH (NODE "FEFO") - TAMBAH & EDIT -->
     <div id="modal-damaged" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter max-h-[92vh] overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter max-h-[92vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-2">
                 <h3 id="fefo-modal-title" class="font-extrabold text-xs uppercase tracking-wider text-amber-600">Catat Batch FEFO Baru</h3>
                 <button onclick="closeDamagedModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -1019,7 +1023,7 @@
                 <input type="hidden" id="dmg-edit-id">
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">Pilih Produk</label>
-                    <select id="dmg-product-id" required class="w-full min-w-0 border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none"></select>
+                    <select id="dmg-product-id" required onchange="onFefoProductChange()" class="w-full min-w-0 border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none"></select>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
@@ -1027,17 +1031,70 @@
                         <input type="number" id="dmg-qty" min="1" required placeholder="Qty" class="w-full border border-slate-200 p-2.5 rounded-xl font-bold focus:outline-none">
                     </div>
                     <div>
-                        <label class="font-bold text-slate-700 block mb-1">Status FEFO</label>
+                        <label class="font-bold text-slate-700 block mb-1">Status Penanganan</label>
                         <select id="dmg-status" class="w-full min-w-0 border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none">
-                            <option value="segera dikeluarkan">🟡 Segera Dikeluarkan</option>
-                            <option value="kadaluwarsa">🔴 Kadaluwarsa (Expired)</option>
-                            <option value="masih aman">🟢 Masih Aman</option>
+                            <option value="auto">⚙️ Otomatis (ikuti tanggal)</option>
+                            <option value="diretur">✅ Sudah diretur ke supplier</option>
+                            <option value="dikeluarkan">✅ Sudah dikeluarkan / dimusnahkan</option>
+                            <optgroup label="Status lama (manual)">
+                                <option value="segera dikeluarkan">🟡 Segera Dikeluarkan</option>
+                                <option value="kadaluwarsa">🔴 Kadaluwarsa (Expired)</option>
+                                <option value="masih aman">🟢 Masih Aman</option>
+                            </optgroup>
                         </select>
                     </div>
                 </div>
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">Tanggal Kadaluwarsa (pilih dari kalender)</label>
-                    <input type="date" id="dmg-timestamp" required onclick="try{this.showPicker()}catch(e){}" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500">
+                    <input type="date" id="dmg-timestamp" required oninput="updateFefoPlanPreview()" onclick="try{this.showPicker()}catch(e){}" class="w-full border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none focus:border-brand-500">
+                </div>
+                <div class="bg-amber-50/60 border border-amber-200 rounded-2xl p-3 space-y-3">
+                    <p class="font-extrabold text-[10px] uppercase tracking-wider text-amber-700">Jadwal Pengingat Batch Ini</p>
+
+                    <details class="text-[11px]">
+                        <summary class="font-bold text-slate-700 cursor-pointer">Hitung tanggal kadaluwarsa dari umur simpan (opsional)</summary>
+                        <div class="grid grid-cols-3 gap-2 mt-2">
+                            <div class="col-span-3">
+                                <label class="font-bold text-slate-600 block mb-1">Tanggal mulai / masuk</label>
+                                <input type="date" id="fefo-life-start" onclick="try{this.showPicker()}catch(e){}" class="w-full border border-slate-200 p-2 rounded-xl font-semibold focus:outline-none bg-white">
+                            </div>
+                            <div>
+                                <label class="font-bold text-slate-600 block mb-1">Umur simpan</label>
+                                <input type="number" id="fefo-life-val" min="1" placeholder="60" class="w-full border border-slate-200 p-2 rounded-xl font-bold focus:outline-none bg-white">
+                            </div>
+                            <div>
+                                <label class="font-bold text-slate-600 block mb-1">Satuan</label>
+                                <select id="fefo-life-unit" class="w-full min-w-0 border border-slate-200 p-2 rounded-xl font-semibold focus:outline-none bg-white"><option value="hari">hari</option><option value="bulan">bulan</option></select>
+                            </div>
+                            <div class="flex items-end">
+                                <button type="button" onclick="calcFefoFromShelfLife()" class="w-full px-2 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold btn-press">Hitung Exp</button>
+                            </div>
+                        </div>
+                    </details>
+
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">Retur ke supplier: berapa lama sebelum kadaluwarsa? <span class="text-slate-400 font-medium">(kosong = tidak ada retur)</span></label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" id="fefo-ret-val" min="0" placeholder="Contoh: 30" oninput="updateFefoPlanPreview()" class="w-full border border-slate-200 p-2.5 rounded-xl font-bold focus:outline-none bg-white">
+                            <select id="fefo-ret-unit" onchange="updateFefoPlanPreview()" class="w-full min-w-0 border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none bg-white"><option value="hari">hari sebelum exp</option><option value="bulan">bulan sebelum exp</option></select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="font-bold text-slate-700 block mb-1">Ingatkan berapa lama sebelum tanggal retur? <span class="text-slate-400 font-medium">(tanpa retur: sebelum kadaluwarsa)</span></label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" id="fefo-rem-val" min="0" required value="30" oninput="updateFefoPlanPreview()" class="w-full border border-slate-200 p-2.5 rounded-xl font-bold focus:outline-none bg-white">
+                            <select id="fefo-rem-unit" onchange="updateFefoPlanPreview()" class="w-full min-w-0 border border-slate-200 p-2.5 rounded-xl font-semibold focus:outline-none bg-white"><option value="hari">hari sebelumnya</option><option value="bulan">bulan sebelumnya</option></select>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5 mt-2">
+                            <button type="button" onclick="setFefoRemind(7,'hari')" class="px-2.5 py-1 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg font-bold text-slate-600 btn-press">7 hari</button>
+                            <button type="button" onclick="setFefoRemind(14,'hari')" class="px-2.5 py-1 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg font-bold text-slate-600 btn-press">14 hari</button>
+                            <button type="button" onclick="setFefoRemind(30,'hari')" class="px-2.5 py-1 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg font-bold text-slate-600 btn-press">30 hari</button>
+                            <button type="button" onclick="setFefoRemind(60,'hari')" class="px-2.5 py-1 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg font-bold text-slate-600 btn-press">60 hari</button>
+                            <button type="button" onclick="setFefoRemind(3,'bulan')" class="px-2.5 py-1 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg font-bold text-slate-600 btn-press">3 bulan</button>
+                        </div>
+                    </div>
+                    <p id="fefo-plan-preview" class="text-[11px] font-bold text-amber-800 leading-relaxed"></p>
                 </div>
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">Catatan FEFO</label>
@@ -1048,6 +1105,67 @@
                     <button type="submit" id="fefo-submit-btn" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold btn-press">Simpan FEFO</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL: UPDATE STOK MASSAL -->
+    <div id="modal-bulk" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-6 space-y-4 shadow-2xl animate-tab-enter max-h-[94vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-extrabold text-xs sm:text-sm uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                    <i data-lucide="layers" class="w-4 h-4 text-amber-600"></i> Update Stok Massal
+                </h3>
+                <button onclick="closeBulkModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div class="bg-amber-50 border border-amber-200 text-amber-900 p-3 rounded-xl font-semibold leading-relaxed">
+                    Isi <b>stok akhir</b> semua barang di Excel / Google Sheets, lalu unggah atau tempel di sini. Barang dicocokkan lewat <b>SKU/Barcode</b> (atau nama barang). Setiap perubahan dicatat sebagai <b>Stock Opname</b>. Barang yang tidak ada di file tidak diubah.
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" onclick="downloadBulkTemplate()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl font-bold text-slate-700 flex items-center gap-1.5 btn-press">
+                        <i data-lucide="download" class="w-4 h-4"></i> Download Template
+                    </button>
+                    <label class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold flex items-center gap-1.5 cursor-pointer btn-press">
+                        <i data-lucide="upload" class="w-4 h-4"></i> Unggah Excel / CSV
+                        <input type="file" id="bulk-file" accept=".xlsx,.xls,.csv" class="hidden" onchange="onBulkFile(event)">
+                    </label>
+                </div>
+
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">Atau tempel data (dari Excel / Google Sheets)</label>
+                    <textarea id="bulk-paste" rows="4" placeholder="SKU/Barcode  [tab]  Stok akhir&#10;8993539106003  120&#10;8998866200318  45" class="w-full border border-slate-200 p-2.5 rounded-xl font-mono text-[11px] focus:outline-none focus:border-brand-500"></textarea>
+                    <button type="button" onclick="onBulkPaste()" class="mt-2 px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold btn-press">Baca Data Tempelan</button>
+                </div>
+
+                <div id="bulk-result" class="hidden space-y-2">
+                    <p id="bulk-summary" class="font-extrabold text-slate-800"></p>
+                    <div class="overflow-x-auto border border-slate-200 rounded-xl max-h-72 overflow-y-auto">
+                        <table class="w-full text-left text-[11px] min-w-[500px]">
+                            <thead class="bg-slate-100 text-slate-600 uppercase sticky top-0">
+                                <tr>
+                                    <th class="p-2">Status</th><th class="p-2">SKU</th><th class="p-2">Nama Barang</th>
+                                    <th class="p-2 text-center">Sistem</th><th class="p-2 text-center">Baru</th><th class="p-2 text-center">Selisih</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bulk-preview" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                    <label class="flex items-start gap-2 font-semibold text-slate-700">
+                        <input type="checkbox" id="bulk-addnew" onchange="updateBulkApplyCount()" class="mt-0.5 rounded border-slate-300">
+                        <span>Tambahkan juga <b>barang baru</b> yang belum ada di sistem (ROP otomatis 10, harga 0, bisa diedit setelahnya)</span>
+                    </label>
+                    <label class="flex items-center gap-2 font-semibold text-slate-700">
+                        <input type="checkbox" id="bulk-backup" checked class="rounded border-slate-300"> Unduh backup Excel lengkap sebelum menerapkan
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 border-t pt-3">
+                <button onclick="closeBulkModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl btn-press">Tutup</button>
+                <button id="bulk-apply-btn" onclick="applyBulkUpdate()" disabled class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow btn-press opacity-50 cursor-not-allowed">Terapkan Perubahan</button>
+            </div>
         </div>
     </div>
 
@@ -1553,50 +1671,25 @@
                 return;
             }
 
-            let expiredCount = 0;
-            let nearCount = 0;
-
-            const todayYear = currentTime.getFullYear();
-            const todayMonth = currentTime.getMonth();
-            const todayDate = currentTime.getDate();
-            const todayTimestamp = new Date(todayYear, todayMonth, todayDate).getTime();
-
+            let expiredCount = 0, returCount = 0, nearCount = 0, active = 0;
             state.FEFO.forEach(item => {
-                if(!item.timestamp || parseInt(item.qty) <= 0) return;
-                const parts = item.timestamp.split('/');
-                if(parts.length === 3) {
-                    const day = parseInt(parts[0], 10);
-                    const month = parseInt(parts[1], 10) - 1;
-                    const year = parseInt(parts[2], 10);
-                    
-                    const expTimestamp = new Date(year, month, day).getTime();
-                    const diffTime = expTimestamp - todayTimestamp;
-                    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-
-                    if(diffDays < 0) {
-                        expiredCount++;
-                    } else if(diffDays <= 30) {
-                        nearCount++;
-                    }
-                }
+                const info = fefoPhaseInfo(item);
+                if(info.phase === 'selesai' || info.phase === 'tanpa') return;
+                active++;
+                if(info.phase === 'expired') expiredCount++;
+                else if(info.phase === 'retur') returCount++;
+                else if(info.phase === 'reminder') nearCount++;
             });
 
             banner.classList.remove('hidden');
-            
-            let statusMessage = "";
-            if(expiredCount > 0) {
-                statusMessage += `🔴 Ada <strong>${expiredCount} batch kedaluwarsa</strong>. `;
-            }
-            if(nearCount > 0) {
-                statusMessage += `🟡 <strong>${nearCount} batch mendekati Exp (≤30 hari)</strong>. `;
-            }
-            if(expiredCount === 0 && nearCount === 0) {
-                statusMessage = `🟢 Semua <strong>${state.FEFO.length} batch FEFO</strong> terpantau aman dan belum melewati batas waktu.`;
-            } else {
-                statusMessage += `Klik banner untuk lihat rincian!`;
-            }
 
-            reminderText.innerHTML = statusMessage;
+            const parts = [];
+            if(expiredCount > 0) parts.push(`🔴 <strong>${expiredCount} batch kedaluwarsa</strong>`);
+            if(returCount > 0) parts.push(`🟠 <strong>${returCount} batch waktunya retur ke supplier</strong>`);
+            if(nearCount > 0) parts.push(`🟡 <strong>${nearCount} batch masuk jadwal pengingat</strong>`);
+            reminderText.innerHTML = parts.length
+                ? parts.join(' · ') + '. Klik banner untuk lihat rincian!'
+                : `🟢 Semua <strong>${active} batch FEFO aktif</strong> aman, belum ada yang masuk jadwal pengingat.`;
         }
 
         function dismissDashboardReminder() {
@@ -1944,40 +2037,45 @@
             }
 
             tbody.innerHTML = '';
-            const fsv = (document.getElementById('fefo-sort') || {}).value || 'exp_asc';
+            const fsv = (document.getElementById('fefo-sort') || {}).value || 'urgent';
             const cmpT = (x, y) => { const a = expiryTime(x.timestamp), b = expiryTime(y.timestamp); return a === b ? 0 : (a < b ? -1 : 1); };
             const fefoList = [...state.FEFO];
-            if (fsv === 'exp_asc') fefoList.sort(cmpT);
+            if (fsv === 'urgent') {
+                const rk = new Map(fefoList.map(d => [d.id, fefoPhaseInfo(d).rank]));
+                fefoList.sort((x, y) => (rk.get(x.id) - rk.get(y.id)) || cmpT(x, y));
+            }
+            else if (fsv === 'exp_asc') fefoList.sort(cmpT);
             else if (fsv === 'exp_desc') fefoList.sort((x, y) => cmpT(y, x));
             else if (fsv === 'name') fefoList.sort((x, y) => String(x.productName).localeCompare(String(y.productName), 'id', { sensitivity: 'base' }) || cmpT(x, y));
             else if (fsv === 'qty_desc') fefoList.sort((x, y) => (parseInt(y.qty) || 0) - (parseInt(x.qty) || 0));
+
+            let html = '';
             fefoList.forEach(d => {
-                const statusLower = (d.status || '').toLowerCase();
-                let badgeStyle = 'bg-emerald-100 text-emerald-800 font-bold';
-                let badgeText = '🟢 Masih Aman';
-
-                if (statusLower.includes('kadaluwarsa') || statusLower.includes('expired')) {
-                    badgeStyle = 'bg-rose-100 text-rose-800 font-bold';
-                    badgeText = '🔴 Kadaluwarsa (Expired)';
-                } else if (statusLower.includes('segera')) {
-                    badgeStyle = 'bg-amber-100 text-amber-800 font-bold';
-                    badgeText = '🟡 Segera Dikeluarkan (FEFO)';
-                }
-
-                tbody.innerHTML += `
+                const info = fefoPhaseInfo(d);
+                const pl = info.plan;
+                const sched = [];
+                if (pl.rem) sched.push(`Ingatkan: ${isoToDMY(pl.rem)}`);
+                if (pl.ret) sched.push(`Retur: ${isoToDMY(pl.ret)}`);
+                const oldSt = ['segera dikeluarkan', 'kadaluwarsa', 'masih aman'].indexOf(String(d.status || '').toLowerCase()) !== -1 ? ` | status lama: ${titleCase(d.status)}` : '';
+                html += `
                     <tr class="hover:bg-slate-50 transition">
                         <td class="p-3.5 font-bold text-brand-600">${escapeHtml(d.timestamp)}</td>
                         <td class="p-3.5 font-bold text-slate-800">${escapeHtml(d.productName)} <span class="font-mono text-xs text-slate-400">(${escapeHtml(d.sku)})</span></td>
-                        <td class="p-3.5 font-black text-slate-800">${d.qty}</td>
-                        <td class="p-3.5 text-slate-500 font-medium">PCS</td>
-                        <td class="p-3.5"><span class="${badgeStyle} px-2.5 py-1 rounded-full text-[10px]">${badgeText}</span> <span class="text-slate-500 ml-1 text-xs font-medium">(${escapeHtml(d.notes || '-')})</span></td>
+                        <td class="p-3.5 font-black text-slate-800">${escapeHtml(d.qty)}</td>
+                        <td class="p-3.5 text-slate-500 font-medium">${escapeHtml(fefoUnit(d))}</td>
+                        <td class="p-3.5">
+                            <span class="${info.cls} px-2.5 py-1 rounded-full text-[10px]">${info.icon} ${escapeHtml(info.label)}</span>
+                            <div class="text-[10px] text-slate-500 font-semibold mt-1">${escapeHtml(sched.join(' · '))}${escapeHtml(oldSt)}</div>
+                            <div class="text-slate-500 text-xs font-medium">(${escapeHtml(d.notes || '-')})</div>
+                        </td>
                         <td class="p-3.5 text-right whitespace-nowrap">
-                            <button onclick="editFefo('${d.id}')" title="Edit batch / ubah status" class="p-1.5 text-slate-400 hover:text-brand-500 btn-press"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                            <button onclick="editFefo('${d.id}')" title="Edit batch / jadwal pengingat" class="p-1.5 text-slate-400 hover:text-brand-500 btn-press"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
                             <button onclick="deleteDamaged('${d.id}')" title="Hapus" class="p-1.5 text-slate-400 hover:text-rose-500 btn-press"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </td>
                     </tr>
                 `;
             });
+            tbody.innerHTML = html;
             lucide.createIcons();
         }
 
@@ -2276,18 +2374,77 @@
             document.getElementById('modal-product').classList.remove('hidden');
         }
 
+        function readFefoPolicy() {
+            const rv = parseInt(val('fefo-ret-val'), 10);
+            const mv = parseInt(val('fefo-rem-val'), 10);
+            return {
+                returnVal: rv > 0 ? rv : 0,
+                returnUnit: val('fefo-ret-unit') === 'bulan' ? 'bulan' : 'hari',
+                remindVal: mv >= 0 ? mv : 30,
+                remindUnit: val('fefo-rem-unit') === 'bulan' ? 'bulan' : 'hari'
+            };
+        }
+
+        function setFefoPolicyFields(pol) {
+            document.getElementById('fefo-ret-val').value = pol.returnVal > 0 ? pol.returnVal : '';
+            document.getElementById('fefo-ret-unit').value = pol.returnUnit === 'bulan' ? 'bulan' : 'hari';
+            const mv = parseInt(pol.remindVal, 10);
+            document.getElementById('fefo-rem-val').value = Number.isNaN(mv) ? 30 : mv;
+            document.getElementById('fefo-rem-unit').value = pol.remindUnit === 'bulan' ? 'bulan' : 'hari';
+        }
+
+        function setFefoRemind(n, unit) {
+            document.getElementById('fefo-rem-val').value = n;
+            document.getElementById('fefo-rem-unit').value = unit;
+            updateFefoPlanPreview();
+        }
+
+        function updateFefoPlanPreview() {
+            const el = document.getElementById('fefo-plan-preview');
+            if (!el) return;
+            const iso = val('dmg-timestamp');
+            if (!iso) { el.innerText = 'Pilih tanggal kadaluwarsa untuk melihat jadwal pengingat.'; return; }
+            const pl = fefoPlan(Object.assign({ timestamp: isoToDMY(iso), status: 'auto' }, readFefoPolicy()));
+            const parts = [`Kadaluwarsa: ${isoToDMY(pl.exp)}`];
+            if (pl.ret) parts.push(`Retur ke supplier: ${isoToDMY(pl.ret)}`);
+            parts.push(`Pengingat mulai: ${isoToDMY(pl.rem)}`);
+            el.innerText = parts.join('  |  ');
+        }
+
+        function calcFefoFromShelfLife() {
+            const start = val('fefo-life-start') || todayISO();
+            const n = parseInt(val('fefo-life-val'), 10);
+            if (!(n > 0)) { showToast('Isi umur simpan dengan angka lebih dari 0.', 'error'); return; }
+            const iso = shiftDateISO(start, n, val('fefo-life-unit') === 'bulan' ? 'bulan' : 'hari', 1);
+            document.getElementById('dmg-timestamp').value = iso;
+            updateFefoPlanPreview();
+            showToast(`Tanggal kadaluwarsa diatur ke ${isoToDMY(iso)}.`);
+        }
+
+        // Batch baru: ikuti pengaturan batch sebelumnya untuk barang yang sama
+        function onFefoProductChange() {
+            if (val('dmg-edit-id')) return;
+            const prod = state.products.find(p => p.id === val('dmg-product-id'));
+            if (!prod) return;
+            const prev = [...(state.FEFO || [])].reverse().find(b => String(b.sku).trim() === String(prod.sku).trim());
+            if (prev) setFefoPolicyFields(prev);
+            else setFefoPolicyFields({ returnVal: 0, returnUnit: 'hari', remindVal: 30, remindUnit: 'hari' });
+            updateFefoPlanPreview();
+        }
+
         function saveDamagedGood(e) {
             e.preventDefault();
             const editId = document.getElementById('dmg-edit-id').value;
             const prodId = document.getElementById('dmg-product-id').value;
             const qty = parseInt(document.getElementById('dmg-qty').value);
             if(!(qty >= 1)) { showToast('Jumlah (Qty) harus minimal 1.', 'error'); return; }
-            const status = document.getElementById('dmg-status').value;
+            const status = document.getElementById('dmg-status').value || 'auto';
             const iso = document.getElementById('dmg-timestamp').value;
             const notes = document.getElementById('dmg-notes').value || 'FEFO Batch';
 
             if(!iso) { showToast('Pilih tanggal kadaluwarsa dari kalender.', 'error'); return; }
             const timestamp = isoToDMY(iso);
+            const policy = readFefoPolicy();
             if(!state.FEFO) state.FEFO = [];
 
             if(editId) {
@@ -2300,7 +2457,7 @@
                     const chosen = state.products.find(p => p.id === prodId);
                     if(chosen) { productName = chosen.name; sku = chosen.sku; }
                 }
-                state.FEFO[idx] = Object.assign({}, old, { productName, sku, qty, status, timestamp, notes });
+                state.FEFO[idx] = Object.assign({}, old, { productName, sku, qty, status, timestamp, notes }, policy);
                 saveStateToCloud();
                 showToast('Batch FEFO berhasil diperbarui!');
                 closeDamagedModal();
@@ -2310,9 +2467,8 @@
 
             const prod = state.products.find(p => p.id === prodId);
             if(prod) {
-                const uniqueKey = newId('fefo');
-                state.FEFO.push({
-                    id: uniqueKey,
+                state.FEFO.push(Object.assign({
+                    id: newId('fefo'),
                     timestamp: timestamp,
                     productName: prod.name,
                     sku: prod.sku,
@@ -2320,9 +2476,9 @@
                     status: status,
                     notes: notes,
                     createdDate: todayISO()
-                });
+                }, policy));
                 saveStateToCloud();
-                showToast('Batch FEFO berhasil dicatat ke Node FEFO Cloud!');
+                showToast('Batch FEFO berhasil dicatat beserta jadwal pengingatnya!');
                 closeDamagedModal();
                 switchTab('damaged');
             }
@@ -2347,11 +2503,16 @@
             }
             document.getElementById('dmg-edit-id').value = d.id;
             document.getElementById('dmg-qty').value = d.qty;
-            document.getElementById('dmg-status').value = d.status || 'masih aman';
+            const stSel = document.getElementById('dmg-status');
+            stSel.value = d.status || 'auto';
+            if(stSel.value !== (d.status || 'auto')) stSel.value = 'auto';
             document.getElementById('dmg-timestamp').value = dmyToISO(d.timestamp);
             document.getElementById('dmg-notes').value = d.notes || '';
+            setFefoPolicyFields(d);
+            document.getElementById('fefo-life-start').value = todayISO();
             document.getElementById('fefo-modal-title').innerText = 'Edit Batch FEFO';
             document.getElementById('fefo-submit-btn').innerText = 'Simpan Perubahan';
+            updateFefoPlanPreview();
             document.getElementById('modal-damaged').classList.remove('hidden');
         }
 
@@ -2681,6 +2842,83 @@
         function periodPhrase(per) { return (!per || per.kind === 'all') ? 'sampai dengan tanggal dokumen ini dibuat' : `pada periode <b>${docEsc(per.label)}</b>`; }
         function emptyMsg(per, what) { return (!per || per.kind === 'all') ? `Belum ada data ${what}.` : `Tidak ada data ${what} pada periode ini.`; }
 
+        // ---------- Jadwal FEFO per batch: pengingat, retur supplier, kadaluwarsa ----------
+        function isoToDate(iso) {
+            const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+        }
+        function shiftDateISO(iso, n, unit, dir) {
+            const d = isoToDate(iso);
+            if (!d) return '';
+            const k = (parseInt(n, 10) || 0) * (dir || 1);
+            if (unit === 'bulan') {
+                const day = d.getDate();
+                d.setDate(1);
+                d.setMonth(d.getMonth() + k);
+                const last = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+                d.setDate(Math.min(day, last));
+            } else {
+                d.setDate(d.getDate() + k);
+            }
+            return isoLocal(d);
+        }
+        function diffDaysISO(a, b) {
+            const x = isoToDate(a), y = isoToDate(b);
+            return (x && y) ? Math.round((x - y) / 86400000) : NaN;
+        }
+
+        // Aturan: pengingat = (tanggal retur, atau kadaluwarsa bila tanpa retur) - lama pengingat.
+        // Fase: aman -> reminder -> retur (jika ada) -> expired. Batch tanpa pengaturan memakai pengingat 30 hari.
+        function fefoPlan(d, todayStr) {
+            const today = todayStr || todayISO();
+            const exp = dmyToISO(d.timestamp);
+            const st = String(d.status || '').toLowerCase();
+            const rv = parseInt(d.returnVal, 10) || 0;
+            const ru = d.returnUnit === 'bulan' ? 'bulan' : 'hari';
+            const mvRaw = parseInt(d.remindVal, 10);
+            const mv = Number.isNaN(mvRaw) ? 30 : mvRaw;
+            const mu = d.remindUnit === 'bulan' ? 'bulan' : 'hari';
+            const ret = (exp && rv > 0) ? shiftDateISO(exp, rv, ru, -1) : '';
+            const anchor = ret || exp;
+            const rem = anchor ? shiftDateISO(anchor, mv, mu, -1) : '';
+            let phase = 'aman';
+            if (!exp) phase = 'tanpa';
+            else if (st === 'diretur' || st === 'dikeluarkan') phase = 'selesai';
+            else if (today > exp) phase = 'expired';
+            else if (ret && today >= ret) phase = 'retur';
+            else if (rem && today >= rem) phase = 'reminder';
+            return {
+                exp: exp, ret: ret, rem: rem, phase: phase,
+                daysToExp: exp ? diffDaysISO(exp, today) : NaN,
+                daysToRet: ret ? diffDaysISO(ret, today) : NaN
+            };
+        }
+
+        function fefoPhaseInfo(d, todayStr) {
+            const pl = fefoPlan(d, todayStr);
+            const q = parseInt(d.qty) || 0;
+            const st = String(d.status || '').toLowerCase();
+            const dayTxt = (n) => n === 0 ? 'hari ini' : `${n} hari lagi`;
+            let phase = pl.phase, icon = '', label = '', cls = '';
+            if (st === 'diretur') { phase = 'selesai'; icon = '✅'; label = 'Sudah diretur ke supplier'; cls = 'bg-emerald-100 text-emerald-800 font-bold'; }
+            else if (st === 'dikeluarkan') { phase = 'selesai'; icon = '✅'; label = 'Sudah dikeluarkan / dimusnahkan'; cls = 'bg-emerald-100 text-emerald-800 font-bold'; }
+            else if (q <= 0) { phase = 'selesai'; icon = '✅'; label = 'Stok batch habis'; cls = 'bg-slate-100 text-slate-600 font-bold'; }
+            else if (phase === 'expired') { icon = '🔴'; label = `Kadaluwarsa (lewat ${Math.abs(pl.daysToExp)} hari)`; cls = 'bg-rose-100 text-rose-800 font-bold'; }
+            else if (phase === 'retur') { icon = '🟠'; label = `Waktunya retur ke supplier (exp ${dayTxt(pl.daysToExp)})`; cls = 'bg-orange-100 text-orange-800 font-bold'; }
+            else if (phase === 'reminder') {
+                icon = '🟡'; cls = 'bg-amber-100 text-amber-800 font-bold';
+                label = pl.ret ? `Mendekati batas retur (${dayTxt(pl.daysToRet)})` : `Mendekati kadaluwarsa (${dayTxt(pl.daysToExp)})`;
+            }
+            else if (phase === 'aman') { icon = '🟢'; label = `Aman (${pl.daysToExp} hari lagi)`; cls = 'bg-emerald-100 text-emerald-800 font-bold'; }
+            else { phase = 'tanpa'; icon = '⚪'; label = 'Tanggal exp tidak valid'; cls = 'bg-slate-100 text-slate-600 font-bold'; }
+            const rank = { expired: 0, retur: 1, reminder: 2, aman: 3, selesai: 4, tanpa: 5 }[phase];
+            return { plan: pl, phase: phase, icon: icon, label: label, cls: cls, rank: rank };
+        }
+        function fefoUnit(d) {
+            const p = state.products.find(x => String(x.sku).trim() === String(d.sku || '').trim());
+            return (p && p.category) ? p.category : 'PCS';
+        }
+
         function titleCase(s) { return String(s || '-').replace(/\b\w/g, c => c.toUpperCase()); }
 
         function loadDocPrefs() { try { return JSON.parse(localStorage.getItem('sistock_doc_prefs') || '{}'); } catch (e) { return {}; } }
@@ -2920,19 +3158,25 @@
         }
 
         function fefoRows(arr) {
-            return arr.map((d, i) => [
-                String(i + 1),
-                `<b>${docEsc(d.timestamp)}</b>`,
-                `<b>${docEsc(d.productName)}</b><br><span class="sub">SKU: ${docEsc(d.sku || '-')}</span>`,
-                docEsc(d.qty),
-                docEsc(fefoDaysLabel(d.timestamp)),
-                docEsc(titleCase(d.status)),
-                docEsc(d.notes || '-')
-            ]);
+            return arr.map((d, i) => {
+                const info = fefoPhaseInfo(d);
+                const pl = info.plan;
+                return [
+                    String(i + 1),
+                    `<b>${docEsc(d.timestamp)}</b>`,
+                    `<b>${docEsc(d.productName)}</b><br><span class="sub">SKU: ${docEsc(d.sku || '-')}</span>`,
+                    docEsc(d.qty),
+                    docEsc(pl.ret ? isoToDMY(pl.ret) : '-'),
+                    docEsc(pl.rem ? isoToDMY(pl.rem) : '-'),
+                    docEsc(info.label),
+                    docEsc(d.notes || '-')
+                ];
+            });
         }
         const FEFO_COLS = [
-            { t: 'NO', w: '5%', a: 'center' }, { t: 'TGL EXPIRED', w: '12%', a: 'center' }, { t: 'NAMA BARANG' },
-            { t: 'QTY', w: '7%', a: 'center' }, { t: 'SISA WAKTU', w: '12%', a: 'center' }, { t: 'STATUS', w: '15%' }, { t: 'CATATAN', w: '14%' }
+            { t: 'NO', w: '5%', a: 'center' }, { t: 'TGL EXP', w: '11%', a: 'center' }, { t: 'NAMA BARANG' },
+            { t: 'QTY', w: '6%', a: 'center' }, { t: 'TGL RETUR', w: '11%', a: 'center' }, { t: 'PENGINGAT', w: '11%', a: 'center' },
+            { t: 'STATUS', w: '18%' }, { t: 'CATATAN', w: '11%' }
         ];
 
         function buildDocHTML(type, meta) {
@@ -3171,9 +3415,15 @@
             const fefo = [...(state.FEFO || [])].sort((a, b) => { const x = expiryTime(a.timestamp), y = expiryTime(b.timestamp); return x === y ? 0 : (x < y ? -1 : 1); });
             sheets.push({
                 name: 'FEFO',
-                aoa: [['NO', 'TGL EXPIRED', 'NAMA BARANG', 'SKU', 'QTY', 'SISA WAKTU', 'STATUS', 'CATATAN', 'TGL DIINPUT']].concat(
-                    fefo.map((d, i) => [i + 1, d.timestamp || '', d.productName || '', String(d.sku || ''), parseInt(d.qty) || 0, fefoDaysLabel(d.timestamp), titleCase(d.status), d.notes || '', d.createdDate ? isoToDMY(d.createdDate) : ''])),
-                cols: [6, 14, 34, 18, 8, 16, 22, 30, 14]
+                aoa: [['NO', 'TGL EXPIRED', 'NAMA BARANG', 'SKU', 'QTY', 'TGL RETUR KE SUPPLIER', 'TGL PENGINGAT', 'SISA HARI KE EXP', 'STATUS JADWAL', 'STATUS PENANGANAN', 'CATATAN', 'TGL DIINPUT']].concat(
+                    fefo.map((d, i) => {
+                        const info = fefoPhaseInfo(d);
+                        const pl = info.plan;
+                        return [i + 1, d.timestamp || '', d.productName || '', String(d.sku || ''), parseInt(d.qty) || 0,
+                            pl.ret ? isoToDMY(pl.ret) : '', pl.rem ? isoToDMY(pl.rem) : '', Number.isNaN(pl.daysToExp) ? '' : pl.daysToExp,
+                            info.label, titleCase(d.status || 'auto'), d.notes || '', d.createdDate ? isoToDMY(d.createdDate) : ''];
+                    })),
+                cols: [6, 14, 34, 18, 8, 20, 16, 16, 34, 20, 30, 14]
             });
 
             // 5. Supplier (backup lengkap)
@@ -3244,6 +3494,19 @@
                 : 'Stok = kondisi saat ini. Sheet transaksi berisi transaksi hari ini.';
         }
 
+        function writeExportFile(mode, day) {
+            const today = todayISO();
+            const wb = XLSX.utils.book_new();
+            buildExportSheets(mode, day).forEach(sh => {
+                const ws = XLSX.utils.aoa_to_sheet(sh.aoa);
+                ws['!cols'] = sh.cols.map(w => ({ wch: w }));
+                XLSX.utils.book_append_sheet(wb, ws, sh.name.slice(0, 31));
+            });
+            const fname = mode === 'full' ? `SISTOCK_Backup_Lengkap_${today}.xlsx` : `SISTOCK_Stok_${day}.xlsx`;
+            XLSX.writeFile(wb, fname);
+            return fname;
+        }
+
         function runExportXlsx() {
             if (typeof XLSX === 'undefined') { showToast('Library Excel belum termuat. Cek internet lalu muat ulang halaman.', 'error'); return; }
             const mode = val('ex-mode') || 'daily';
@@ -3251,20 +3514,244 @@
             const day = val('ex-date') || today;
             if (mode === 'daily' && day > today) { showToast('Tanggal tidak boleh di masa depan.', 'error'); return; }
             try {
-                const wb = XLSX.utils.book_new();
-                buildExportSheets(mode, day).forEach(sh => {
-                    const ws = XLSX.utils.aoa_to_sheet(sh.aoa);
-                    ws['!cols'] = sh.cols.map(w => ({ wch: w }));
-                    XLSX.utils.book_append_sheet(wb, ws, sh.name.slice(0, 31));
-                });
-                const fname = mode === 'full' ? `SISTOCK_Backup_Lengkap_${today}.xlsx` : `SISTOCK_Stok_${day}.xlsx`;
-                XLSX.writeFile(wb, fname);
+                const fname = writeExportFile(mode, day);
                 closeExportModal();
                 showToast(`File ${fname} berhasil dibuat.`);
             } catch (err) {
                 console.error('Export Excel gagal:', err);
                 showToast('Gagal membuat file Excel.', 'error');
             }
+        }
+
+        // ============================================================
+        // UPDATE STOK MASSAL (impor Excel / CSV / tempel dari spreadsheet)
+        // ============================================================
+        let bulkRows = [];
+        let bulkCounts = { ubah: 0, baru: 0 };
+
+        function bulkCellStr(c) {
+            if (typeof c === 'number') return Number.isInteger(c) ? String(c) : String(c);
+            return String(c == null ? '' : c).trim();
+        }
+        // Mengembalikan angka bulat >= 0, null jika kosong, NaN jika tidak valid
+        function parseBulkStock(c) {
+            if (typeof c === 'number') return (Number.isInteger(c) && c >= 0) ? c : NaN;
+            const t = String(c == null ? '' : c).replace(/\s+/g, '');
+            if (t === '') return null;
+            if (/^\d+$/.test(t)) return parseInt(t, 10);
+            if (/^\d{1,3}([.,]\d{3})+$/.test(t)) return parseInt(t.replace(/[.,]/g, ''), 10);
+            if (/^\d+[.,]0+$/.test(t)) return parseInt(t, 10);
+            return NaN;
+        }
+
+        function parseBulkTable(aoa) {
+            const rows = (aoa || []).filter(r => Array.isArray(r) && r.some(c => String(c == null ? '' : c).trim() !== ''));
+            if (!rows.length) return { error: 'Data kosong.' };
+            const norm = c => String(c == null ? '' : c).trim().toLowerCase();
+            const first = rows[0].map(norm);
+            const hdrRe = /(sku|barcode|kode|nama|barang|stok|stock|jumlah|qty|fisik)/;
+            const isHeader = first.some(c => hdrRe.test(c) && /[a-z]/.test(c));
+            let skuCol = -1, nameCol = -1, stockCol = -1, unitCol = -1, locCol = -1, start = 0;
+
+            if (isHeader) {
+                start = 1;
+                first.forEach((c, i) => { if (skuCol < 0 && /(sku|barcode|kode)/.test(c)) skuCol = i; });
+                first.forEach((c, i) => { if (nameCol < 0 && i !== skuCol && /(nama|barang|produk|item)/.test(c)) nameCol = i; });
+                const pri = [/(stok|stock)\s*(baru|akhir|fisik)|hasil|fisik|akhir|baru/, /^(stok|stock|jumlah|qty)$/];
+                for (const re of pri) { first.forEach((c, i) => { if (stockCol < 0 && i !== skuCol && i !== nameCol && re.test(c)) stockCol = i; }); }
+                if (stockCol < 0) first.forEach((c, i) => { if (stockCol < 0 && /(stok|stock|qty|jumlah)/.test(c) && !/(sistem|lama|sekarang|awal)/.test(c)) stockCol = i; });
+                if (stockCol < 0) return { error: 'Kolom stok tidak ditemukan. Beri judul kolom "STOK BARU".' };
+                first.forEach((c, i) => {
+                    if (unitCol < 0 && i !== stockCol && /(satuan|unit|kategori)/.test(c)) unitCol = i;
+                    if (locCol < 0 && i !== stockCol && /(lokasi|rak)/.test(c)) locCol = i;
+                });
+                if (skuCol < 0 && nameCol < 0) return { error: 'Kolom SKU/Barcode atau Nama Barang tidak ditemukan.' };
+            } else {
+                skuCol = 0;
+                const w = Math.max.apply(null, rows.map(r => r.length));
+                stockCol = w - 1;
+                if (stockCol <= 0) return { error: 'Data minimal 2 kolom: SKU/Nama dan Stok.' };
+            }
+
+            const out = [];
+            const seen = {};
+            const seenNew = {};
+            for (let i = start; i < rows.length; i++) {
+                const r = rows[i];
+                const ident = skuCol >= 0 ? bulkCellStr(r[skuCol]) : '';
+                const nm = nameCol >= 0 ? bulkCellStr(r[nameCol]) : '';
+                const stockV = parseBulkStock(r[stockCol]);
+                let prod = null;
+                if (ident) prod = findProductBySku(ident);
+                if (!prod) {
+                    const key = (nm || ident).toLowerCase();
+                    if (key) prod = state.products.find(p => String(p.name).trim().toLowerCase() === key) || null;
+                }
+                const row = { line: i + 1, ident: ident, nameIn: nm, prod: prod, newStock: stockV, status: '', unit: unitCol >= 0 ? bulkCellStr(r[unitCol]) : '', loc: locCol >= 0 ? bulkCellStr(r[locCol]) : '' };
+                if (stockV === null) row.status = 'kosong';
+                else if (Number.isNaN(stockV)) row.status = 'invalid';
+                else if (!prod) {
+                    if (ident && nm) {
+                        const k = normSku(ident) || ident;
+                        if (seenNew[k] !== undefined) out[seenNew[k]].status = 'dup';
+                        seenNew[k] = out.length;
+                        row.status = 'baru';
+                    } else row.status = 'nf';
+                }
+                else {
+                    if (seen[prod.id] !== undefined) out[seen[prod.id]].status = 'dup';
+                    seen[prod.id] = out.length;
+                    row.status = numStock(prod) === stockV ? 'sama' : 'ubah';
+                }
+                out.push(row);
+            }
+            return { rows: out };
+        }
+
+        function openBulkModal() {
+            bulkRows = [];
+            bulkCounts = { ubah: 0, baru: 0 };
+            const an = document.getElementById('bulk-addnew'); if (an) an.checked = false;
+            document.getElementById('bulk-paste').value = '';
+            document.getElementById('bulk-result').classList.add('hidden');
+            setBulkApply(0);
+            document.getElementById('modal-bulk').classList.remove('hidden');
+            lucide.createIcons();
+        }
+        function closeBulkModal() { document.getElementById('modal-bulk').classList.add('hidden'); }
+        function setBulkApply(n) {
+            const b = document.getElementById('bulk-apply-btn');
+            b.disabled = n === 0;
+            b.classList.toggle('opacity-50', n === 0);
+            b.classList.toggle('cursor-not-allowed', n === 0);
+            b.innerText = n > 0 ? `Terapkan ${n} Perubahan` : 'Terapkan Perubahan';
+        }
+
+        function downloadBulkTemplate() {
+            if (typeof XLSX === 'undefined') { showToast('Library Excel belum termuat. Cek internet lalu muat ulang halaman.', 'error'); return; }
+            const aoa = [['SKU / BARCODE', 'NAMA BARANG', 'STOK SISTEM', 'STOK BARU']].concat(
+                [...state.products].sort(cmpName).map(p => [String(p.sku), p.name, numStock(p), numStock(p)]));
+            const ws = XLSX.utils.aoa_to_sheet(aoa);
+            ws['!cols'] = [{ wch: 20 }, { wch: 38 }, { wch: 13 }, { wch: 13 }];
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Update Stok');
+            XLSX.writeFile(wb, `SISTOCK_Template_Update_Stok_${todayISO()}.xlsx`);
+            showToast('Template diunduh. Ubah kolom STOK BARU lalu unggah kembali.');
+        }
+
+        function onBulkFile(ev) {
+            const f = ev.target.files && ev.target.files[0];
+            if (!f) return;
+            if (typeof XLSX === 'undefined') { showToast('Library Excel belum termuat. Cek internet lalu muat ulang halaman.', 'error'); return; }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+                    const ws = wb.Sheets[wb.SheetNames[0]];
+                    renderBulkPreview(parseBulkTable(XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' })));
+                } catch (err) {
+                    console.error(err);
+                    showToast('File tidak bisa dibaca. Pastikan format .xlsx / .csv.', 'error');
+                }
+            };
+            reader.readAsArrayBuffer(f);
+            ev.target.value = '';
+        }
+
+        function onBulkPaste() {
+            const t = val('bulk-paste');
+            if (!t.trim()) { showToast('Tempelkan datanya dulu.', 'error'); return; }
+            const aoa = t.split(/\r?\n/).filter(l => l.trim() !== '').map(l => l.indexOf('\t') !== -1 ? l.split('\t') : (l.indexOf(';') !== -1 ? l.split(';') : l.split(',')));
+            renderBulkPreview(parseBulkTable(aoa));
+        }
+
+        function renderBulkPreview(res) {
+            if (res.error) { showToast(res.error, 'error'); return; }
+            bulkRows = res.rows;
+            const label = { ubah: ['🟢 Ubah', 'text-emerald-700'], sama: ['⚪ Sama', 'text-slate-400'], nf: ['🔴 Tidak ditemukan', 'text-rose-600'], invalid: ['🔴 Angka tidak valid', 'text-rose-600'], kosong: ['⚪ Stok kosong', 'text-slate-400'], baru: ['🔵 Barang baru', 'text-sky-700'], dup: ['🟡 Dobel (dilewati)', 'text-amber-600'] };
+            const cnt = { ubah: 0, baru: 0, sama: 0, nf: 0, invalid: 0, kosong: 0, dup: 0 };
+            let html = '';
+            const order = { ubah: 0, baru: 1, nf: 2, invalid: 2, dup: 2, kosong: 3, sama: 4 };
+            [...bulkRows].sort((a, b) => order[a.status] - order[b.status] || a.line - b.line).forEach(r => {
+                cnt[r.status]++;
+                const cur = r.prod ? numStock(r.prod) : (r.status === 'baru' ? 0 : '');
+                const diff = (r.status === 'ubah' || r.status === 'baru') ? (r.newStock - cur) : '';
+                html += `<tr>
+                    <td class="p-2 font-bold whitespace-nowrap ${label[r.status][1]}">${label[r.status][0]}</td>
+                    <td class="p-2 font-mono">${escapeHtml(r.prod ? r.prod.sku : r.ident)}</td>
+                    <td class="p-2 font-semibold">${escapeHtml(r.prod ? r.prod.name : (r.nameIn || '-'))}${r.status === 'baru' && r.unit ? ' <span class="text-slate-400 font-normal">(' + escapeHtml(r.unit) + ')</span>' : ''}</td>
+                    <td class="p-2 text-center">${cur}</td>
+                    <td class="p-2 text-center font-black">${(r.newStock === null || Number.isNaN(r.newStock)) ? '-' : r.newStock}</td>
+                    <td class="p-2 text-center font-bold">${diff === '' ? '' : (diff > 0 ? '+' + diff : diff)}</td>
+                </tr>`;
+            });
+            document.getElementById('bulk-preview').innerHTML = html;
+            bulkCounts = cnt;
+            document.getElementById('bulk-summary').innerText = `${cnt.ubah} akan diubah | ${cnt.baru} barang baru | ${cnt.sama} sama | ${cnt.nf} tidak ditemukan | ${cnt.invalid} angka tidak valid | ${cnt.dup} dobel | ${cnt.kosong} kosong`;
+            document.getElementById('bulk-result').classList.remove('hidden');
+            updateBulkApplyCount();
+        }
+
+        function updateBulkApplyCount() {
+            const addNew = document.getElementById('bulk-addnew') && document.getElementById('bulk-addnew').checked;
+            setBulkApply(bulkCounts.ubah + (addNew ? bulkCounts.baru : 0));
+        }
+
+        function applyBulkUpdate() {
+            const addNew = document.getElementById('bulk-addnew').checked;
+            const changes = bulkRows.filter(r => r.status === 'ubah');
+            const news = addNew ? bulkRows.filter(r => r.status === 'baru') : [];
+            if (!changes.length && !news.length) { showToast('Tidak ada perubahan untuk diterapkan.', 'error'); return; }
+            if (!confirm(`Terapkan ${changes.length} perubahan stok dan tambah ${news.length} barang baru sekaligus?\n\nPerubahan stok dicatat sebagai Stock Opname.`)) return;
+
+            if (document.getElementById('bulk-backup').checked && typeof XLSX !== 'undefined') {
+                try { writeExportFile('full', todayISO()); } catch (e) { console.error('Backup sebelum update gagal:', e); }
+            }
+
+            let done = 0, created = 0;
+            changes.forEach(r => {
+                const prod = state.products.find(p => p.id === r.prod.id);
+                if (!prod) return;
+                const before = numStock(prod);
+                const diff = r.newStock - before;
+                if (diff === 0) return;
+                prod.stock = r.newStock;
+                state.logs.push({
+                    id: newId('log'),
+                    ...nowStamp(),
+                    productName: prod.name,
+                    sku: prod.sku,
+                    type: 'OPNAME',
+                    qty: r.newStock,
+                    before: before,
+                    diff: diff,
+                    notes: `Update stok massal (Selisih: ${diff > 0 ? '+' : ''}${diff})`
+                });
+                done++;
+            });
+
+            news.forEach(r => {
+                if (findProductBySku(r.ident)) return;
+                const unit = (r.unit || 'PCS').trim().toUpperCase();
+                const loc = (r.loc && r.loc.trim() !== '-' ? r.loc.trim() : '') || 'Gudang Utama';
+                const np = { id: newId('prod'), sku: r.ident, name: r.nameIn.trim(), category: unit, location: loc, price: 0, stock: r.newStock, rop: 10 };
+                state.products.push(np);
+                state.logs.push({
+                    id: newId('log'),
+                    ...nowStamp(),
+                    productName: np.name,
+                    sku: np.sku,
+                    type: 'IN',
+                    qty: np.stock,
+                    notes: `Barang baru (impor massal) - Rak: ${np.location}`
+                });
+                created++;
+            });
+
+            saveStateToCloud();
+            refreshUI();
+            closeBulkModal();
+            showToast(`${done} stok diperbarui, ${created} barang baru ditambahkan.`);
         }
 
         // ---------- Tombol cetak ----------
@@ -3518,6 +4005,10 @@
             document.getElementById('dmg-edit-id').value = '';
             document.getElementById('fefo-modal-title').innerText = 'Catat Batch FEFO Baru';
             document.getElementById('fefo-submit-btn').innerText = 'Simpan FEFO';
+            document.getElementById('dmg-status').value = 'auto';
+            setFefoPolicyFields({ returnVal: 0, returnUnit: 'hari', remindVal: 30, remindUnit: 'hari' });
+            document.getElementById('fefo-life-start').value = todayISO();
+            updateFefoPlanPreview();
             document.getElementById('modal-damaged').classList.remove('hidden');
         }
         function closeDamagedModal() { document.getElementById('modal-damaged').classList.add('hidden'); }
@@ -3700,102 +4191,50 @@
             const contentContainer = document.getElementById('fefo-detail-content');
             if(!modal || !contentContainer) return;
 
-            const now = new Date();
-            const todayYear = now.getFullYear();
-            const todayMonth = now.getMonth();
-            const todayDate = now.getDate();
-            const todayTimestamp = new Date(todayYear, todayMonth, todayDate).getTime();
+            const groups = { expired: [], retur: [], reminder: [], aman: [] };
+            (state.FEFO || []).forEach(item => {
+                const info = fefoPhaseInfo(item);
+                if(groups[info.phase]) groups[info.phase].push({ item: item, info: info });
+            });
+            Object.keys(groups).forEach(k => groups[k].sort((a, b) => expiryTime(a.item.timestamp) - expiryTime(b.item.timestamp)));
 
-            let expiredList = [];
-            let nearList = [];
-            let safeList = [];
+            const card = (g, bg, border, textCls, tag, tagBg) => {
+                const it = g.item, pl = g.info.plan;
+                const dates = [`Exp: <strong class="${textCls}">${escapeHtml(it.timestamp)}</strong>`];
+                if(pl.ret) dates.push(`Retur: <strong>${isoToDMY(pl.ret)}</strong>`);
+                if(pl.rem) dates.push(`Pengingat: ${isoToDMY(pl.rem)}`);
+                return `
+                    <div class="${bg} ${border} border p-2.5 rounded-xl flex justify-between items-center gap-2">
+                        <div class="min-w-0">
+                            <p class="font-bold text-slate-900 truncate">${escapeHtml(it.productName)} <span class="font-mono text-[10px] ${textCls}">(${escapeHtml(it.sku)})</span></p>
+                            <p class="text-[10px] text-slate-600 font-medium">Qty: <strong>${escapeHtml(it.qty)} ${escapeHtml(fefoUnit(it))}</strong> | ${dates.join(' | ')}</p>
+                            <p class="text-[10px] font-bold ${textCls}">${escapeHtml(g.info.label)}</p>
+                        </div>
+                        <span class="px-2 py-0.5 ${tagBg} text-white font-bold text-[9px] rounded-md flex-shrink-0">${tag}</span>
+                    </div>`;
+            };
+            const section = (title, titleCls, list, empty, renderer) => `
+                <div class="space-y-2">
+                    <h4 class="font-extrabold ${titleCls} uppercase text-[11px] flex items-center gap-1.5">${title} (${list.length})</h4>
+                    ${list.length === 0
+                        ? `<p class="text-slate-400 italic text-[11px] bg-slate-50 p-2.5 rounded-xl">${empty}</p>`
+                        : `<div class="space-y-1.5 max-h-44 overflow-y-auto custom-scrollbar pr-1">${list.map(renderer).join('')}</div>`}
+                </div>`;
 
-            if(state.FEFO) {
-                state.FEFO.forEach(item => {
-                    if(!item.timestamp || parseInt(item.qty) <= 0) return;
-                    const parts = item.timestamp.split('/');
-                    if(parts.length === 3) {
-                        const day = parseInt(parts[0], 10);
-                        const month = parseInt(parts[1], 10) - 1;
-                        const year = parseInt(parts[2], 10);
-                        
-                        const expTimestamp = new Date(year, month, day).getTime();
-                        const diffTime = expTimestamp - todayTimestamp;
-                        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-
-                        if(diffDays < 0) {
-                            expiredList.push({...item, diffDays});
-                        } else if(diffDays <= 30) {
-                            nearList.push({...item, diffDays});
-                        } else {
-                            safeList.push({...item, diffDays});
-                        }
-                    }
-                });
-            }
-
-            let htmlContent = `
+            contentContainer.innerHTML = `
                 <div class="space-y-4">
                     <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
                         <p class="font-bold text-slate-700">📊 Ringkasan Status Batch FEFO Gudang:</p>
-                        <p class="text-[11px] text-slate-500 mt-0.5">Berdasarkan tanggal hari ini (Zona Waktu Bandung WIB)</p>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Mengikuti jadwal pengingat tiap batch (Zona Waktu Bandung WIB)</p>
                     </div>
-            `;
-
-            // Bagian Kedaluwarsa
-            htmlContent += `<div class="space-y-2"><h4 class="font-extrabold text-rose-600 uppercase text-[11px] flex items-center gap-1.5">🔴 Batch Kedaluwarsa (${expiredList.length})</h4>`;
-            if(expiredList.length === 0) {
-                htmlContent += `<p class="text-slate-400 italic text-[11px] bg-slate-50 p-2.5 rounded-xl">Tidak ada batch yang kedaluwarsa.</p>`;
-            } else {
-                htmlContent += `<div class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar pr-1">`;
-                expiredList.forEach(ex => {
-                    htmlContent += `
-                        <div class="bg-rose-50 border border-rose-200 p-2.5 rounded-xl flex justify-between items-center">
-                            <div>
-                                <p class="font-bold text-slate-900">${escapeHtml(ex.productName)} <span class="font-mono text-[10px] text-rose-600">(${escapeHtml(ex.sku)})</span></p>
-                                <p class="text-[10px] text-slate-600 font-medium">Qty: <strong>${ex.qty} PCS</strong> | Expired: <strong class="text-rose-700">${escapeHtml(ex.timestamp)}</strong> (${Math.abs(ex.diffDays)} hari lalu)</p>
-                            </div>
-                            <span class="px-2 py-0.5 bg-rose-600 text-white font-bold text-[9px] rounded-md">KADALUWARSA</span>
-                        </div>
-                    `;
-                });
-                htmlContent += `</div>`;
-            }
-            htmlContent += `</div>`;
-
-            // Bagian Mendekati Expired (≤30 hari)
-            htmlContent += `<div class="space-y-2"><h4 class="font-extrabold text-amber-600 uppercase text-[11px] flex items-center gap-1.5">🟡 Mendekati Kadaluwarsa / ≤30 Hari (${nearList.length})</h4>`;
-            if(nearList.length === 0) {
-                htmlContent += `<p class="text-slate-400 italic text-[11px] bg-slate-50 p-2.5 rounded-xl">Tidak ada batch yang mendesak dalam 30 hari ke depan.</p>`;
-            } else {
-                htmlContent += `<div class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar pr-1">`;
-                nearList.forEach(nr => {
-                    htmlContent += `
-                        <div class="bg-amber-50 border border-amber-200 p-2.5 rounded-xl flex justify-between items-center">
-                            <div>
-                                <p class="font-bold text-slate-900">${escapeHtml(nr.productName)} <span class="font-mono text-[10px] text-amber-600">(${escapeHtml(nr.sku)})</span></p>
-                                <p class="text-[10px] text-slate-600 font-medium">Qty: <strong>${nr.qty} PCS</strong> | Expired: <strong class="text-amber-700">${escapeHtml(nr.timestamp)}</strong> (Sisa ${nr.diffDays} hari)</p>
-                            </div>
-                            <span class="px-2 py-0.5 bg-amber-500 text-white font-bold text-[9px] rounded-md">SEGERA KELUARKAN</span>
-                        </div>
-                    `;
-                });
-                htmlContent += `</div>`;
-            }
-            htmlContent += `</div>`;
-
-            // Bagian Aman
-            htmlContent += `
-                <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-2xl flex items-center justify-between">
-                    <div>
-                        <p class="font-bold text-emerald-900">🟢 Batch Aman (> 30 Hari)</p>
-                        <p class="text-[10px] text-emerald-700">Terdapat <strong>${safeList.length} batch</strong> dalam kondisi aman dan stabil.</p>
+                    ${section('🔴 Batch Kedaluwarsa', 'text-rose-600', groups.expired, 'Tidak ada batch yang kedaluwarsa.', g => card(g, 'bg-rose-50', 'border-rose-200', 'text-rose-700', 'KADALUWARSA', 'bg-rose-600'))}
+                    ${section('🟠 Waktunya Retur ke Supplier', 'text-orange-600', groups.retur, 'Tidak ada batch yang harus diretur sekarang.', g => card(g, 'bg-orange-50', 'border-orange-200', 'text-orange-700', 'RETUR', 'bg-orange-500'))}
+                    ${section('🟡 Masuk Jadwal Pengingat', 'text-amber-600', groups.reminder, 'Tidak ada batch yang masuk jadwal pengingat.', g => card(g, 'bg-amber-50', 'border-amber-200', 'text-amber-700', 'SEGERA KELUARKAN', 'bg-amber-500'))}
+                    <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-2xl">
+                        <p class="font-bold text-emerald-900">🟢 Batch Aman</p>
+                        <p class="text-[10px] text-emerald-700">Terdapat <strong>${groups.aman.length} batch</strong> yang belum masuk jadwal pengingat.</p>
                     </div>
-                </div>
-            `;
-
-            htmlContent += `</div>`;
-            contentContainer.innerHTML = htmlContent;
+                </div>`;
             modal.classList.remove('hidden');
             lucide.createIcons();
         }
