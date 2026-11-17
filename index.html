@@ -591,19 +591,19 @@
 
                     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
                         <div class="overflow-x-auto max-w-full">
-                            <table class="w-full text-left text-xs min-w-[700px]">
+                            <table class="w-full text-left text-xs md:min-w-[700px]">
                                 <thead class="bg-slate-50 text-slate-500 uppercase font-extrabold border-b border-slate-200">
                                     <tr>
-                                        <th class="p-3.5">SKU / Barcode</th>
+                                        <th class="p-3.5 hidden md:table-cell">SKU / Barcode</th>
                                         <th class="p-3.5">Nama Barang</th>
-                                        <th class="p-3.5">Satuan</th>
-                                        <th class="p-3.5">Lokasi Rak</th>
-                                        <th class="p-3.5">Harga Satuan</th>
-                                        <th class="p-3.5 font-bold text-slate-700">Total Nilai</th>
-                                        <th class="p-3.5 text-center">ROP (Min)</th>
+                                        <th class="p-3.5 hidden md:table-cell">Satuan</th>
+                                        <th class="p-3.5 hidden md:table-cell">Lokasi Rak</th>
+                                        <th class="p-3.5 hidden md:table-cell">Harga Satuan</th>
+                                        <th class="p-3.5 font-bold text-slate-700 hidden md:table-cell">Total Nilai</th>
+                                        <th class="p-3.5 text-center hidden md:table-cell">ROP (Min)</th>
                                         <th class="p-3.5 text-center">Stok Akhir</th>
-                                        <th class="p-3.5 text-center">Status</th>
-                                        <th class="p-3.5 text-right">Aksi</th>
+                                        <th class="p-3.5 text-center hidden md:table-cell">Status</th>
+                                        <th class="p-3.5 text-right hidden md:table-cell">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="products-tbody" class="divide-y divide-slate-100">
@@ -958,10 +958,17 @@
                     <label class="block font-bold text-slate-700 mb-1">Catatan <span class="text-slate-400 font-medium">(opsional)</span></label>
                     <input type="text" id="doNote" oninput="updateDeliveryPreview()" placeholder="Contoh: Untuk praktikum kelas XI Logistik" class="w-full border rounded-xl p-2.5 text-xs outline-none bg-white font-semibold focus:border-brand-500">
                 </div>
+                <div class="md:col-span-2">
+                    <label class="block font-bold text-slate-700 mb-1">Format Cetak</label>
+                    <select id="doFormat" class="w-full min-w-0 border rounded-xl p-2.5 text-xs outline-none bg-white font-semibold focus:border-brand-500">
+                        <option value="dua">2 salinan per lembar A4 (hemat kertas, dipotong di tengah)</option>
+                        <option value="satu">1 salinan A4 penuh</option>
+                    </select>
+                </div>
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-slate-700 mb-2">Pilih Barang yang Dikirim:</label>
+                <label class="block text-xs font-bold text-slate-700 mb-2">Pilih Barang yang Dikirim <span class="text-slate-400 font-medium">(tidak dibatasi stok)</span>:</label>
                 <div id="doItemSelector" class="space-y-2 max-h-40 overflow-y-auto border p-3 rounded-2xl text-xs bg-slate-50 custom-scrollbar"></div>
             </div>
 
@@ -1105,6 +1112,21 @@
                     <button type="submit" id="fefo-submit-btn" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold btn-press">Simpan FEFO</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL: DETAIL BARANG (HP) -->
+    <div id="modal-product-detail" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white rounded-t-3xl sm:rounded-3xl max-w-md w-full p-5 space-y-4 shadow-2xl animate-tab-enter max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-start gap-3 border-b pb-3">
+                <h3 id="pd-name" class="font-extrabold text-sm text-slate-900 leading-snug"></h3>
+                <button onclick="closeProductDetail()" class="text-slate-400 hover:text-slate-600 flex-shrink-0"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="pd-body" class="grid grid-cols-2 gap-x-4 gap-y-3 text-xs"></div>
+            <div class="flex gap-2 pt-1">
+                <button id="pd-edit" class="flex-1 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 btn-press"><i data-lucide="edit-3" class="w-4 h-4"></i> Edit</button>
+                <button id="pd-del" class="flex-1 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 btn-press"><i data-lucide="trash-2" class="w-4 h-4"></i> Hapus</button>
+            </div>
         </div>
     </div>
 
@@ -2005,18 +2027,19 @@
                     rowBg = '';
                 }
 
+                const dot = stock <= 0 ? 'bg-rose-500' : (stock <= rop ? 'bg-amber-500' : 'bg-emerald-500');
                 htmlAcc += `
-                    <tr class="hover:bg-slate-50 ${rowBg} transition">
-                        <td class="p-3.5 font-mono font-bold text-brand-600">${escapeHtml(p.sku)}</td>
-                        <td class="p-3.5 font-bold text-slate-800">${escapeHtml(p.name)}</td>
-                        <td class="p-3.5 text-slate-500 font-medium">${escapeHtml(p.category || '-')}</td>
-                        <td class="p-3.5 font-bold text-slate-700">${escapeHtml(p.location || 'Gudang Utama')}</td>
-                        <td class="p-3.5 font-semibold text-slate-600">Rp ${price.toLocaleString('id-ID')}</td>
-                        <td class="p-3.5 font-extrabold text-emerald-700">Rp ${totalAssetVal.toLocaleString('id-ID')}</td>
-                        <td class="p-3.5 text-center text-slate-600 font-semibold">${rop}</td>
-                        <td class="p-3.5 text-center font-black text-slate-900">${stock}</td>
-                        <td class="p-3.5 text-center">${statusBadge}</td>
-                        <td class="p-3.5 text-right space-x-1">
+                    <tr class="hover:bg-slate-50 ${rowBg} transition cursor-pointer md:cursor-default" onclick="onProductRowClick('${p.id}')">
+                        <td class="p-3.5 font-mono font-bold text-brand-600 hidden md:table-cell">${escapeHtml(p.sku)}</td>
+                        <td class="p-3 md:p-3.5 font-bold text-slate-800"><span class="md:hidden inline-block w-2 h-2 rounded-full mr-1.5 ${dot}"></span>${escapeHtml(p.name)}</td>
+                        <td class="p-3.5 text-slate-500 font-medium hidden md:table-cell">${escapeHtml(p.category || '-')}</td>
+                        <td class="p-3.5 font-bold text-slate-700 hidden md:table-cell">${escapeHtml(p.location || 'Gudang Utama')}</td>
+                        <td class="p-3.5 font-semibold text-slate-600 hidden md:table-cell">Rp ${price.toLocaleString('id-ID')}</td>
+                        <td class="p-3.5 font-extrabold text-emerald-700 hidden md:table-cell">Rp ${totalAssetVal.toLocaleString('id-ID')}</td>
+                        <td class="p-3.5 text-center text-slate-600 font-semibold hidden md:table-cell">${rop}</td>
+                        <td class="p-3 md:p-3.5 text-center font-black text-slate-900 whitespace-nowrap">${stock}<span class="md:hidden text-[10px] text-slate-400 font-semibold ml-1">${escapeHtml(p.category || '')}</span></td>
+                        <td class="p-3.5 text-center hidden md:table-cell">${statusBadge}</td>
+                        <td class="p-3.5 text-right space-x-1 hidden md:table-cell">
                             <button onclick="editProduct('${p.id}')" class="p-1.5 text-slate-400 hover:text-brand-500 rounded-lg hover:bg-slate-100 btn-press"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
                             <button onclick="deleteProduct('${p.id}')" class="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg hover:bg-slate-100 btn-press"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </td>
@@ -3277,6 +3300,108 @@
             return docShell(T, meta, body);
         }
 
+        // ---------- Surat Jalan 2 salinan per lembar A4 (potong horizontal di tengah) ----------
+        function fmtRackShort(r) {
+            const parts = String(r || '').split(/[,;]/).map(x => x.trim()).filter(Boolean);
+            if (!parts.length) return '-';
+            return parts.length > 1 ? `${parts[0]} +${parts.length - 1}` : parts[0];
+        }
+        function chunkDoRows(rows, cap) {
+            const chunks = [];
+            let cur = [], used = 0;
+            rows.forEach(r => {
+                const units = Math.max(1, Math.ceil(String(r.name).length / 58));
+                if (used + units > cap && cur.length) { chunks.push(cur); cur = []; used = 0; }
+                cur.push(r);
+                used += units;
+            });
+            if (cur.length) chunks.push(cur);
+            return chunks;
+        }
+
+        function docCssCompact() {
+            return `
+                @page { size: A4 portrait; margin: 0; }
+                * { box-sizing: border-box; }
+                html, body { margin: 0; padding: 0; }
+                body { font-family: 'Times New Roman', Times, serif; font-size: 9pt; color: #000; line-height: 1.25; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                .sheet { width: 210mm; height: 296.5mm; position: relative; overflow: hidden; page-break-after: always; }
+                .sheet:last-child { page-break-after: auto; }
+                .half { height: 148.25mm; padding: 7mm 12mm 5mm; position: relative; overflow: hidden; }
+                .half.top { border-bottom: 0.3mm dashed #777; }
+                .cutmark { position: absolute; right: 12mm; top: 145.2mm; font-size: 6.5pt; color: #777; background: #fff; padding: 0 1.5mm; }
+                .kop { border-bottom: 2px double #000; padding-bottom: 3px; margin-bottom: 5px; }
+                .kop table { width: 100%; border-collapse: collapse; }
+                .kop-logo { width: 17mm; text-align: center; vertical-align: middle; }
+                .kop-logo img { max-width: 15mm; max-height: 15mm; object-fit: contain; }
+                .kop-text { text-align: center; vertical-align: middle; }
+                .k1 { font-size: 12.5pt; font-weight: bold; letter-spacing: 0.4px; }
+                .k2 { font-size: 8.5pt; font-weight: bold; margin-top: 1px; }
+                .k3 { font-size: 7pt; margin-top: 1px; }
+                .doc-title { text-align: center; font-size: 10.5pt; font-weight: bold; text-decoration: underline; text-transform: uppercase; margin: 3px 0 4px; }
+                table.meta { width: 100%; border-collapse: collapse; font-size: 8.5pt; margin-bottom: 4px; }
+                table.meta td { padding: 1px 3px; vertical-align: top; }
+                table.meta td.ml { width: 29mm; white-space: nowrap; }
+                table.meta td.r { width: 17mm; text-align: right; }
+                table.data { width: 100%; border-collapse: collapse; font-size: 8.3pt; }
+                table.data th, table.data td { border: 0.25mm solid #000; padding: 1.2px 4px; vertical-align: middle; }
+                table.data th { background: #e6e6e6; text-align: center; font-size: 7.8pt; }
+                table.data td.c { text-align: center; }
+                table.data tr { page-break-inside: avoid; }
+                .total { margin: 3px 0 0; font-size: 8.5pt; text-align: right; }
+                .total.cont { font-style: italic; color: #444; }
+                .sig-wrap { margin-top: 5px; }
+                .sig-date { text-align: right; font-size: 8.5pt; margin-bottom: 1px; }
+                table.sig { width: 100%; border-collapse: collapse; }
+                table.sig td { text-align: center; vertical-align: top; font-size: 8.5pt; padding: 0 6px; }
+                .sig-role { font-weight: bold; }
+                .sig-space { height: 11mm; }
+                .sig-name { font-weight: bold; text-decoration: underline; }
+                .sig-name.blank { font-weight: normal; text-decoration: none; }
+                .foot { position: absolute; left: 12mm; right: 12mm; bottom: 2.5mm; font-size: 6.5pt; color: #666; }
+            `;
+        }
+
+        function buildDoCompactHTML(meta, rows) {
+            const totalQty = rows.reduce((a, r) => a + (parseInt(r.qty) || 0), 0);
+            const chunks = chunkDoRows(rows, 10);
+            const printedAt = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+            let offset = 0;
+            const sheets = chunks.map((chunk, ci) => {
+                const last = ci === chunks.length - 1;
+                const trs = chunk.map((r, i) => `<tr>
+                    <td class="c" style="width:8mm">${offset + i + 1}</td>
+                    <td><b>${docEsc(r.name)}</b></td>
+                    <td style="width:33mm">${docEsc(r.sku)}</td>
+                    <td class="c" style="width:21mm">${docEsc(fmtRackShort(r.rack))}</td>
+                    <td class="c" style="width:13mm"><b>${docEsc(r.qty)}</b></td>
+                    <td class="c" style="width:16mm">${docEsc(r.unit)}</td>
+                </tr>`).join('');
+                offset += chunk.length;
+                const half = (isTop) => `
+                    <div class="half${isTop ? ' top' : ''}">
+                        ${docKop(meta)}
+                        <div class="doc-title">${docEsc(DOC_TYPES.do.title)}</div>
+                        <table class="meta">
+                            <tr><td class="ml">No. DO</td><td>: <b>${docEsc(meta.kode)}</b></td><td class="r">Tanggal</td><td style="width:26mm">: ${isoToDMY(meta.tanggal)}</td></tr>
+                            <tr><td class="ml">Penerima / Tujuan</td><td colspan="3">: <b>${docEsc(meta.customer)}</b>${chunks.length > 1 ? ` &nbsp;&nbsp;(Hal. ${ci + 1}/${chunks.length})` : ''}</td></tr>
+                            ${meta.note ? `<tr><td class="ml">Catatan</td><td colspan="3">: ${docEsc(meta.note)}</td></tr>` : ''}
+                        </table>
+                        <table class="data">
+                            <thead><tr><th>NO</th><th>NAMA BARANG</th><th>SKU / BARCODE</th><th>RAK</th><th>QTY</th><th>SATUAN</th></tr></thead>
+                            <tbody>${trs}</tbody>
+                        </table>
+                        ${last
+                            ? `<p class="total">Total: <b>${rows.length}</b> jenis barang, <b>${totalQty}</b> unit</p>
+                               ${docSignatures(meta, [{ role: 'Penerima', name: '' }, { role: 'Admin Gudang', name: meta.admin }], false)}`
+                            : `<p class="total cont">bersambung ke halaman berikutnya &rarr;</p>`}
+                        <div class="foot">SISTOCK 2.0 &middot; SMKN 3 Bandung &middot; Dicetak: ${docEsc(printedAt)} WIB</div>
+                    </div>`;
+                return `<section class="sheet">${half(true)}<div class="cutmark">&#9986; potong di sini</div>${half(false)}</section>`;
+            }).join('');
+            return `<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>${docEsc(DOC_TYPES.do.title)} - ${docEsc(meta.kode)}</title><style>${docCssCompact()}</style></head><body>${sheets}</body></html>`;
+        }
+
         function buildDoHTML(meta, rows) {
             const totalQty = rows.reduce((a, r) => a + (parseInt(r.qty) || 0), 0);
             const trs = rows.map((r, i) => [
@@ -3782,11 +3907,8 @@
                 const id = cb.getAttribute('data-id');
                 const qtyEl = document.getElementById(`doQty_${id}`);
                 const qty = qtyEl ? (parseInt(qtyEl.value) || 0) : 0;
-                const prod = state.products.find(p => p.id === id);
-                const stock = prod ? (parseInt(prod.stock) || 0) : 0;
                 const name = cb.getAttribute('data-name');
-                if (stock <= 0) err = `Stok ${name} kosong, tidak bisa dikirim.`;
-                else if (qty < 1 || qty > stock) err = `Jumlah ${name} harus antara 1 dan ${stock}.`;
+                if (qty < 1) err = `Jumlah ${name} minimal 1.`;
                 rows.push({ name: name, sku: cb.getAttribute('data-sku'), rack: cb.getAttribute('data-rack'), unit: cb.getAttribute('data-unit'), qty: qty });
             });
             return { rows: rows, err: err };
@@ -3801,6 +3923,8 @@
             if(kodeEl && !kodeEl.value.trim()) kodeEl.value = `DO${currentDoNumber}`;
             const adminEl = document.getElementById('doAdmin');
             if(adminEl && !adminEl.value.trim()) adminEl.value = loadDocPrefs().admin || '';
+            const fmtEl = document.getElementById('doFormat');
+            if(fmtEl) fmtEl.value = loadDocPrefs().doFormat === 'satu' ? 'satu' : 'dua';
             
             renderDoSelector();
             updateDeliveryPreview();
@@ -3809,22 +3933,64 @@
 
         function closeDeliveryModal() { document.getElementById('deliveryModal').classList.add('hidden'); }
 
+        // HP: ketuk baris barang untuk melihat detail lengkap & aksi (di laptop tabel sudah lengkap)
+        function onProductRowClick(id) {
+            if (!window.matchMedia('(max-width: 767px)').matches) return;
+            openProductDetail(id);
+        }
+        function openProductDetail(id) {
+            const p = state.products.find(x => x.id === id);
+            if (!p) return;
+            const stock = numStock(p), rop = parseInt(p.rop) || 0, price = parseFloat(p.price) || 0;
+            const status = stock <= 0 ? '🔴 Habis' : (stock <= rop ? '🟡 ROP Warning' : '🟢 Aman');
+            const cell = (label, value) => `<div><p class="text-[10px] font-bold uppercase text-slate-400">${label}</p><p class="font-bold text-slate-800 break-words">${value}</p></div>`;
+            document.getElementById('pd-name').innerText = p.name;
+            document.getElementById('pd-body').innerHTML =
+                cell('Stok', `${stock} ${escapeHtml(p.category || '')}`) + cell('Status', status) +
+                cell('ROP (Min)', rop) + cell('Lokasi Rak', escapeHtml(p.location || 'Gudang Utama')) +
+                cell('SKU / Barcode', `<span class="font-mono">${escapeHtml(p.sku)}</span>`) + cell('Satuan', escapeHtml(p.category || '-')) +
+                cell('Harga Satuan', 'Rp ' + price.toLocaleString('id-ID')) + cell('Total Nilai', 'Rp ' + (stock * price).toLocaleString('id-ID'));
+            document.getElementById('pd-edit').onclick = () => { closeProductDetail(); editProduct(id); };
+            document.getElementById('pd-del').onclick = () => { closeProductDetail(); deleteProduct(id); };
+            document.getElementById('modal-product-detail').classList.remove('hidden');
+            lucide.createIcons();
+        }
+        function closeProductDetail() { document.getElementById('modal-product-detail').classList.add('hidden'); }
+
         function renderDoSelector() {
             const container = document.getElementById('doItemSelector');
             if(!container) return;
-            container.innerHTML = '';
 
-            state.products.forEach((item) => {
-                container.innerHTML += `
+            // pertahankan pilihan & jumlah saat daftar dirender ulang
+            const prev = {};
+            document.querySelectorAll('.do-checkbox').forEach(cb => {
+                const id = cb.getAttribute('data-id');
+                const q = document.getElementById(`doQty_${id}`);
+                prev[id] = { checked: cb.checked, qty: q ? q.value : '1' };
+            });
+
+            // Surat jalan tidak dibatasi stok: barang berstok di atas, stok kosong di bawah (tetap bisa dikirim)
+            const list = [...state.products].sort((x, y) => ((numStock(x) <= 0 ? 1 : 0) - (numStock(y) <= 0 ? 1 : 0)) || cmpName(x, y));
+            let html = '';
+            let dividerShown = false;
+            list.forEach((item) => {
+                const empty = numStock(item) <= 0;
+                if (empty && !dividerShown) {
+                    dividerShown = true;
+                    html += `<div class="pt-2 pb-1 text-[10px] font-extrabold uppercase tracking-wider text-rose-600">Stok kosong (tetap bisa dikirim)</div>`;
+                }
+                const st = prev[item.id] || { checked: false, qty: '1' };
+                html += `
                     <div class="flex items-center justify-between gap-2 border-b border-slate-200/80 pb-2 pt-1">
                         <label class="flex items-center gap-2 cursor-pointer truncate flex-1">
-                            <input type="checkbox" ${(parseInt(item.stock) || 0) <= 0 ? 'disabled' : ''} class="do-checkbox rounded border-slate-300 text-brand-500 focus:ring-brand-500" data-id="${item.id}" data-name="${escapeHtml(item.name)}" data-sku="${escapeHtml(item.sku || '-')}" data-rack="${escapeHtml(item.location || 'Utama')}" data-unit="${escapeHtml(item.category || 'PCS')}" onchange="updateDeliveryPreview()">
-                            <span class="font-bold truncate text-slate-700">${escapeHtml(item.name)} <span class="text-slate-400 font-medium text-[10px]">(${item.category}, Rak: ${item.location || 'Utama'}, Stok: ${item.stock})</span>${(parseInt(item.stock) || 0) <= 0 ? ' <span class="text-rose-600 font-extrabold text-[10px]">⛔ HABIS</span>' : ''}</span>
+                            <input type="checkbox" ${st.checked ? 'checked' : ''} class="do-checkbox rounded border-slate-300 text-brand-500 focus:ring-brand-500" data-id="${item.id}" data-name="${escapeHtml(item.name)}" data-sku="${escapeHtml(item.sku || '-')}" data-rack="${escapeHtml(item.location || 'Utama')}" data-unit="${escapeHtml(item.category || 'PCS')}" onchange="updateDeliveryPreview()">
+                            <span class="font-bold truncate ${empty ? 'text-slate-500' : 'text-slate-700'}">${escapeHtml(item.name)} <span class="text-slate-400 font-medium text-[10px]">(${escapeHtml(item.category || '-')}, Rak: ${escapeHtml(item.location || 'Utama')}, Stok: ${numStock(item)})</span></span>
                         </label>
-                        <input type="number" min="1" max="${item.stock || 999}" value="1" id="doQty_${item.id}" ${(parseInt(item.stock) || 0) <= 0 ? 'disabled' : ''} class="w-16 border rounded-lg p-1 text-center bg-white text-xs font-bold" onchange="updateDeliveryPreview()" onkeyup="updateDeliveryPreview()">
+                        <input type="number" min="1" value="${escapeHtml(st.qty || '1')}" id="doQty_${item.id}" class="w-16 border rounded-lg p-1 text-center bg-white text-xs font-bold" onchange="updateDeliveryPreview()" onkeyup="updateDeliveryPreview()">
                     </div>
                 `;
             });
+            container.innerHTML = html;
         }
 
         function updateDeliveryPreview() {
@@ -3896,11 +4062,13 @@
                 admin: val('doAdmin').trim(),
                 note: val('doNote').trim()
             };
+            const fmt = val('doFormat') === 'satu' ? 'satu' : 'dua';
             const prefs = loadDocPrefs();
             prefs.admin = meta.admin;
+            prefs.doFormat = fmt;
             saveDocPrefs(prefs);
 
-            openPrintWindow(buildDoHTML(meta, res.rows));
+            openPrintWindow(fmt === 'dua' ? buildDoCompactHTML(meta, res.rows) : buildDoHTML(meta, res.rows));
 
             // nomor DO otomatis naik hanya jika memakai nomor bawaan
             if (kode === `DO${currentDoNumber}`) {
