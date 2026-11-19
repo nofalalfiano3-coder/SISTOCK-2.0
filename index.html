@@ -961,7 +961,7 @@
                 <div class="md:col-span-2">
                     <label class="block font-bold text-slate-700 mb-1">Format Cetak</label>
                     <select id="doFormat" class="w-full min-w-0 border rounded-xl p-2.5 text-xs outline-none bg-white font-semibold focus:border-brand-500">
-                        <option value="dua">2 salinan per lembar A4 (hemat kertas, dipotong di tengah)</option>
+                        <option value="dua">2 salinan per lembar A4 (diputar 90°, hemat kertas, dipotong di tengah)</option>
                         <option value="satu">1 salinan A4 penuh</option>
                     </select>
                 </div>
@@ -3300,17 +3300,19 @@
             return docShell(T, meta, body);
         }
 
-        // ---------- Surat Jalan 2 salinan per lembar A4 (potong horizontal di tengah) ----------
+        // ---------- Surat Jalan 2 salinan per lembar A4 portrait (atas & bawah, tiap surat diputar 90°, potong di tengah) ----------
         function fmtRackShort(r) {
             const parts = String(r || '').split(/[,;]/).map(x => x.trim()).filter(Boolean);
             if (!parts.length) return '-';
             return parts.length > 1 ? `${parts[0]} +${parts.length - 1}` : parts[0];
         }
+        // Bagi baris barang per halaman. Tiap baris dihitung sebanyak jumlah baris teks yang terpakai
+        // (nama panjang / SKU panjang otomatis membungkus), supaya tabel tidak meluap keluar dari kertas.
         function chunkDoRows(rows, cap) {
             const chunks = [];
             let cur = [], used = 0;
             rows.forEach(r => {
-                const units = Math.max(1, Math.ceil(String(r.name).length / 58));
+                const units = Math.max(1, Math.ceil(String(r.name).length / 30), Math.ceil(String(r.sku).length / 15));
                 if (used + units > cap && cur.length) { chunks.push(cur); cur = []; used = 0; }
                 cur.push(r);
                 used += units;
@@ -3325,79 +3327,87 @@
                 * { box-sizing: border-box; }
                 html, body { margin: 0; padding: 0; }
                 body { font-family: 'Times New Roman', Times, serif; font-size: 9pt; color: #000; line-height: 1.25; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                .sheet { width: 210mm; height: 296.5mm; position: relative; overflow: hidden; page-break-after: always; }
-                .sheet:last-child { page-break-after: auto; }
-                .half { height: 148.25mm; padding: 7mm 12mm 5mm; position: relative; overflow: hidden; }
-                .half.top { border-bottom: 0.3mm dashed #777; }
-                .cutmark { position: absolute; right: 12mm; top: 145.2mm; font-size: 6.5pt; color: #777; background: #fff; padding: 0 1.5mm; }
-                .kop { border-bottom: 2px double #000; padding-bottom: 3px; margin-bottom: 5px; }
+                /* 1 lembar A4 portrait = 2 surat A5 (atas & bawah), masing-masing diputar 90° searah jarum jam */
+                .sheet { width: 210mm; height: 296.5mm; position: relative; overflow: hidden; page-break-after: always; break-after: page; }
+                .sheet:last-child { page-break-after: auto; break-after: auto; }
+                .half { position: absolute; left: 0; width: 210mm; height: 148.25mm; overflow: hidden; }
+                .half.top { top: 0; border-bottom: 0.3mm dashed #777; }
+                .half.bottom { top: 148.25mm; }
+                .rot { position: absolute; left: 0; top: 0; width: 148.25mm; height: 210mm; padding: 7mm 8mm 6mm; display: flex; flex-direction: column; overflow: hidden; transform-origin: 0 0; transform: translateX(210mm) rotate(90deg); }
+                .cutmark { position: absolute; left: 50%; top: 148.25mm; transform: translate(-50%, -50%); font-size: 6.5pt; color: #777; background: #fff; padding: 0 2mm; white-space: nowrap; z-index: 2; }
+                .kop { border-bottom: 2px double #000; padding-bottom: 3px; margin-bottom: 5px; flex: none; }
                 .kop table { width: 100%; border-collapse: collapse; }
-                .kop-logo { width: 17mm; text-align: center; vertical-align: middle; }
-                .kop-logo img { max-width: 15mm; max-height: 15mm; object-fit: contain; }
+                .kop-logo { width: 14mm; text-align: center; vertical-align: middle; }
+                .kop-logo img { max-width: 12.5mm; max-height: 12.5mm; object-fit: contain; }
                 .kop-text { text-align: center; vertical-align: middle; }
-                .k1 { font-size: 12.5pt; font-weight: bold; letter-spacing: 0.4px; }
-                .k2 { font-size: 8.5pt; font-weight: bold; margin-top: 1px; }
-                .k3 { font-size: 7pt; margin-top: 1px; }
-                .doc-title { text-align: center; font-size: 10.5pt; font-weight: bold; text-decoration: underline; text-transform: uppercase; margin: 3px 0 4px; }
-                table.meta { width: 100%; border-collapse: collapse; font-size: 8.5pt; margin-bottom: 4px; }
-                table.meta td { padding: 1px 3px; vertical-align: top; }
-                table.meta td.ml { width: 29mm; white-space: nowrap; }
-                table.meta td.r { width: 17mm; text-align: right; }
-                table.data { width: 100%; border-collapse: collapse; font-size: 8.3pt; }
-                table.data th, table.data td { border: 0.25mm solid #000; padding: 1.2px 4px; vertical-align: middle; }
-                table.data th { background: #e6e6e6; text-align: center; font-size: 7.8pt; }
+                .k1 { font-size: 11.5pt; font-weight: bold; letter-spacing: 0.3px; }
+                .k2 { font-size: 8pt; font-weight: bold; margin-top: 1px; }
+                .k3 { font-size: 6.3pt; margin-top: 1px; line-height: 1.2; }
+                .doc-title { text-align: center; font-size: 10.5pt; font-weight: bold; text-decoration: underline; text-transform: uppercase; margin: 2px 0 4px; flex: none; }
+                table.meta { width: 100%; border-collapse: collapse; font-size: 8.3pt; margin-bottom: 4px; flex: none; }
+                table.meta td { padding: 1px 2px; vertical-align: top; }
+                table.meta td.ml { width: 27mm; white-space: nowrap; }
+                table.meta td.r { width: 14mm; text-align: right; white-space: nowrap; }
+                .body { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+                table.data { width: 100%; border-collapse: collapse; font-size: 8pt; table-layout: fixed; }
+                table.data th, table.data td { border: 0.25mm solid #000; padding: 1.2px 3px; vertical-align: middle; word-wrap: break-word; overflow-wrap: anywhere; }
+                table.data th { background: #e6e6e6; text-align: center; font-size: 7.3pt; }
                 table.data td.c { text-align: center; }
-                table.data tr { page-break-inside: avoid; }
-                .total { margin: 3px 0 0; font-size: 8.5pt; text-align: right; }
+                table.data tr { page-break-inside: avoid; break-inside: avoid; }
+                .total { margin: 3px 0 0; font-size: 8.3pt; text-align: right; }
                 .total.cont { font-style: italic; color: #444; }
-                .sig-wrap { margin-top: 5px; }
-                .sig-date { text-align: right; font-size: 8.5pt; margin-bottom: 1px; }
+                .bottom { flex: none; }
+                .sig-wrap { margin-top: 4px; }
+                .sig-date { text-align: right; font-size: 8.3pt; margin-bottom: 1px; }
                 table.sig { width: 100%; border-collapse: collapse; }
-                table.sig td { text-align: center; vertical-align: top; font-size: 8.5pt; padding: 0 6px; }
+                table.sig td { text-align: center; vertical-align: top; font-size: 8.3pt; padding: 0 6px; }
                 .sig-role { font-weight: bold; }
-                .sig-space { height: 11mm; }
+                .sig-space { height: 15mm; }
                 .sig-name { font-weight: bold; text-decoration: underline; }
                 .sig-name.blank { font-weight: normal; text-decoration: none; }
-                .foot { position: absolute; left: 12mm; right: 12mm; bottom: 2.5mm; font-size: 6.5pt; color: #666; }
+                .foot { margin-top: 4px; padding-top: 2px; border-top: 0.2mm solid #bbb; font-size: 6.3pt; color: #666; display: flex; justify-content: space-between; gap: 4mm; }
             `;
         }
 
         function buildDoCompactHTML(meta, rows) {
             const totalQty = rows.reduce((a, r) => a + (parseInt(r.qty) || 0), 0);
-            const chunks = chunkDoRows(rows, 10);
-            const printedAt = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+            const chunks = chunkDoRows(rows, 26);
             let offset = 0;
             const sheets = chunks.map((chunk, ci) => {
                 const last = ci === chunks.length - 1;
                 const trs = chunk.map((r, i) => `<tr>
-                    <td class="c" style="width:8mm">${offset + i + 1}</td>
+                    <td class="c" style="width:7mm">${offset + i + 1}</td>
                     <td><b>${docEsc(r.name)}</b></td>
-                    <td style="width:33mm">${docEsc(r.sku)}</td>
-                    <td class="c" style="width:21mm">${docEsc(fmtRackShort(r.rack))}</td>
-                    <td class="c" style="width:13mm"><b>${docEsc(r.qty)}</b></td>
-                    <td class="c" style="width:16mm">${docEsc(r.unit)}</td>
+                    <td style="width:26mm">${docEsc(r.sku)}</td>
+                    <td class="c" style="width:15mm">${docEsc(fmtRackShort(r.rack))}</td>
+                    <td class="c" style="width:11mm"><b>${docEsc(r.qty)}</b></td>
+                    <td class="c" style="width:13mm">${docEsc(r.unit)}</td>
                 </tr>`).join('');
                 offset += chunk.length;
-                const half = (isTop) => `
-                    <div class="half${isTop ? ' top' : ''}">
+                const half = (copyNo) => `
+                    <div class="half ${copyNo === 1 ? 'top' : 'bottom'}"><div class="rot">
                         ${docKop(meta)}
                         <div class="doc-title">${docEsc(DOC_TYPES.do.title)}</div>
                         <table class="meta">
-                            <tr><td class="ml">No. DO</td><td>: <b>${docEsc(meta.kode)}</b></td><td class="r">Tanggal</td><td style="width:26mm">: ${isoToDMY(meta.tanggal)}</td></tr>
+                            <tr><td class="ml">No. DO</td><td>: <b>${docEsc(meta.kode)}</b></td><td class="r">Tanggal</td><td style="width:24mm">: ${isoToDMY(meta.tanggal)}</td></tr>
                             <tr><td class="ml">Penerima / Tujuan</td><td colspan="3">: <b>${docEsc(meta.customer)}</b>${chunks.length > 1 ? ` &nbsp;&nbsp;(Hal. ${ci + 1}/${chunks.length})` : ''}</td></tr>
                             ${meta.note ? `<tr><td class="ml">Catatan</td><td colspan="3">: ${docEsc(meta.note)}</td></tr>` : ''}
                         </table>
-                        <table class="data">
-                            <thead><tr><th>NO</th><th>NAMA BARANG</th><th>SKU / BARCODE</th><th>RAK</th><th>QTY</th><th>SATUAN</th></tr></thead>
-                            <tbody>${trs}</tbody>
-                        </table>
-                        ${last
-                            ? `<p class="total">Total: <b>${rows.length}</b> jenis barang, <b>${totalQty}</b> unit</p>
-                               ${docSignatures(meta, [{ role: 'Penerima', name: '' }, { role: 'Admin Gudang', name: meta.admin }], false)}`
-                            : `<p class="total cont">bersambung ke halaman berikutnya &rarr;</p>`}
-                        <div class="foot">SISTOCK 2.0 &middot; SMKN 3 Bandung &middot; Dicetak: ${docEsc(printedAt)} WIB</div>
-                    </div>`;
-                return `<section class="sheet">${half(true)}<div class="cutmark">&#9986; potong di sini</div>${half(false)}</section>`;
+                        <div class="body">
+                            <table class="data">
+                                <thead><tr><th style="width:7mm">NO</th><th>NAMA BARANG</th><th style="width:26mm">SKU / BARCODE</th><th style="width:15mm">RAK</th><th style="width:11mm">QTY</th><th style="width:13mm">SATUAN</th></tr></thead>
+                                <tbody>${trs}</tbody>
+                            </table>
+                            ${last
+                                ? `<p class="total">Total: <b>${rows.length}</b> jenis barang, <b>${totalQty}</b> unit</p>`
+                                : `<p class="total cont">bersambung ke halaman berikutnya &rarr;</p>`}
+                        </div>
+                        <div class="bottom">
+                            ${last ? docSignatures(meta, [{ role: 'Penerima', name: '' }, { role: 'Admin Gudang', name: meta.admin }], false) : ''}
+
+                        </div>
+                    </div></div>`;
+                return `<section class="sheet">${half(1)}<div class="cutmark">&#9986; potong di sini</div>${half(2)}</section>`;
             }).join('');
             return `<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>${docEsc(DOC_TYPES.do.title)} - ${docEsc(meta.kode)}</title><style>${docCssCompact()}</style></head><body>${sheets}</body></html>`;
         }
